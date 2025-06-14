@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/02 11:18:19 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/14 13:49:58 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void read_input()
 
 	while (1)
 	{
-		command_line = readline("MiniShell: ");			
+		command_line = readline("MiniShell: ");
 		if (command_line && *command_line)
 		{
 			add_history(command_line);
@@ -53,6 +53,28 @@ int	main(int argc, char **argv, char **envp)
 
 	read_input();
 
+	printf("=== PIPE SPLIT TEST ===\n");
+    
+    char *tests[] = {
+        // Geçerli testler
+        "ls -la | grep test | wc -l",
+        "cat file.txt | head -10", 
+        "ls -la",
+        
+        // Hatalı testler
+        "|||",
+        "| grep test",
+        "ls -la |",
+        "ls || grep",
+        "ls | | grep",
+        
+        NULL
+    };
+    
+    for (int i = 0; tests[i]; i++) {
+        printf("\nTest %d: \"%s\"\n", i+1, tests[i]);
+        parse_command(tests[i]);
+    }
 
 	return (0);
 }
