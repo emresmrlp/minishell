@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse.c                                            :+:      :+:    :+:   */
+/*   parse_pipe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/15 14:17:24 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/15 16:42:14 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,13 +117,6 @@ void parse_command(char *command_line)
         printf("syntax error: invalid pipe usage\n");
         return;
     }
-        
-    int i = 0;
-    while (shell[i])
-    {
-        printf("Komut %d '%s'\n", i,shell[i]);
-        free(shell[i]);
-        i++;
-    }
+    add_node(shell);
     free(shell);
 }

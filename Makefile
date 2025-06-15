@@ -2,6 +2,7 @@ NAME = minishell
 
 SRC = src/parse_pipe.c \
 		src/main.c \
+		src/parse_redirect.c \
 
 OBJ = $(SRC:.c=.o) 
 

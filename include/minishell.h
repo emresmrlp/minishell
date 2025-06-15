@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/06/13 14:55:32 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/15 16:41:41 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,11 @@
 
 typedef struct s_command {
     char            **args;     
-    char             *input_fd;   
-    char             *output_fd;
-    char             *append_output_fd;
-    char             *heredoc_fd;
+    char             *input_fd;   // >
+    char             *output_fd; // <
+    char             *append_output_fd; // >>
+    char             *heredoc_fd; // <<
+    struct s_command *next;
 } t_command;
 
 // t_command **shell;
@@ -47,6 +48,7 @@ typedef struct s_command {
 // < a ls -l | >a > b >c grep m
 
 void parse_command(char *command_line);
+void add_node(char **shell);
 void error(char *message);
 
 
