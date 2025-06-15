@@ -1,6 +1,6 @@
 NAME = minishell
 
-SRC = src/parse.c \
+SRC = src/parse_pipe.c \
 		src/main.c \
 
 OBJ = $(SRC:.c=.o) 

@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/15 13:55:21 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/15 14:17:24 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,27 +59,35 @@ int validate_pipes(const char *line)
     
     return 1;
 }
+
 static void pass_quote(const char *line, int *i)
 {
-    if (line[*i] == '"')
+    char quote_char;
+    
+    if (line[*i] == '"' || line[*i] == '\'')
     {
+        quote_char = line[*i];
         (*i)++;
-        while (line[*i] && line[*i] != '"')
+
+        while (line[*i] && line[*i] != quote_char)
             (*i)++;
-        if (line[*i] == '"')
+
+        if (line[*i] == quote_char)
             (*i)++;
     }
 }
 
+
 static char **pipe_split(const char *line, int start, int k, int i)
 {
-    char **shell = malloc(sizeof(char *) * (pipe_count(line) + 2));
+    char **shell;
     char *temp;
 
     if (!validate_pipes(line))
         return (NULL);
+    shell = malloc(sizeof(char *) * (pipe_count(line) + 2));
     if (!shell)
-        printf("Error: Memory allocation failed\n");
+        return(NULL);
     while (line[k])
     {
         pass_quote(line, &k);
@@ -98,24 +106,14 @@ static char **pipe_split(const char *line, int start, int k, int i)
     shell[i] = NULL;
     return (shell);
 }
-static void free_shell(char **shell)
-{
-    int i = 0;
 
-    while (shell[i])
-    {
-        free(shell[i]);
-        i++;
-    }
-    free(shell);
-}
+
 void parse_command(char *command_line)
 {
     char **shell = pipe_split(command_line, 0, 0, 0);
     
     if (!shell)
     {
-        free_shell(shell);
         printf("syntax error: invalid pipe usage\n");
         return;
     }
@@ -127,6 +125,5 @@ void parse_command(char *command_line)
         free(shell[i]);
         i++;
     }
-    free(shell[i]);
     free(shell);
 }
