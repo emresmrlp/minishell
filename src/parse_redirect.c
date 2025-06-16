@@ -6,11 +6,22 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/15 16:48:19 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/16 15:11:45 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+
+int ft_strcmp(const char *s1, const char *s2)
+{
+    while (*s1 && *s2 && *s1 == *s2)
+    {
+        s1++;
+        s2++;
+    }
+    return ((unsigned char)*s1 - (unsigned char)*s2);
+}
 
 static t_command *create_node(void)
 {   
@@ -27,32 +38,85 @@ static t_command *create_node(void)
     return node;
 }
 
-void print_command_list(t_command *cmd)
+// void print_command_list(t_command *cmd) // Bu Fonksiyon gelen nodeları DOğru bir şekilde ekliyo mu test etmek için silmeyi unutma !!!!
+// {
+//     int i = 0;
+
+//     while (cmd)
+//     {
+//         printf("Komut %d:\n", i);
+        
+//         if (cmd->args)
+//         {
+//             printf("  Argümanlar:\n");
+//             for (int j = 0; cmd->args[j]; j++)
+//                 printf("    - %s\n", cmd->args[j]);
+//         }
+
+//         if (cmd->input_fd)
+//             printf("  Girdi yönlendirme (<): %s\n", cmd->input_fd);
+//         if (cmd->output_fd)
+//             printf("  Çıktı yönlendirme (>): %s\n", cmd->output_fd);
+//         if (cmd->append_output_fd)
+//             printf("  Ekli çıktı yönlendirme (>>): %s\n", cmd->append_output_fd);
+//         if (cmd->heredoc_fd)
+//             printf("  Heredoc (<<): %s\n", cmd->heredoc_fd);
+
+//         cmd = cmd->next;
+//         i++;
+//     }
+// }
+
+
+static void handle_redirection(t_command *node, char **tokens, int *j)
+{
+    if (ft_strcmp(tokens[*j], "<<") == 0)
+        node->heredoc_fd = ft_strdup(tokens[++(*j)]);
+
+    else if (ft_strcmp(tokens[*j], ">>") == 0)
+        node->append_output_fd = ft_strdup(tokens[++(*j)]);
+
+    else if (ft_strcmp(tokens[*j], "<") == 0)
+        node->input_fd = ft_strdup(tokens[++(*j)]);
+
+    else if (ft_strcmp(tokens[*j], ">") == 0)
+        node->output_fd = ft_strdup(tokens[++(*j)]);
+}
+
+static int is_redirection(char *token)
+{
+    return (ft_strcmp(token, "<<") == 0 || ft_strcmp(token, ">>") == 0 ||
+            ft_strcmp(token, "<") == 0 || ft_strcmp(token, ">") == 0);
+}
+
+static void parse_tokens(t_command *node, char **tokens)
 {
     int i = 0;
-
-    while (cmd)
+    int arg_count = 0;
+    
+    while (tokens[i])
     {
-        printf("Komut %d:\n", i);
-        
-        if (cmd->args)
+        if (is_redirection(tokens[i]))
+            i += 2;
+        else
         {
-            printf("  Argümanlar:\n");
-            for (int j = 0; cmd->args[j]; j++)
-                printf("    - %s\n", cmd->args[j]);
+            arg_count++;
+            i++;
         }
-
-        if (cmd->input_fd)
-            printf("  Girdi yönlendirme (<): %s\n", cmd->input_fd);
-        if (cmd->output_fd)
-            printf("  Çıktı yönlendirme (>): %s\n", cmd->output_fd);
-        if (cmd->append_output_fd)
-            printf("  Ekli çıktı yönlendirme (>>): %s\n", cmd->append_output_fd);
-        if (cmd->heredoc_fd)
-            printf("  Heredoc (<<): %s\n", cmd->heredoc_fd);
-
-        cmd = cmd->next;
-        i++;
+    }
+    if (arg_count > 0)
+    {
+        node->args = (char **)ft_calloc(arg_count + 1, sizeof(char *));
+        i = 0;
+        arg_count = 0;
+        while (tokens[i])
+        {
+            if (is_redirection(tokens[i]))
+                handle_redirection(node, tokens, &i);
+            else
+                node->args[arg_count++] = ft_strdup(tokens[i]);
+            i++;
+        }
     }
 }
 
@@ -60,39 +124,22 @@ void add_node(char **shell)
 {
     t_command *head = NULL;
     t_command *curr = NULL;
+    t_command *node = NULL;
     char **tokens;
     int i = 0;
 
     while (shell[i])
     {
-        t_command *node = create_node();
-        tokens = ft_split(shell[i], ' ', 0, 0); // whitespace'e göre böl
-        int j = 0;
-        while (tokens[j])
-        {
-            if (strcmp(tokens[j], "<") == 0)
-                node->input_fd = ft_strdup(tokens[++j]);        //TODO //FIXME Bu dosyada gelen pipe a göre ayrılmış parçaların içinden redirectleri bulup node a ekleme yapılacak 
-                                                                // hatalar var onlar çözülecek
-            else if (strcmp(tokens[j], ">") == 0)
-                node->output_fd = ft_strdup(tokens[++j]);
-            else if (strcmp(tokens[j], ">>") == 0)
-                node->append_output_fd = ft_strdup(tokens[++j]);
-            else if (strcmp(tokens[j], "<<") == 0)
-                node->heredoc_fd = ft_strdup(tokens[++j]);
-            else
-                node->args = tokens; // yönlendirme değilse argümana ekle
-            j++;
-        }
+        node = create_node();
+        tokens = ft_split(shell[i], ' ', 0, 0);
+        
+        parse_tokens(node, tokens);        
         if (!head)
             head = node;
         else
             curr->next = node;
         curr = node;
-        free(tokens);
         i++;
     }
-    print_command_list(head); // debug için
+    print_command_list(head);
 }
-
-
-
