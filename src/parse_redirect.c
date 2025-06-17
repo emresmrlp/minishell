@@ -6,11 +6,12 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/17 15:24:13 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/17 19:29:42 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
 int ft_strcmp(const char *s1, const char *s2)
 {
     while (*s1 && *s2 && *s1 == *s2)
