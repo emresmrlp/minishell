@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/18 14:47:11 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:05:46 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ void add_node(char **shell)
         // tokens'ı serbest bırakma fonksiyonu eklenecek
         i++;
     }
-    parse_dolar(head);
+    parse_dollar(head);
     
     //print_command_list(head);
 }

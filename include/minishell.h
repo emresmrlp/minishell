@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/06/18 14:47:24 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:05:13 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct s_command {
 void parse_command(char *command_line);
 void add_node(char **shell);
 void error(char *message);
-void parse_dolar(t_command *head);
+void	parse_dollar(t_command *head);
 int ft_strcmp(const char *s1, const char *s2);
 void print_command_list(t_command *cmd);
 
