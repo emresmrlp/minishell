@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/17 19:29:42 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/18 14:47:11 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static t_command *create_node(void)
     node->input_fd = NULL;
     node->output_fd = NULL;
     node->next = NULL;
+    node->dollar = 0;
     
     return node;
 }
@@ -63,6 +64,8 @@ void print_command_list(t_command *cmd)
             printf("  Ekli çıktı yönlendirme (>>): %s\n", cmd->append_output_fd);
         if (cmd->heredoc_fd)
             printf("  Heredoc (<<): %s\n", cmd->heredoc_fd);
+        if (cmd->dollar == 1)
+            printf("  DOLLAR BULUNDU %d($)\n", cmd->dollar);
 
         cmd = cmd->next;
         i++;
@@ -196,6 +199,7 @@ void add_node(char **shell)
         // tokens'ı serbest bırakma fonksiyonu eklenecek
         i++;
     }
+    parse_dolar(head);
     
-    print_command_list(head);
+    //print_command_list(head);
 }
