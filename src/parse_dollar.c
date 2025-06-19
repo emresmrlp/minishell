@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/18 20:01:01 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:32:18 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,51 +54,52 @@ static char	*expand_var(char *str, int *i)
 	return (value);
 }
 
-static char	*process_string(char *str)
-{
-	char	*result;
-	char	*temp;
-	int		i;
-	int		j;
-	int		in_single;
-	int		in_double;
 
-	result = malloc(ft_strlen(str) * 4);
-	if (!result)
-		return (NULL);
-	i = 0;
-	j = 0;
-	in_single = 0;
-	in_double = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' && !in_double)
-		{
-			in_single = !in_single;
-			i++;
-		}
-		else if (str[i] == '"' && !in_single)
-		{
-			in_double = !in_double;
-			i++;
-		}
-		else if (str[i] == '$' && !in_single && str[i + 1] && 
-				is_var_char(str[i + 1]))
-		{
-			temp = expand_var(str, &i);
-			if (temp)
-			{
-				ft_strlcpy(result + j, temp, ft_strlen(temp) + 1);
-				j += ft_strlen(temp);
-				free(temp);
-			}
-		}
-		else
-			result[j++] = str[i++];
-	}
-	result[j] = '\0';
-	return (result);
+static void handle_quotes(char c, int *in_single, int *in_double)
+{
+    if (c == '\'' && !*in_double)
+        *in_single = !*in_single;
+    else if (c == '"' && !*in_single)
+        *in_double = !*in_double;
 }
+
+
+static void append_expansion(char **result, int *j, char *str, int *i)
+{
+    char *temp = expand_var(str, i);
+    if (temp)
+    {
+        ft_strlcpy(*result + *j, temp, ft_strlen(temp) + 1);
+        *j += ft_strlen(temp);
+        free(temp);
+    }
+}
+
+
+static char *process_string(char *str)
+{
+    char *result = malloc(ft_strlen(str) * 4);
+    int i = 0, j = 0, in_single = 0, in_double = 0;
+    
+    if (!result)
+        return (NULL);
+    
+    while (str[i])
+    {
+        if ((str[i] == '\'' || str[i] == '"'))
+        {
+            handle_quotes(str[i], &in_single, &in_double);
+            i++;
+        }
+        else if (str[i] == '$' && !in_single && str[i + 1] && is_var_char(str[i + 1]))
+            append_expansion(&result, &j, str, &i);
+        else
+            result[j++] = str[i++];
+    }
+    result[j] = '\0';
+    return (result);
+}
+
 
 static int	has_expansion(char *str)
 {
