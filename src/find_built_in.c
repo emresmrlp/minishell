@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/07 13:51:12 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 14:52:17 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,26 @@
 
 static void cd_function(t_command *iter)
 {
-    if (!iter->args[1])
-        printf("cd: No such file or directory\n");
-    else if (chdir(iter->args[1]) == -1)
+    if (!iter->args[1] || ft_strcmp(iter->args[1], "~") == 0)
+    {
+        chdir(getenv("HOME"));
+        printf("getenv: %s\n", getenv("HOME"));
+        return ;
+    }
+    if (ft_strcmp(iter->args[1], "-") == 0)
+    {
+        printf("dönen değer:%s \n", strrchr(iter->args[1], '/') + 1);
+        chdir(strrchr(iter->args[1], '/') + 1);
+    }
+    if (chdir(iter->args[1]) == -1)
     {
         perror("cd");
         return;
     }
-    if (ft_strchr(iter->args[1], '~') )
-    {
-        /* code */
-    }
-    
 }
 static void built_in(t_command *iter)
 {
-    if (ft_strcmp(iter->args[0], "pwd") == 0)
+    if (ft_strcmp(iter->args[0], "pwd") == 0) //TODO bu ksıma parse gerekebilişr göz atılacak
     {
         free(iter->args[0]);
         iter->args[0] = getcwd(NULL, 0);

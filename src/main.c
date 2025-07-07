@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/15 13:36:12 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 14:57:11 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void read_input()
 int	main(int argc, char **argv, char **envp)
 {
 	(void)argc;
-	if ((ft_strncmp(*argv,"./minishell", 12)) || (argc != 1))
+	if ((ft_strcmp(*argv,"./minishell")) || (argc != 1))
 		error("Wrong program name or number just run 'minishell'\n");
 	voidke(argv, envp); // sussun diye konuldu
 

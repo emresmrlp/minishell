@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/07 12:25:59 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 14:56:42 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ typedef struct s_command {
     int               dollar;
     struct s_command *next;
 } t_command;
+
+
 
 // t_command **shell;
 

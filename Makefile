@@ -4,7 +4,7 @@ SRC = src/parse_pipe.c \
 		src/main.c \
 		src/parse_redirect.c \
 		src/parse_dollar.c \
-		src/execute_one.c  
+		src/find_built_in.c  
 
 OBJ = $(SRC:.c=.o) 
 
