@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute_one.c                                      :+:      :+:    :+:   */
+/*   find_built_in.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/07 14:52:17 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:02:49 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,23 @@ static void cd_function(t_command *iter)
         return;
     }
 }
+
+// static void export_function(char **args)
+// {
+//     t_shell *shell;
+//     int i;
+
+//     i = 0;
+    
+// }
 static void built_in(t_command *iter)
 {
     if (ft_strcmp(iter->args[0], "pwd") == 0) //TODO bu ksıma parse gerekebilişr göz atılacak
     {
         free(iter->args[0]);
         iter->args[0] = getcwd(NULL, 0);
+        printf("%s\n", iter->args[0]);
+        return;
     }
     else if (ft_strcmp(iter->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek
     {
@@ -51,7 +62,7 @@ static void built_in(t_command *iter)
     }
     else if (ft_strcmp(iter->args[0], "export") == 0)
     {
-     //   execute_export(iter->args);
+        //export_function(iter->args);
     }
     else if (ft_strcmp(iter->args[0], "unset") == 0)
     {

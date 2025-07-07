@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/07 14:57:11 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:01:05 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,9 @@ void voidke(char **argv, char **envp)
 	(void)envp;	
 }
 
-void read_input()
+void read_input(void)
 {
 	char *command_line;
-
 	while (1)
 	{
 		command_line = readline("MiniShell: ");
@@ -50,14 +49,13 @@ void read_input()
 
 int	main(int argc, char **argv, char **envp)
 {
+
 	(void)argc;
 	if ((ft_strcmp(*argv,"./minishell")) || (argc != 1))
 		error("Wrong program name or number just run 'minishell'\n");
 	voidke(argv, envp); // sussun diye konuldu
 
-	read_input();
-
-	
+	read_input();	
 
 	return (0);
 }
