@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/07 12:57:23 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 13:27:48 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void built_in(t_command *iter)
         free(iter->args[0]);
         iter->args[0] = getcwd(NULL, 0);
     }
-    else if (ft_strcmp(iter->args[0], "echo") == 0)
+    else if (ft_strcmp(iter->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek
     {
         if (iter->args[1])
             printf("%s\n",iter->args[1]);
@@ -42,7 +42,7 @@ static void built_in(t_command *iter)
     }
     else if (ft_strcmp(iter->args[0], "exit") == 0)
     {
-        //execute_exit(iter->args);
+        exit(EXIT_SUCCESS); //TODO burayı böyle bırakma leakleri çöz
     }
 }
 
