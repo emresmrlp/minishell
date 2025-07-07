@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/06/18 15:05:13 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 12:25:59 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void add_node(char **shell);
 void error(char *message);
 void	parse_dollar(t_command *head);
 int ft_strcmp(const char *s1, const char *s2);
+void    split_built_in(t_command *head);
 void print_command_list(t_command *cmd);
 
 

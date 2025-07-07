@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/19 14:32:18 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/07 12:38:56 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,5 +143,6 @@ void	parse_dollar(t_command *head)
 		}
 		iter = iter->next;
 	}
+	split_built_in(head);
     print_command_list(head);
 }

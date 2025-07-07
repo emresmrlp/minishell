@@ -3,7 +3,8 @@ NAME = minishell
 SRC = src/parse_pipe.c \
 		src/main.c \
 		src/parse_redirect.c \
-		src/parse_dollar.c 
+		src/parse_dollar.c \
+		src/execute_one.c  
 
 OBJ = $(SRC:.c=.o) 
 
