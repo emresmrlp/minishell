@@ -6,22 +6,20 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/07 14:41:17 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:01:04 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-
-static char	*get_env_value(char *var_name)
+static char	*get_env_value(char *var_name, t_envp *env_list)
 {
 	char	*value;
 
-	value = getenv(var_name);
+	value = find_env_value(env_list, var_name);
     if (!value)
-    {
         return ("");
-    }
+
 	return (value);
 }
 
@@ -30,7 +28,7 @@ static int	is_var_char(char c)
 	return (ft_isalnum(c) || c == '_');
 }
 
-static char	*expand_var(char *str, int *i)
+static char	*expand_var(char *str, int *i, t_envp *env_list)
 {
 	int		start;
 	char	*var_name;
@@ -49,7 +47,7 @@ static char	*expand_var(char *str, int *i)
 	while (start < *i)
 		var_name[j++] = str[start++];
 	var_name[j] = '\0';
-	value = ft_strdup(get_env_value(var_name));
+	value = ft_strdup(get_env_value(var_name, env_list));
 	free(var_name);
 	return (value);
 }
@@ -64,9 +62,9 @@ static void handle_quotes(char c, int *in_single, int *in_double)
 }
 
 
-static void append_expansion(char **result, int *j, char *str, int *i)
+static void append_expansion(char **result, int *j, char *str, int *i, t_envp *env_list)
 {
-    char *temp = expand_var(str, i);
+    char *temp = expand_var(str, i, env_list);
     if (temp)
     {
         ft_strlcpy(*result + *j, temp, ft_strlen(temp) + 1);
@@ -76,7 +74,7 @@ static void append_expansion(char **result, int *j, char *str, int *i)
 }
 
 
-static char *process_string(char *str)
+static char *process_string(char *str, t_envp *env_list)
 {
     char *result = malloc(ft_strlen(str) * 4);
     int i = 0, j = 0, in_single = 0, in_double = 0;
@@ -92,7 +90,7 @@ static char *process_string(char *str)
             i++;
         }
         else if (str[i] == '$' && !in_single && str[i + 1] && is_var_char(str[i + 1]))
-            append_expansion(&result, &j, str, &i);
+            append_expansion(&result, &j, str, &i, env_list);
         else
             result[j++] = str[i++];
     }
@@ -133,7 +131,7 @@ void	parse_dollar(t_command *head)
 		while (iter->args && iter->args[i])
 		{
 			iter->dollar = has_expansion(iter->args[i]);
-			processed = process_string(iter->args[i]);
+			processed = process_string(iter->args[i], iter->env_list);
 			if (processed)
 			{
 				free(iter->args[i]);

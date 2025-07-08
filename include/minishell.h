@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/07 14:56:42 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/08 17:35:38 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,21 @@
 
 
 typedef struct s_command {
-    char            **args;     
-    char             *input_fd;   // >
-    char             *output_fd; // <
-    char             *append_output_fd; // >>
-    char             *heredoc_fd; // <<
-    int               dollar;
-    struct s_command *next;
+    char                **args;     
+    char                *input_fd;   // >
+    char                *output_fd; // <
+    char                *append_output_fd; // >>
+    char                *heredoc_fd; // <<
+    t_envp              *env_list;    // Environment linked list
+    int                 dollar;
+    struct s_command    *next;
 } t_command;
 
+typedef struct s_envp {
+    char            *key;
+    char            *value;
+    struct s_envp  *next;
+} t_envp;
 
 
 // t_command **shell;
@@ -50,13 +56,20 @@ typedef struct s_command {
 // shell[1].outfile_fd=c;
 // < a ls -l | >a > b >c grep m
 
-void parse_command(char *command_line);
-void add_node(char **shell);
+void parse_command(char *command_line, t_envp *env_list);
+void add_node(char **shell, t_envp *env_list);
 void error(char *message);
 void	parse_dollar(t_command *head);
 int ft_strcmp(const char *s1, const char *s2);
 void    split_built_in(t_command *head);
 void print_command_list(t_command *cmd);
+
+// // Environment linked list functions
+// t_envp *create_env_list(char **envp);
+// char *find_env_value(t_envp *env_list, char *key);
+// void add_env_node(t_envp **head, char *key, char *value);
+// void update_env_value(t_envp *env_list, char *key, char *value);
+// void free_env_list(t_envp *env_list);
 
 
 

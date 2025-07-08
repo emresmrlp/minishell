@@ -168,7 +168,7 @@ static int parse_argv(t_command *node, char **tokens)
     return (1);
 }
 
-void add_node(char **shell)
+void add_node(char **shell, t_envp *env_list)
 {
     t_command *head = NULL;
     t_command *curr = NULL;
@@ -180,6 +180,7 @@ void add_node(char **shell)
     while (shell[i])
     {
         node = create_node();
+        node->env_list = env_list;  // env_list'i node'a ata
         tokens = ft_split(shell[i], ' ', 0, 0);
 
         // parse_argv artık hata durumu döndürüyor

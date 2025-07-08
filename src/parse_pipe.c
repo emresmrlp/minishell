@@ -1,5 +1,16 @@
 /* ************************************************************************** */
-/*                                                                            */
+/*                           void parse_command(char *command_line, t_envp *env_list)
+{
+    char **shell = pipe_split(command_line, 0, 0, 0);
+    
+    if (!shell)
+    {
+        printf("syntax error: invalid pipe usage\n");
+        return;
+    }
+    add_node(shell, env_list);
+    free(shell);
+}                                     */
 /*                                                        :::      ::::::::   */
 /*   parse_pipe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
@@ -108,7 +119,7 @@ static char **pipe_split(const char *line, int start, int k, int i)
 }
 
 
-void parse_command(char *command_line)
+void parse_command(char *command_line, t_envp *env_list)
 {
     char **shell = pipe_split(command_line, 0, 0, 0);
     
@@ -117,6 +128,6 @@ void parse_command(char *command_line)
         printf("syntax error: invalid pipe usage\n");
         return;
     }
-    add_node(shell);
+    add_node(shell, env_list);
     free(shell);
 }
