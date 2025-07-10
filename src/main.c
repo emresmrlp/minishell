@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/10 14:13:07 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 19:41:26 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void read_input(t_envp *env_list)
 		free(command_line);
 	}
 }
+
 char *find_env(t_envp *head, char *search)
 {
 	t_envp *temp;
