@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/10 18:26:49 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 18:36:20 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,12 @@ static void cd_function(t_command *iter)
     }
     else
         target_dir = iter->args[1];
-    
     if (chdir(target_dir) == -1)
     {
         perror("cd");
         free(current_pwd);
         return;
     }
-    
-    // Environment değişkenlerini güncelle
     update_env(iter, "OLDPWD", current_pwd);
     
     char *new_pwd = getcwd(NULL, 0);
@@ -121,7 +118,10 @@ static void built_in(t_command *iter)
     }
     else if (ft_strcmp(iter->args[0], "export") == 0)
     {
-        //export_function(iter->args);
+        if (!iter->args[1])
+            print_env(iter);
+        else
+        
     }
     else if (ft_strcmp(iter->args[0], "unset") == 0)
     {
