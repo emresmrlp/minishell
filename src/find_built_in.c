@@ -6,25 +6,39 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/10 15:03:03 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:40:11 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 
+char *find_env_value(t_command *iter, char *key)
+{
+    t_envp *temp;
+
+    temp = iter->env_list;
+    while (temp)
+    {
+        if (ft_strcmp(temp->key, key) == 0)
+            return (temp->value);
+        temp = temp->next;
+    }
+    return (NULL);
+}
+
 static void cd_function(t_command *iter)
 {
     if (!iter->args[1] || ft_strcmp(iter->args[1], "~") == 0)
     {
-        chdir(getenv("HOME"));
-        printf("getenv: %s\n", getenv("HOME"));
+        chdir(find_env_value(iter, "HOME"));
         return ;
     }
     if (ft_strcmp(iter->args[1], "-") == 0)
     {
-        printf("dönen değer:%s \n", strrchr(iter->args[1], '/') + 1);
-        chdir(strrchr(iter->args[1], '/') + 1);
+        //chdir(strrchr(getcwd(NULL, 0), '/'));
+        printf("getcwd: %s:\n",getcwd(NULL, 0));
+        printf("%s\n", strrchr(getcwd(NULL, 0), '/'));
     }
     if (chdir(iter->args[1]) == -1)
     {
@@ -32,6 +46,8 @@ static void cd_function(t_command *iter)
         return;
     }
 }
+
+
 
 static void print_env(t_command *iter)
 {
