@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/08 13:01:04 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 14:13:32 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static char	*get_env_value(char *var_name, t_envp *env_list)
 {
 	char	*value;
 
-	value = find_env_value(env_list, var_name);
+	
     if (!value)
         return ("");
 

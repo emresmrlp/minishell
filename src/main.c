@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/08 13:03:39 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 14:13:07 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char *find_env(t_envp *head, char *search)
 	}
 	return (NULL);
 }
-char  *env_head(char ** envp, char *search)
+t_envp  *env_head(char ** envp)
 {
 	t_envp *temp;
 	t_envp *head;
@@ -81,15 +81,15 @@ char  *env_head(char ** envp, char *search)
 		temp->next = NULL;
 		i++;	
 	}
-	if (search)
-		return (find_env(head, search));
-	return (NULL);
+	return (head);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	// Environment linked list'i oluştur
-	t_envp *env_list = create_env_list(envp);
+	t_envp *env_list;
+	
+	env_list = env_head(envp);
 	
 	(void)argc;
 	if ((ft_strcmp(*argv,"./minishell")) || (argc != 1))
@@ -98,7 +98,7 @@ int	main(int argc, char **argv, char **envp)
 	read_input(env_list);
 	
 	// Temizlik
-	free_env_list(env_list);
+	//free_env_list(env_list);
 
 	return (0);
 }

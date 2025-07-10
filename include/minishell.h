@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/08 17:35:38 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 13:10:48 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@
 # include <stdio.h>
 
 
+typedef struct s_envp {
+    char            *key;
+    char            *value;
+    struct s_envp  *next;
+} t_envp;
 
 
 typedef struct s_command {
@@ -39,11 +44,6 @@ typedef struct s_command {
     struct s_command    *next;
 } t_command;
 
-typedef struct s_envp {
-    char            *key;
-    char            *value;
-    struct s_envp  *next;
-} t_envp;
 
 
 // t_command **shell;
