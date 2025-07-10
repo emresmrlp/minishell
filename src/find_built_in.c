@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/10 15:40:11 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 18:26:49 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,65 @@ char *find_env_value(t_command *iter, char *key)
     return (NULL);
 }
 
-static void cd_function(t_command *iter)
+void update_env(t_command *iter, char *key, char *new_value)
 {
-    if (!iter->args[1] || ft_strcmp(iter->args[1], "~") == 0)
+    t_envp *temp = iter->env_list;
+    
+    while (temp)
     {
-        chdir(find_env_value(iter, "HOME"));
-        return ;
+        if (ft_strcmp(temp->key, key) == 0)
+        {
+            free(temp->value);
+            temp->value = ft_strdup(new_value);  // Yeni value'yu ata
+            return;  // Güncelledikten sonra fonksiyondan çık
+        }
+        temp = temp->next;
     }
-    if (ft_strcmp(iter->args[1], "-") == 0)
-    {
-        //chdir(strrchr(getcwd(NULL, 0), '/'));
-        printf("getcwd: %s:\n",getcwd(NULL, 0));
-        printf("%s\n", strrchr(getcwd(NULL, 0), '/'));
-    }
-    if (chdir(iter->args[1]) == -1)
-    {
-        perror("cd");
-        return;
-    }
+    
+    // Sadece key bulunamazsa yeni node ekle
+    t_envp *new_node = (t_envp *)malloc(sizeof(t_envp));
+    new_node->key = ft_strdup(key);
+    new_node->value = ft_strdup(new_value);
+    new_node->next = iter->env_list;
+    iter->env_list = new_node;
 }
 
+static void cd_function(t_command *iter)
+{
+    char *current_pwd = getcwd(NULL, 0);  // Mevcut dizini kaydet
+    char *target_dir;
+    
+    if (!iter->args[1] || ft_strcmp(iter->args[1], "~") == 0)
+        target_dir = find_env_value(iter, "HOME");
+    else if (ft_strcmp(iter->args[1], "-") == 0)
+    {
+        target_dir = find_env_value(iter, "OLDPWD");
+        if (!target_dir)
+        {
+            printf("cd: OLDPWD not set\n");
+            free(current_pwd);
+            return;
+        }
+    }
+    else
+        target_dir = iter->args[1];
+    
+    if (chdir(target_dir) == -1)
+    {
+        perror("cd");
+        free(current_pwd);
+        return;
+    }
+    
+    // Environment değişkenlerini güncelle
+    update_env(iter, "OLDPWD", current_pwd);
+    
+    char *new_pwd = getcwd(NULL, 0);
+    update_env(iter, "PWD", new_pwd);
+    
+    free(current_pwd);
+    free(new_pwd);
+}
 
 
 static void print_env(t_command *iter)
@@ -65,9 +104,9 @@ static void built_in(t_command *iter)
 {
     if (ft_strcmp(iter->args[0], "pwd") == 0) //TODO bu ksıma parse gerekebilişr göz atılacak
     {
-        free(iter->args[0]);
-        iter->args[0] = getcwd(NULL, 0);
-        printf("%s\n", iter->args[0]);
+        char *current_dir = getcwd(NULL, 0);
+        printf("%s\n", current_dir);
+        free(current_dir);
         return;
     }
     else if (ft_strcmp(iter->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek
@@ -76,7 +115,7 @@ static void built_in(t_command *iter)
             printf("%s\n",iter->args[1]);
         return;
     }
-    else if (ft_strcmp(iter->args[0], "cd") == 0)
+    else if (ft_strcmp(iter->args[0], "cd") == 0) // "-" komutunda sorun var düzeltilecek
     {
         cd_function(iter);
     }
