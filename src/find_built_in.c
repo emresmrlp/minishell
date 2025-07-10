@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/07 17:02:49 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:03:03 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,18 @@ static void cd_function(t_command *iter)
     }
 }
 
-// static void export_function(char **args)
-// {
-//     t_shell *shell;
-//     int i;
-
-//     i = 0;
+static void print_env(t_command *iter)
+{
+    t_envp *temp;
     
-// }
+    temp = iter->env_list;
+    while (temp)
+    {
+        if (temp->key && temp->value)
+            printf("%s=%s\n", temp->key, temp->value);
+        temp = temp->next;
+    }
+}
 static void built_in(t_command *iter)
 {
     if (ft_strcmp(iter->args[0], "pwd") == 0) //TODO bu ksıma parse gerekebilişr göz atılacak
@@ -70,7 +74,7 @@ static void built_in(t_command *iter)
     }
     else if (ft_strcmp(iter->args[0], "env") == 0)
     {
-       // execute_env();
+       print_env(iter);
     }
     else if (ft_strcmp(iter->args[0], "exit") == 0)
     {
