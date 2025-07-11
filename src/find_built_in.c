@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/10 19:52:54 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:50:01 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,13 +128,12 @@ void export_add(t_command *iter)
         temp->next->value = NULL;
     }
 }
+
 static void built_in(t_command *iter)
 {
     if (ft_strcmp(iter->args[0], "pwd") == 0) //TODO bu ksıma parse gerekebilişr göz atılacak
     {
-        char *current_dir = getcwd(NULL, 0);
-        printf("%s\n", current_dir);
-        free(current_dir);
+        printf("%s\n", getcwd(NULL, 0));
         return;
     }
     else if (ft_strcmp(iter->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek
