@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/08 13:01:04 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 14:58:19 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,16 @@
 
 static char	*get_env_value(char *var_name, t_envp *env_list)
 {
-	char	*value;
+	t_envp	*temp;
 
-	value = find_env_value(env_list, var_name);
-    if (!value)
-        return ("");
-
-	return (value);
+	temp = env_list;
+	while (temp)
+	{
+		if (ft_strcmp(temp->key, var_name) == 0)
+			return (temp->value);
+		temp = temp->next;
+	}
+    return ("");
 }
 
 static int	is_var_char(char c)
@@ -52,7 +55,6 @@ static char	*expand_var(char *str, int *i, t_envp *env_list)
 	return (value);
 }
 
-
 static void handle_quotes(char c, int *in_single, int *in_double)
 {
     if (c == '\'' && !*in_double)
@@ -60,7 +62,6 @@ static void handle_quotes(char c, int *in_single, int *in_double)
     else if (c == '"' && !*in_single)
         *in_double = !*in_double;
 }
-
 
 static void append_expansion(char **result, int *j, char *str, int *i, t_envp *env_list)
 {
@@ -72,7 +73,6 @@ static void append_expansion(char **result, int *j, char *str, int *i, t_envp *e
         free(temp);
     }
 }
-
 
 static char *process_string(char *str, t_envp *env_list)
 {
@@ -97,7 +97,6 @@ static char *process_string(char *str, t_envp *env_list)
     result[j] = '\0';
     return (result);
 }
-
 
 static int	has_expansion(char *str)
 {

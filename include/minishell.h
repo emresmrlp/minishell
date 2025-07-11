@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/08 17:35:38 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/10 18:14:10 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@
 # include <stdio.h>
 
 
+typedef struct s_envp {
+    char            *key;
+    char            *value;
+    struct s_envp  *next;
+} t_envp;
 
 
 typedef struct s_command {
@@ -39,11 +44,6 @@ typedef struct s_command {
     struct s_command    *next;
 } t_command;
 
-typedef struct s_envp {
-    char            *key;
-    char            *value;
-    struct s_envp  *next;
-} t_envp;
 
 
 // t_command **shell;
@@ -63,6 +63,8 @@ void	parse_dollar(t_command *head);
 int ft_strcmp(const char *s1, const char *s2);
 void    split_built_in(t_command *head);
 void print_command_list(t_command *cmd);
+void update_env(t_command *iter, char *key, char *new_value);
+char *find_env_value(t_command *iter, char *key);
 
 // // Environment linked list functions
 // t_envp *create_env_list(char **envp);
