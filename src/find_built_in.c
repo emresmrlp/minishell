@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/11 12:50:01 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/11 17:00:11 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,12 @@ void update_env(t_command *iter, char *key, char *new_value)
         if (ft_strcmp(temp->key, key) == 0)
         {
             free(temp->value);
-            temp->value = ft_strdup(new_value);  // Yeni value'yu ata
-            return;  // Güncelledikten sonra fonksiyondan çık
+            temp->value = ft_strdup(new_value);
+            return ;
         }
         temp = temp->next;
     }
     
-    // Sadece key bulunamazsa yeni node ekle
     t_envp *new_node = (t_envp *)malloc(sizeof(t_envp));
     new_node->key = ft_strdup(key);
     new_node->value = ft_strdup(new_value);
@@ -136,7 +135,7 @@ static void built_in(t_command *iter)
         printf("%s\n", getcwd(NULL, 0));
         return;
     }
-    else if (ft_strcmp(iter->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek
+    else if (ft_strcmp(iter->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek //FIXME PİPE VARSA EN SONUNCU ELE ALINACAK
     {
         if (iter->args[1])
             printf("%s\n",iter->args[1]);
@@ -159,13 +158,9 @@ static void built_in(t_command *iter)
      //   execute_unset(iter->args);
     }
     else if (ft_strcmp(iter->args[0], "env") == 0)
-    {
        print_env(iter);
-    }
     else if (ft_strcmp(iter->args[0], "exit") == 0)
-    {
         exit(EXIT_SUCCESS); //TODO burayı böyle bırakma leakleri çöz
-    }
 }
 
 void    split_built_in(t_command *head)
