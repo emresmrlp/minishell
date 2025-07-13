@@ -1,32 +1,50 @@
-NAME = minishell
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
+#    Updated: 2025/07/13 12:51:28 by ysumeral         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SRC = src/parse_pipe.c \
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+LIBFT = external/libft/libft.a
+SRC =	src/parse_pipe.c \
 		src/main.c \
+		src/env_init.c \
+		src/env_manage.c \
+		src/input_read.c \
 		src/parse_redirect.c \
 		src/parse_dollar.c \
-		src/find_built_in.c  
-
-OBJ = $(SRC:.c=.o) 
-
-
-LIBFT=Libft/libft.a
-
-CC = gcc -Wall -Wextra -Werror
-
+		src/builtin.c  
+OBJ = $(SRC:.c=.o)
+NAME = minishell
+RESET	= \033[0m
+GREEN	= \033[0;32m(SUCCESS)$(RESET) -
+BLUE	= \033[0;34m(BUILD)$(RESET) -
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	make -C ./Libft -s
-	$(CC) -o $(NAME) $(SRC) $(LIBFT) -lreadline -s
+	@echo "$(BLUE) Linking (Seriously The Best MiniShell Ever)...$(RESET)"
+	@make -C ./external/libft -s
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT) -lreadline
+	@echo "$(GREEN) MiniShell build successful!$(RESET)"
+	@echo "$(GREEN) Authors: ysumeral & makpolat$(RESET)"
 
 clean:
-	rm -rf src/*.o
-	make -C ./Libft clean
+	@make clean -C ./external/libft
+	@rm -rf $(OBJ)
 
 fclean: clean
-	rm -rf $(NAME)
-	make -C ./Libft fclean
+	@make fclean -C ./external/libft
+	@rm -rf $(NAME)
+
+test: all clean #TODO DELETE THIS
 
 re: fclean all
 

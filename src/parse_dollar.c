@@ -3,28 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse_dollar.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/10 14:58:19 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/13 12:50:44 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-static char	*get_env_value(char *var_name, t_envp *env_list)
-{
-	t_envp	*temp;
-
-	temp = env_list;
-	while (temp)
-	{
-		if (ft_strcmp(temp->key, var_name) == 0)
-			return (temp->value);
-		temp = temp->next;
-	}
-    return ("");
-}
 
 static int	is_var_char(char c)
 {
@@ -55,47 +41,57 @@ static char	*expand_var(char *str, int *i, t_envp *env_list)
 	return (value);
 }
 
-static void handle_quotes(char c, int *in_single, int *in_double)
+static void	handle_quotes(char c, int *in_single, int *in_double)
 {
-    if (c == '\'' && !*in_double)
-        *in_single = !*in_single;
-    else if (c == '"' && !*in_single)
-        *in_double = !*in_double;
+	if (c == '\'' && !*in_double)
+		*in_single = !*in_single;
+	else if (c == '"' && !*in_single)
+		*in_double = !*in_double;
 }
 
-static void append_expansion(char **result, int *j, char *str, int *i, t_envp *env_list)
+static void	append_expansion(char **result, int *j, char *str, int *i, t_envp *env_list)
 {
-    char *temp = expand_var(str, i, env_list);
-    if (temp)
-    {
-        ft_strlcpy(*result + *j, temp, ft_strlen(temp) + 1);
-        *j += ft_strlen(temp);
-        free(temp);
-    }
+	char	*temp;
+
+	temp = expand_var(str, i, env_list);
+	if (temp)
+	{
+		ft_strlcpy(*result + *j, temp, ft_strlen(temp) + 1);
+		*j += ft_strlen(temp);
+		free(temp);
+	}
 }
 
-static char *process_string(char *str, t_envp *env_list)
+static char	*process_string(char *str, t_envp *env_list)
 {
-    char *result = malloc(ft_strlen(str) * 4);
-    int i = 0, j = 0, in_single = 0, in_double = 0;
-    
-    if (!result)
-        return (NULL);
-    
-    while (str[i])
-    {
-        if ((str[i] == '\'' || str[i] == '"'))
-        {
-            handle_quotes(str[i], &in_single, &in_double);
-            i++;
-        }
-        else if (str[i] == '$' && !in_single && str[i + 1] && is_var_char(str[i + 1]))
-            append_expansion(&result, &j, str, &i, env_list);
-        else
-            result[j++] = str[i++];
-    }
-    result[j] = '\0';
-    return (result);
+	char	*result;
+	int		i;
+	int		j;
+	int		in_single;
+	int		in_double;
+
+	result = malloc(ft_strlen(str) * 4);
+	i = 0;
+	j = 0;
+	in_single = 0;
+	in_double = 0;
+	if (!result)
+		return (NULL);
+	while (str[i])
+	{
+		if ((str[i] == '\'' || str[i] == '"'))
+		{
+			handle_quotes(str[i], &in_single, &in_double);
+			i++;
+		}
+		else if (str[i] == '$' && !in_single
+			&& str[i + 1] && is_var_char(str[i + 1]))
+			append_expansion(&result, &j, str, &i, env_list);
+		else
+			result[j++] = str[i++];
+	}
+	result[j] = '\0';
+	return (result);
 }
 
 static int	has_expansion(char *str)
@@ -109,8 +105,8 @@ static int	has_expansion(char *str)
 	{
 		if (str[i] == '\'' && !ft_strchr(str, '"'))
 			in_single = !in_single;
-		else if (str[i] == '$' && !in_single && str[i + 1] && 
-				is_var_char(str[i + 1]))
+		else if (str[i] == '$' && !in_single && str[i + 1]
+			&& is_var_char(str[i + 1]))
 			return (1);
 		i++;
 	}
@@ -141,5 +137,5 @@ void	parse_dollar(t_command *head)
 		iter = iter->next;
 	}
 	split_built_in(head);
-    print_command_list(head);
+	print_command_list(head);
 }

@@ -1,32 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   env_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/13 12:39:41 by ysumeral         ###   ########.fr       */
+/*   Created: 2025/07/13 12:01:54 by ysumeral          #+#    #+#             */
+/*   Updated: 2025/07/13 12:10:11 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	error(char *message)
+char	*find_env(t_envp *head, char *search)
 {
-	write(2, message, ft_strlen(message));
-	exit(EXIT_FAILURE);
-}
+	t_envp	*temp;
 
-int	main(int argc, char **argv, char **envp)
-{
-	t_envp	*env_list; // Environment linked list'i oluştur
-
-	env_list = env_head(envp);
-	if ((ft_strcmp(*argv, "./minishell")) || (argc != 1))
-		error("Wrong program name or number just run 'minishell'\n");
-	read_input(env_list);
-	// Temizlik
-	//free_env_list(env_list);
-	return (0);
+	temp = head;
+	while (temp)
+	{
+		if (ft_strcmp(temp->key, search) == 0)
+		{
+			free(temp->key);
+			return (temp->value);
+		}
+		temp = temp->next;
+	}
+	return (NULL);
 }
