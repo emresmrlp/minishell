@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/13 12:29:06 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:19:17 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-static void cd_function(t_command *iter)
+static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gidilen dizin
 {
 	char *current_pwd = getcwd(NULL, 0);  // Mevcut dizini kaydet
 	char *target_dir;

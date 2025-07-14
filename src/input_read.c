@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_read.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/13 12:38:08 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:17:56 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	banner(void)
 	printf("╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n");
 	printf("\nSeriously The Best MiniShell Ever :) (by ysumeral & makpolat)\n");
 	printf("\033[0m");
-	usleep(1000000);
+	usleep(1500000);
 	write(1, "\033[H\033[J", 6);
 }
 
