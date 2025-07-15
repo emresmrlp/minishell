@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/14 15:19:17 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/15 07:44:17 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gidilen dizin
 {
-	char *current_pwd = getcwd(NULL, 0);  // Mevcut dizini kaydet
-	char *target_dir;
-	
+	char	*current_pwd = getcwd(NULL, 0);  // Mevcut dizini kaydet
+	char	*target_dir;
+	char	*new_pwd;
+
 	if (!iter->args[1] || ft_strcmp(iter->args[1], "~") == 0)
 		target_dir = find_env_value(iter, "HOME");
 	else if (ft_strcmp(iter->args[1], "-") == 0)
@@ -26,7 +27,7 @@ static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gi
 		{
 			printf("cd: OLDPWD not set\n");
 			free(current_pwd);
-			return;
+			return ;
 		}
 	}
 	else
@@ -39,7 +40,7 @@ static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gi
 	}
 	update_env(iter, "OLDPWD", current_pwd);
 	
-	char *new_pwd = getcwd(NULL, 0);
+	new_pwd = getcwd(NULL, 0);
 	update_env(iter, "PWD", new_pwd);
 	
 	free(current_pwd);
@@ -47,9 +48,9 @@ static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gi
 }
 
 
-static void print_env(t_command *iter)
+static void	print_env(t_command *iter)
 {
-	t_envp *temp;
+	t_envp	*temp;
 	
 	temp = iter->env_list;
 	while (temp)
@@ -62,13 +63,12 @@ static void print_env(t_command *iter)
 
 void export_add(t_command *iter)
 {
-	t_envp *temp;
-	char *index;
+	t_envp	*temp;
+	char	*index;
 
 	temp = iter->env_list;
 	while (temp->next)
 		temp = temp->next;
-
 	temp->next = (t_envp *)malloc(sizeof(t_envp));
 	temp->next->next = NULL;
 	index = ft_strchr(iter->args[1], '=');
