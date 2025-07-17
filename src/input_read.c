@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/14 15:17:56 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:22:29 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,6 @@ void	read_input(t_envp *env_list)
 		{
 			add_history(command_line);
 			parse_command(command_line, env_list);
-			if (!ft_strncmp(command_line, "exit", ft_strlen(command_line))) //TODO bu komut built-in kısmına taşınacak ve leaklere bakılacak ondan sonra
-			{
-				free(command_line);
-				clear_history();
-				break ;
-			}
 		}
 		free(command_line);
 	}

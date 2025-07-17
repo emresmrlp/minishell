@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/15 07:44:17 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:58:55 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gidilen dizin
 {
-	char	*current_pwd = getcwd(NULL, 0);  // Mevcut dizini kaydet
+	char	*current_pwd = getcwd(NULL, 0);
 	char	*target_dir;
 	char	*new_pwd;
 
@@ -93,21 +93,17 @@ void export_add(t_command *iter)
 
 static void built_in(t_command *iter)
 {
-	if (ft_strcmp(iter->args[0], "pwd") == 0) //TODO bu ksıma parse gerekebilişr göz atılacak
+	if (ft_strcmp(iter->args[0], "pwd") == 0)
 	{
 		printf("%s\n", getcwd(NULL, 0));
 		return;
 	}
 	else if (ft_strcmp(iter->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek //FIXME PİPE VARSA EN SONUNCU ELE ALINACAK
 	{
-		if (iter->args[1])
-			printf("%s\n",iter->args[1]);
-		return;
+		echo_function(iter);
 	}
-	else if (ft_strcmp(iter->args[0], "cd") == 0) // "-" komutunda sorun var düzeltilecek
-	{
+	else if (ft_strcmp(iter->args[0], "cd") == 0)
 		cd_function(iter);
-	}
 	else if (ft_strcmp(iter->args[0], "export") == 0)
 	{
 		if (!iter->args[1])
@@ -123,7 +119,10 @@ static void built_in(t_command *iter)
 	else if (ft_strcmp(iter->args[0], "env") == 0)
 	   print_env(iter);
 	else if (ft_strcmp(iter->args[0], "exit") == 0)
-		exit(EXIT_SUCCESS); //TODO burayı böyle bırakma leakleri çöz
+	{
+		clear_history();
+		exit(EXIT_SUCCESS);
+	}
 }
 
 void    split_built_in(t_command *head)
