@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/13 12:51:28 by ysumeral         ###   ########.fr        #
+#    Updated: 2025/07/17 16:20:06 by makpolat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ SRC =	src/parse_pipe.c \
 		src/input_read.c \
 		src/parse_redirect.c \
 		src/parse_dollar.c \
-		src/builtin.c  
+		src/builtin.c  \
+		src/builtin_utils.c
 OBJ = $(SRC:.c=.o)
 NAME = minishell
 RESET	= \033[0m
