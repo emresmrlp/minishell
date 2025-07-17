@@ -3,24 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/13 12:52:50 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:41:02 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-int ft_strcmp(const char *s1, const char *s2)
-{
-	while (*s1 && *s2 && *s1 == *s2)
-	{
-		s1++;
-		s2++;
-	}
-	return ((unsigned char)*s1 - (unsigned char)*s2);
-}
 
 static t_command *create_node(void)
 {   
@@ -183,7 +173,7 @@ void	add_node(char **shell, t_envp *env_list)
 	{
 		node = create_node();
 		node->env_list = env_list;  // env_list'i node'a ata
-		tokens = ft_split(shell[i], ' ', 0, 0);
+		tokens = ft_split(shell[i], ' ');
 
 		// parse_argv artık hata durumu döndürüyor
 		if (!parse_argv(node, tokens))

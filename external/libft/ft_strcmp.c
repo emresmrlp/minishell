@@ -1,31 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/17 15:50:22 by ysumeral         ###   ########.fr       */
+/*   Created: 2025/07/17 15:33:45 by ysumeral          #+#    #+#             */
+/*   Updated: 2025/07/17 15:34:08 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "libft.h"
 
-void	error(char *message)
+int ft_strcmp(const char *s1, const char *s2)
 {
-	write(2, message, ft_strlen(message));
-	exit(EXIT_FAILURE);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	t_envp	*env_list;
-
-	env_list = env_head(envp);
-	if ((ft_strcmp(*argv, "./minishell")) || (argc != 1))
-		error("Wrong program name or number just run 'minishell'\n");
-	read_input(env_list);
-	//free_env_list(env_list);
-	return (0);
+	while (*s1 && *s2 && *s1 == *s2)
+	{
+		s1++;
+		s2++;
+	}
+	return ((unsigned char)*s1 - (unsigned char)*s2);
 }

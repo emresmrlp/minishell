@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 12:46:11 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/17 15:19:55 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:37:54 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,10 @@ static char	*create_word(const char *s, char c)
 	return (result);
 }
 
-char	**ft_split(char const *s, char c, int i, int j)
+char	**ft_split(char const *s, char c)
 {
 	char	**tab;
+	int		i;
 
 	if (!s)
 		return (NULL);
