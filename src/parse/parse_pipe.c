@@ -1,27 +1,16 @@
 /* ************************************************************************** */
-/*                           void parse_command(char *command_line, t_envp *env_list)
-{
-	char **shell = pipe_split(command_line, 0, 0, 0);
-	
-	if (!shell)
-	{
-		printf("syntax error: invalid pipe usage\n");
-		return;
-	}
-	add_node(shell, env_list);
-	free(shell);
-}                                     */
+/*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_pipe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/06/16 16:16:16 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/17 18:59:37 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 static int	pipe_count(const char *line)
 {

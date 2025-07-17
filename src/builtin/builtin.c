@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/17 15:58:55 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/17 18:59:14 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
-static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gidilen dizin
+static void cd_function(t_command *iter)
 {
 	char	*current_pwd = getcwd(NULL, 0);
 	char	*target_dir;
@@ -39,10 +39,8 @@ static void cd_function(t_command *iter) //  cd - komutunda ekrana yazılacak gi
 		return;
 	}
 	update_env(iter, "OLDPWD", current_pwd);
-	
 	new_pwd = getcwd(NULL, 0);
 	update_env(iter, "PWD", new_pwd);
-	
 	free(current_pwd);
 	free(new_pwd);
 }
