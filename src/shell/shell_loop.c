@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input_read.c                                       :+:      :+:    :+:   */
+/*   shell_loop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/17 21:49:20 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 00:19:31 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	banner(void)
 	write(1, "\033[H\033[J", 6);
 }
 
-void	read_input(t_envp *env_list)
+void	shell_loop(t_envp *env_list)
 {
 	char	*command_line;
 

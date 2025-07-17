@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   shell_state.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 00:38:09 by ysumeral         ###   ########.fr       */
+/*   Created: 2025/07/18 00:11:56 by ysumeral          #+#    #+#             */
+/*   Updated: 2025/07/18 00:19:28 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+int shell_exit_with_error(char *message, t_command *command)
 {
-	t_envp	*env_list;
+    if (message)
+        write(2, message, ft_strlen(message));
+    memory_free(command);
+    exit(FAILURE);
+    return (FAILURE);
+}
 
-	if ((ft_strcmp(*argv, "./minishell")) || (argc != 1))
-		shell_exit_with_error("MiniShell Wrong program name or number just run 'minishell'\n", NULL);
-	env_list = env_head(envp);
-	shell_loop(env_list);
-	//free_env_list(env_list);
-	return (0);
+int shell_exit(t_command *command)
+{
+    memory_free(command);
+    exit(SUCCESS);
+    return (SUCCESS);
 }

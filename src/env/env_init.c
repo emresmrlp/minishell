@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:01:54 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/17 18:59:10 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 00:29:39 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,4 +27,17 @@ char	*find_env(t_envp *head, char *search)
 		temp = temp->next;
 	}
 	return (NULL);
+}
+
+void	print_env(t_command *iter)
+{
+	t_envp	*temp;
+	
+	temp = iter->env_list;
+	while (temp)
+	{
+		if (temp->key && temp->value)
+			printf("%s=%s\n", temp->key, temp->value);
+		temp = temp->next;
+	}
 }

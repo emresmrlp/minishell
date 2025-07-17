@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/17 18:59:26 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 00:37:23 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_envp	*env_head(char **envp)
 		{
 			temp->next = (t_envp *)malloc(sizeof(t_envp));
 			if (!temp->next)
-				error("Malloc Error\n");
+				exit(FAILURE);
 			temp = temp->next;
 		}
 		else

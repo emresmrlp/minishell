@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/17 18:25:36 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 00:40:29 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,47 +25,60 @@
 # include <unistd.h>
 # include <stdio.h>
 
-typedef struct s_envp {
-	char            *key;
-	char            *value;
-	struct s_envp  *next;
-} t_envp;
+# define FAILURE 1
+# define SUCCESS 0
 
-typedef struct s_command {
-	char                **args;     
-	char                *input_fd;   // >
-	char                *output_fd; // <
-	char                *append_output_fd; // >>
-	char                *heredoc_fd; // <<
-	t_envp              *env_list;    // Environment linked list
-	int                 dollar;
-	struct s_command    *next;
-} t_command;
+typedef struct s_envp
+{
+	char			*key;
+	char			*value;
+	struct s_envp	*next;
+}	t_envp;
 
-t_envp	*env_head(char **envp);
+typedef struct s_command
+{
+	char				**args;
+	char				*input_fd; // >
+	char				*output_fd; // <
+	char				*append_output_fd; // >>
+	char				*heredoc_fd; // <<
+	t_envp				*env_list; // Environment linked list
+	int					dollar;
+	struct s_command	*next;
+}	t_command;
+
 char	*find_env(t_envp *head, char *search);
 void	export_add(t_command *iter);
+
+// env
 t_envp	*env_head(char **envp);
-void	read_input(t_envp *env_list);
-void	split_built_in(t_command *head);
-void	parse_command(char *command_line, t_envp *env_list);
-void	add_node(char **shell, t_envp *env_list);
-void	error(char *message);
-void	parse_dollar(t_command *head);
-int		ft_strcmp(const char *s1, const char *s2);
-void	split_built_in(t_command *head);
-void	print_command_list(t_command *cmd);
 void	update_env(t_command *iter, char *key, char *new_value);
 char	*find_env_value(t_command *iter, char *key);
 char	*get_env_value(char *var_name, t_envp *env_list);
-void	echo_function(t_command *iter);
+void	print_env(t_command *iter);
 
 
 
+void	shell_loop(t_envp *env_list);
+void	split_built_in(t_command *head);
+void	parse_command(char *command_line, t_envp *env_list);
+void	parse_dollar(t_command *head);
+void	add_node(char **shell, t_envp *env_list);
+void	split_built_in(t_command *head);
+void	print_command_list(t_command *cmd);
+int		ft_strcmp(const char *s1, const char *s2);
+
+// builtin
+int builtin_cd(t_command *iter);
+int	builtin_echo(t_command *command);
+int	builtin_pwd(void);
+int	builtin_unset(t_command *command);
 
 
+void memory_free(t_command *command);
 
-
+int shell_exit_with_error(char *message, t_command *command);
+int shell_exit(t_command *command);
 
 // // Environment linked list functions
 // t_envp *create_env_list(char **envp);
