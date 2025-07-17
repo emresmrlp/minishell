@@ -3,37 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 12:46:11 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/15 07:41:26 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:19:55 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	countwords(const char *s, char c, int sq, int dq)
+static int	countwords(const char *s, char c, int i, int j)
 {
 	int	count;
 
 	if (!*s)
 		return (0);
 	count = 0;
-	sq = 0;
-	dq = 0;
+	i = 0;
+	j = 0;
 	while (*s)
 	{
-		while (*s == c && !sq && !dq)
+		while (*s == c && !i && !j)
 			s++;
 		if (*s)
 		{
 			count++;
-			while (*s && (*s != c || sq || dq))
+			while (*s && (*s != c || i || j))
 			{
-				if (*s == '\'' && !dq)
-					sq = !sq;
-				else if (*s == '"' && !sq)
-					dq = !dq;
+				if (*s == '\'' && !j)
+					i = !i;
+				else if (*s == '"' && !i)
+					j = !j;
 				s++;
 			}
 		}
@@ -55,13 +55,15 @@ static char	**check(char **s)
 	return (0);
 }
 
-static int	get_len(const char *s, char c)
+static int	get_len_and_remove_quotes(const char *s, char c, char *result)
 {
 	int	j;
+	int	k;
 	int	in_single_quote;
 	int	in_double_quote;
 
 	j = 0;
+	k = 0;
 	in_single_quote = 0;
 	in_double_quote = 0;
 	while (s[j] && (s[j] != c || in_single_quote || in_double_quote))
@@ -70,44 +72,32 @@ static int	get_len(const char *s, char c)
 			in_single_quote = !in_single_quote;
 		else if (s[j] == '"' && !in_single_quote)
 			in_double_quote = !in_double_quote;
+		else
+			result[k++] = s[j];
 		j++;
 	}
+	result[k] = '\0';
 	return (j);
 }
 
-static char	*remove_quotes(const char *s)
+static char	*create_word(const char *s, char c)
 {
 	char	*result;
-	int		i;
-	int		j;
-	int		in_single_quote;
-	int		in_double_quote;
+	int		len;
 
-	result = malloc(ft_strlen(s) + 1);
+	len = 0;
+	while (s[len] && (s[len] != c))
+		len++;
+	result = malloc(len + 1);
 	if (!result)
 		return (NULL);
-	i = 0;
-	j = 0;
-	in_single_quote = 0;
-	in_double_quote = 0;
-	while (s[i])
-	{
-		if (s[i] == '\'' && !in_double_quote)
-			in_single_quote = !in_single_quote;
-		else if (s[i] == '"' && !in_single_quote)
-			in_double_quote = !in_double_quote;
-		else
-			result[j++] = s[i];
-		i++;
-	}
-	result[j] = '\0';
+	get_len_and_remove_quotes(s, c, result);
 	return (result);
 }
 
 char	**ft_split(char const *s, char c, int i, int j)
 {
 	char	**tab;
-	char	*temp;
 
 	if (!s)
 		return (NULL);
@@ -120,16 +110,13 @@ char	**ft_split(char const *s, char c, int i, int j)
 		while (*s == c)
 			s++;
 		if (*s)
-			break ;
-		j = get_len(s, c);
-		temp = ft_substr(s, 0, j);
-		if (temp == NULL)
-			return (check(tab));
-		tab[i] = remove_quotes(temp);
-		free(temp);
-		if (tab[i++] == NULL)
-			return (check(tab));
-		s += j;
+		{
+			tab[i] = create_word(s, c);
+			if (tab[i++] == NULL)
+				return (check(tab));
+			while (*s && *s != c)
+				s++;
+		}
 	}
 	tab[i] = NULL;
 	return (tab);

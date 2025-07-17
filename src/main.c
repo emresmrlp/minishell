@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/13 12:39:41 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:09:27 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	main(int argc, char **argv, char **envp)
 	if ((ft_strcmp(*argv, "./minishell")) || (argc != 1))
 		error("Wrong program name or number just run 'minishell'\n");
 	read_input(env_list);
-	// Temizlik
+	// Temizlik 
 	//free_env_list(env_list);
 	return (0);
 }
