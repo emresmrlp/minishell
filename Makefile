@@ -6,7 +6,7 @@
 #    By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/18 12:26:18 by ysumeral         ###   ########.fr        #
+#    Updated: 2025/07/18 12:47:06 by ysumeral         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ SRC =	src/main.c \
 		src/parse/parse_redirect.c \
 		src/parse/parse_dollar.c \
 		src/parse/parse_pipe.c \
-		src/builtin/dispatch.c \
+		src/builtin/handle_builtin.c \
 		src/builtin/unset.c \
 		src/builtin/cd.c \
 		src/builtin/pwd.c \

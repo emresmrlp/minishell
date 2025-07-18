@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_dollar.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/17 18:59:35 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 12:47:38 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,21 @@ static int	has_expansion(char *str)
 		i++;
 	}
 	return (0);
+}
+
+void    split_built_in(t_command *head)
+{
+	t_command *iter;
+
+	iter = head;
+	while (iter)
+	{
+		if (iter->args && iter->args[0])
+		{
+			handle_builtin(iter);
+		}
+		iter = iter->next;
+	}
 }
 
 void	parse_dollar(t_command *head)
