@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 00:44:47 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 12:38:14 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,22 +50,14 @@ static int	dispatch(t_command *command)
 		return (builtin_echo(command));
 	else if (ft_strcmp(command->args[0], "cd") == 0)
 		return (builtin_cd(command));
-	else if (ft_strcmp(command->args[0], "export") == 0)
-	{
-		if (!command->args[1])
-			print_env(command);
-		else
-			export_add(command);
-	}
+	else if (ft_strcmp(command->args[0], "export") == 0) //TODO export ile eklenenler gözükmeyecek
+		return (builtin_export(command));
 	else if (ft_strcmp(command->args[0], "unset") == 0)
 		return (builtin_unset(command));
 	else if (ft_strcmp(command->args[0], "env") == 0)
-	   print_env(command);
-	else if (ft_strcmp(command->args[0], "exit") == 0)
-	{
-		clear_history();
-		return (shell_exit(command));
-	}
+		return (builtin_env(command));
+	else if (ft_strcmp(command->args[0], "exit") == 0) //TODO exit code duzenlenecek
+		return(builtin_exit(command, command->args));
 	return (SUCCESS);
 }
 

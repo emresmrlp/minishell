@@ -1,26 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 10:27:34 by ysumeral         ###   ########.fr       */
+/*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
+/*   Updated: 2025/07/18 12:16:51 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+int builtin_export(t_command *command)
 {
-	t_envp	*env_list;
-
-	if ((ft_strcmp(*argv, "./minishell")) || (argc != 1))
-		shell_exit_with_error("MiniShell Wrong program name or "
-			"number just run 'minishell'\n", NULL);
-	env_list = env_head(envp);
-	shell_loop(env_list);
-	//free_env_list(env_list);
-	return (0);
+    if (!command->args[1])
+    {
+        print_env(command);
+        return (SUCCESS);
+    }
+    export_add(command);
+    return (SUCCESS);
 }
