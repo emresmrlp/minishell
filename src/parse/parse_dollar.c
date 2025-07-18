@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_dollar.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 12:47:38 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:42:35 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static char	*process_string(char *str, t_envp *env_list)
 		if ((str[i] == '\'' || str[i] == '"'))
 		{
 			handle_quotes(str[i], &in_single, &in_double);
-			result[j++] = str[i++];  // Tırnak karakterini de kopyala
+			result[j++] = str[i++];
 		}
 		else if (str[i] == '$' && !in_single
 			&& str[i + 1] && is_var_char(str[i + 1]))

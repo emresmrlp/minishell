@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_builtin.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 14:06:15 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:42:07 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	handle_builtin(t_command *command)
 {
 	if (ft_strcmp(command->args[0], "pwd") == 0)
 		return (builtin_pwd());
-	else if (ft_strcmp(command->args[0], "echo") == 0) //TODO -n opsiyonu eklenecek //FIXME PİPE VARSA EN SONUNCU ELE ALINACAK
+	else if (ft_strcmp(command->args[0], "echo") == 0)
 		return (builtin_echo(command));
 	else if (ft_strcmp(command->args[0], "cd") == 0)
 		return (builtin_cd(command));
