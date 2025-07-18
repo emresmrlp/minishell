@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 13:11:44 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:06:15 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ int	handle_builtin(t_command *command)
 	else if (ft_strcmp(command->args[0], "export") == 0) //TODO export ile eklenenler gözükmeyecek
 		return (builtin_export(command));
 	else if (ft_strcmp(command->args[0], "unset") == 0)
-		return (builtin_unset(command));
+		builtin_unset(command, command->args);
 	else if (ft_strcmp(command->args[0], "env") == 0)
 		return (builtin_env(command));
-	else if (ft_strcmp(command->args[0], "exit") == 0) //TODO exit code duzenlenecek
+	else if (ft_strcmp(command->args[0], "exit") == 0) //TODO syntax error kontrolleri
 		return (builtin_exit(command, command->args));
 	return (SUCCESS);
 }

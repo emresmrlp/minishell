@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 00:37:23 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:01:47 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,31 @@ void	update_env(t_command *iter, char *key, char *new_value)
 	new_node->value = ft_strdup(new_value);
 	new_node->next = iter->env_list;
 	iter->env_list = new_node;
+}
+
+void	remove_env(t_command *command, char *key)
+{
+	t_envp	*temp;
+	t_envp	*prev;
+
+	temp = command->env_list;
+	prev = NULL;
+	while (temp)
+	{
+		if (ft_strcmp(temp->key, key) == 0)
+		{
+			if (prev)
+				prev->next = temp->next;
+			else
+				command->env_list = temp->next;
+			free(temp->key);
+			free(temp->value);
+			free(temp);
+			return ;
+		}
+		prev = temp;
+		temp = temp->next;
+	}
 }
 
 char	*get_env_value(char *var_name, t_envp *env_list)

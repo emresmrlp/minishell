@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 13:11:57 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:06:27 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	update_env(t_command *iter, char *key, char *new_value);
 char	*find_env_value(t_command *iter, char *key);
 char	*get_env_value(char *var_name, t_envp *env_list);
 void	print_env(t_command *iter);
+void	remove_env(t_command *command, char *key);
 
 void	shell_loop(t_envp *env_list);
 void	split_built_in(t_command *head);
@@ -68,14 +69,14 @@ void	print_command_list(t_command *cmd);
 int		ft_strcmp(const char *s1, const char *s2);
 
 // builtin
-int	handle_builtin(t_command *command);
-int builtin_cd(t_command *iter);
-int	builtin_echo(t_command *command);
-int	builtin_pwd(void);
-int	builtin_unset(t_command *command);
-int	builtin_exit(t_command *command, char **args);
-int builtin_export(t_command *command);
-int builtin_env(t_command *command);
+int		handle_builtin(t_command *command);
+int 	builtin_cd(t_command *iter);
+int		builtin_echo(t_command *command);
+int		builtin_pwd(void);
+void	builtin_unset(t_command *command, char **args);
+int		builtin_exit(t_command *command, char **args);
+int 	builtin_export(t_command *command);
+int 	builtin_env(t_command *command);
 
 void memory_free(t_command *command);
 
