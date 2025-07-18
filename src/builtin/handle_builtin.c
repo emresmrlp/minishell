@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_builtin.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 14:42:07 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:40:50 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	handle_builtin(t_command *command)
 	else if (ft_strcmp(command->args[0], "cd") == 0)
 		return (builtin_cd(command));
 	else if (ft_strcmp(command->args[0], "export") == 0) //TODO export ile eklenenler gözükmeyecek
-		return (builtin_export(command));
+		return (builtin_export(command, command->args));
 	else if (ft_strcmp(command->args[0], "unset") == 0)
 		builtin_unset(command, command->args);
 	else if (ft_strcmp(command->args[0], "env") == 0)

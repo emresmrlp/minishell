@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/17 18:59:40 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:46:11 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,13 @@ void	print_command_list(t_command *cmd)
 		if (cmd->input_fd)
 			printf("  Girdi yönlendirme (<): %s\n", cmd->input_fd);
 		if (cmd->output_fd)
-			printf("  Çıktı yönlendirme (>): %s\n", cmd->output_fd);
+			printf("  Çikti yönlendirme (>): %s\n", cmd->output_fd);
 		if (cmd->append_output_fd)
-			printf("  Ekli çıktı yönlendirme (>>): %s\n", cmd->append_output_fd);
+			printf("  Ekli çikti yönlendirme (>>): %s\n", cmd->append_output_fd);
 		if (cmd->heredoc_fd)
 			printf("  Heredoc (<<): %s\n", cmd->heredoc_fd);
 		if (cmd->dollar == 1)
 			printf("  DOLLAR BULUNDU %d($)\n", cmd->dollar);
-
 		cmd = cmd->next;
 		i++;
 	}
@@ -172,27 +171,19 @@ void	add_node(char **shell, t_envp *env_list)
 	while (shell[i])
 	{
 		node = create_node();
-		node->env_list = env_list;  // env_list'i node'a ata
-		tokens = ft_split(shell[i], ' ');
-
-		// parse_argv artık hata durumu döndürüyor
+		node->env_list = env_list;
+		tokens = ft_split(shell[i], ' '); //TODO boşluğa göre ayırmadan önce 'echo afheaf<<ahaefa' gibi durumda boşluğa göre bölünce redirect görmüyor
 		if (!parse_argv(node, tokens))
 		{
-			// Hata durumunda temizlik yap ve çık
-			free(node);
-			return;
+			return free(node);
 		}
-		
 		if (!head)
 			head = node;
 		else
 			curr->next = node;
 		curr = node;
-		
 		// tokens'ı serbest bırakma fonksiyonu eklenecek
 		i++;
 	}
-	parse_dollar(head);
-	
-	//print_command_list(head);
+	parse_dollar(head);	
 }

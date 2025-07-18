@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 14:06:27 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:44:56 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@
 # include <stdio.h>
 # include <limits.h>
 
-# define FAILURE 1
 # define SUCCESS 0
+# define FAILURE 1
 
 typedef struct s_envp
 {
@@ -49,7 +49,6 @@ typedef struct s_command
 }	t_command;
 
 char	*find_env(t_envp *head, char *search);
-void	export_add(t_command *iter);
 
 // env
 t_envp	*env_head(char **envp);
@@ -75,7 +74,7 @@ int		builtin_echo(t_command *command);
 int		builtin_pwd(void);
 void	builtin_unset(t_command *command, char **args);
 int		builtin_exit(t_command *command, char **args);
-int 	builtin_export(t_command *command);
+int 	builtin_export(t_command *command, char **args);
 int 	builtin_env(t_command *command);
 
 void memory_free(t_command *command);
