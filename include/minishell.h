@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 12:49:00 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 13:11:57 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <readline/history.h>
 # include <unistd.h>
 # include <stdio.h>
+# include <limits.h>
 
 # define FAILURE 1
 # define SUCCESS 0
@@ -80,7 +81,7 @@ void memory_free(t_command *command);
 
 int error_handler(char *message);
 int shell_exit_with_error(char *message, t_command *command);
-int shell_exit(t_command *command);
+int shell_exit(t_command *command, int exit_code);
 
 // // Environment linked list functions
 // t_envp *create_env_list(char **envp);

@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 10:32:35 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 12:37:10 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 13:31:03 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,54 @@ int	is_numeric(char *str)
 	return (SUCCESS);
 }
 
+unsigned long long	ft_safe_atol(char *str)
+{
+	size_t				i;
+	int					sign;
+	unsigned long long	result;
+
+	i = 0;
+	sign = 1;
+	result = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i++] == '-')
+			sign *= -1;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result *= 10;
+		result += (str[i] - 48);
+		i++;
+	}
+	if (result > 9223372036854775807ULL && sign == 1)
+		return (10000000000000000000ULL);
+	if (result < 9223372036854775808ULL && sign == -1)
+		return (10000000000000000000ULL);
+	return (result * sign);
+}
+
 int	handle_exit_code(char *arg)
 {
-	int exit_code;
+	int	exit_code;
 
-	exit_code = 1;
-	if (is_numeric(arg) == FAILURE)
-		return (exit_code);
+	printf("exit\n");
+	if (is_numeric(arg) == FAILURE || ft_safe_atol(arg) > LONG_MAX)
+	{
+		error_handler("exit: numeric argument required\n");
+		return (255);
+	}
+	exit_code = (ft_safe_atol(arg) % 256);
 	return (exit_code);
 }
 
 int	builtin_exit(t_command *command, char **args)
 {
 	int	exit_code;
-	int i;
-	
+	int	i;
+
 	i = 0;
 	exit_code = SUCCESS;
 	while (args[i])
@@ -57,16 +90,10 @@ int	builtin_exit(t_command *command, char **args)
 		return (FAILURE);
 	}
 	if (i > 1)
-	{
 		exit_code = handle_exit_code(args[1]);
-		if (exit_code == FAILURE)
-		{
-			error_handler("exit: numeric argument required\n");
-			return (FAILURE);
-		}
-	}
-	printf("exit\n");
+	else
+		printf("exit\n");
 	clear_history();
-	shell_exit(command);
+	shell_exit(command, exit_code);
 	return (exit_code);
 }

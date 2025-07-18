@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 12:48:37 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 13:11:44 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,6 @@ int	handle_builtin(t_command *command)
 	else if (ft_strcmp(command->args[0], "env") == 0)
 		return (builtin_env(command));
 	else if (ft_strcmp(command->args[0], "exit") == 0) //TODO exit code duzenlenecek
-		return(builtin_exit(command, command->args));
+		return (builtin_exit(command, command->args));
 	return (SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:11:56 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 10:54:18 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 13:11:02 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ int shell_exit_with_error(char *message, t_command *command)
     return (FAILURE);
 }
 
-int shell_exit(t_command *command)
+int shell_exit(t_command *command, int exit_code)
 {
     memory_free(command);
-    exit(SUCCESS);
-    return (SUCCESS);
+    exit(exit_code);
+    return (exit_code);
 }
