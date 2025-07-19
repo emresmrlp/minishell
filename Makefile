@@ -6,12 +6,12 @@
 #    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/19 12:30:40 by makpolat         ###   ########.fr        #
+#    Updated: 2025/07/19 16:59:34 by makpolat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 LIBFT = external/libft/libft.a
 SRC =	src/main.c \
 		src/memory_free.c \

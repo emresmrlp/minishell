@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/19 14:59:17 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/19 16:46:27 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,34 +194,40 @@ void	add_node(char **shell, t_envp *env_list)
 	char		**tokens;
 	char		**split_shell;
 	int			i;
+	int			j;
 
 	head = NULL;
 	curr = NULL;
 	i = 0;
 	while (shell[i])
 	{
-		node = create_node();
-		if (!node)
-			return ;
-		node->env_list = env_list;
+		//redirect ayırma fonksştyonu
 		split_shell = split_redirects_for_command(shell[i]);
-		if (split_shell)
-			tokens = split_shell;
-		else
-			tokens = ft_split(shell[i], ' ');
-			
-		if (!parse_argv(node, tokens))
+		if (!split_shell)
+			split_shell = ft_split(shell[i], ' ');
+		j = 0;
+		while (split_shell[j])
 		{
+			node = create_node();
+			if (!node)
+				return ;
+			node->env_list = env_list;
+			tokens = ft_split(split_shell[j], ' ');
+			if (!parse_argv(node, tokens))
+			{
+				free_tokens(tokens);
+				free(node);
+				return ;
+			}
+			if (!head)
+				head = node;
+			else
+				curr->next = node;
+			curr = node;
 			free_tokens(tokens);
-			free(node);
-			return ;
+			j++;
 		}
-		if (!head)
-			head = node;
-		else
-			curr->next = node;
-		curr = node;
-		free_tokens(tokens);
+		free_tokens(split_shell);
 		i++;
 	}
 	if (head)
