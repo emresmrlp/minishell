@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/19 11:54:08 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/19 14:16:54 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void	add_node(char **shell, t_envp *env_list);
 void	split_built_in(t_command *head);
 void	print_command_list(t_command *cmd);
 int		ft_strcmp(const char *s1, const char *s2);
+char	**redirect_split(char **shell);
 
 // builtin
 int		handle_builtin(t_command *command);

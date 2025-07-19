@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 18:46:11 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/19 14:59:17 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,31 +159,71 @@ static int	parse_argv(t_command *node, char **tokens)
 	return (1);
 }
 
+static void	free_tokens(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i])
+		free(tokens[i++]);
+	free(tokens);
+}
+
+static char	**split_redirects_for_command(char *command)
+{
+	char	**temp_shell;
+	char	**result;
+
+	temp_shell = malloc(sizeof(char *) * 2);
+	if (!temp_shell)
+		return (NULL);
+	temp_shell[0] = command;
+	temp_shell[1] = NULL;
+	result = redirect_split(temp_shell);
+	free(temp_shell);
+	return (result);
+}
+
 void	add_node(char **shell, t_envp *env_list)
 {
-	t_command *head = NULL;
-	t_command *curr = NULL;
-	t_command *node = NULL;
-	char **tokens;
-	int i;
-	
+	t_command	*head;
+	t_command	*curr;
+	t_command	*node;
+	char		**tokens;
+	char		**split_shell;
+	int			i;
+
+	head = NULL;
+	curr = NULL;
 	i = 0;
 	while (shell[i])
 	{
 		node = create_node();
+		if (!node)
+			return ;
 		node->env_list = env_list;
-		tokens = ft_split(shell[i], ' '); //TODO boşluğa göre ayırmadan önce 'echo afheaf<<ahaefa' gibi durumda boşluğa göre bölünce redirect görmüyor
+		split_shell = split_redirects_for_command(shell[i]);
+		if (split_shell)
+			tokens = split_shell;
+		else
+			tokens = ft_split(shell[i], ' ');
+			
 		if (!parse_argv(node, tokens))
 		{
-			return free(node);
+			free_tokens(tokens);
+			free(node);
+			return ;
 		}
 		if (!head)
 			head = node;
 		else
 			curr->next = node;
 		curr = node;
-		// tokens'ı serbest bırakma fonksiyonu eklenecek
+		free_tokens(tokens);
 		i++;
 	}
-	parse_dollar(head);	
+	if (head)
+		parse_dollar(head);
 }
