@@ -6,11 +6,17 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 18:45:38 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/18 23:33:34 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+// TODO - export env listesini alacak.
+// TODO - başına declare -x eklenecek.
+// TODO - alfabetik olarak bubble algoritmasıyla sıralanacak.
+// TODO - value NULL olanlar env'de listelenmeyip export'ta listelenecek.
+// TODO - mevcut kodda AD= yada AD gibi girdiler kabul edilmiyor, düzeltilecek ve bu tarz girdilerde value NULL olarak ayarlanacak.
 
 static void export_add(t_command *iter)
 {

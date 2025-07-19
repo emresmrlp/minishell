@@ -6,7 +6,7 @@
 #    By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/18 12:47:06 by ysumeral         ###   ########.fr        #
+#    Updated: 2025/07/18 23:37:46 by ysumeral         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ SRC =	src/main.c \
 		src/builtin/echo.c \
 		src/builtin/exit.c \
 		src/builtin/export.c \
-		src/builtin/env.c
+		src/builtin/env.c \
+		src/execute/execute.c
 
 OBJ = $(SRC:.c=.o)
 NAME = minishell

@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 18:44:56 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/19 11:54:08 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <unistd.h>
 # include <string.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -50,6 +51,8 @@ typedef struct s_command
 
 char	*find_env(t_envp *head, char *search);
 
+void execute(t_command *command);
+
 // env
 t_envp	*env_head(char **envp);
 void	update_env(t_command *iter, char *key, char *new_value);
@@ -78,6 +81,8 @@ int 	builtin_export(t_command *command, char **args);
 int 	builtin_env(t_command *command);
 
 void memory_free(t_command *command);
+
+char **env_to_array(t_envp *env_list);
 
 int error_handler(char *message);
 int shell_exit_with_error(char *message, t_command *command);
