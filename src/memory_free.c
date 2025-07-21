@@ -3,16 +3,75 @@
 /*                                                        :::      ::::::::   */
 /*   memory_free.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:32:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 00:33:10 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/21 13:32:00 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void memory_free(t_command *command)
+// static void	free_env_list(t_envp *env_list) //  ana döngüde readline ın orada
+// {
+// 	t_envp	*temp;
+
+// 	while (env_list)
+// 	{
+// 		temp = env_list;
+// 		env_list = env_list->next;
+// 		if (temp->key)
+// 			free(temp->key);
+// 		if (temp->value)
+// 			free(temp->value);
+// 		free(temp);
+// 	}
+// }
+
+static void	free_command_args(char **args)
 {
-    (void)command;
+	int	i;
+
+	if (!args)
+		return ;
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
+static void	free_command_node(t_command *cmd)
+{
+	if (!cmd)
+		return ;
+	free_command_args(cmd->args);
+	if (cmd->input_fd)
+		free(cmd->input_fd);
+	if (cmd->output_fd)
+		free(cmd->output_fd);
+	if (cmd->append_output_fd)
+		free(cmd->append_output_fd);
+	if (cmd->heredoc_fd)
+		free(cmd->heredoc_fd);
+}
+
+void	memory_free(t_command *command)
+{
+	t_command	*temp;
+
+	if (!command)
+		return ;
+	while (command)
+	{
+		temp = command;
+		command = command->next;
+        //free(temp->env_list->key);
+        //free(temp->env_list->value);
+        //free(temp->env_list);
+		free_command_node(temp);
+		free(temp);
+	}
 }

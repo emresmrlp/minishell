@@ -1,0 +1,119 @@
+{
+   readline_leak_1
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_leak_2
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_leak_3
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_all
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:readline
+}
+
+{
+   history_leak
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:add_history
+}
+
+{
+   readline_all_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*/libreadline*
+}
+
+{
+   readline_all_possible
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_malloc
+   Memcheck:Leak
+   match-leak-kinds: all
+   fun:malloc
+   ...
+   obj:*/libreadline*
+}
+
+{
+   readline_calloc
+   Memcheck:Leak
+   match-leak-kinds: all
+   fun:calloc
+   ...
+   obj:*/libreadline*
+}
+
+{
+   history_malloc
+   Memcheck:Leak
+   match-leak-kinds: all
+   fun:malloc
+   ...
+   fun:add_history
+}
+
+{
+   readline_internal
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:readline*
+}
+
+{
+   libc_dl_open
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:_dl_*
+}
+
+{
+   glibc_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*/libc*
+}
+
+{
+   system_libs
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc*
+   ...
+   obj:*/lib*
+}

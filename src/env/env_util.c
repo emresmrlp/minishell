@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 23:54:08 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/21 13:33:05 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ t_envp	*env_head(char **envp)
 
 	i = 0;
 	head = (t_envp *)malloc(sizeof(t_envp));
-	head->value = ft_strdup(ft_strchr(envp[i], '=') + 1);
-	head->key = ft_substr(envp[i], 0, ft_strchr(envp[i], '=') - envp[i]);
+	if (!head)
+		return (NULL);
 	temp = head;
 	while (envp[i])
 	{
@@ -62,7 +62,7 @@ t_envp	*env_head(char **envp)
 		{
 			temp->next = (t_envp *)malloc(sizeof(t_envp));
 			if (!temp->next)
-				exit(FAILURE);
+				return (NULL);
 			temp = temp->next;
 		}
 		else

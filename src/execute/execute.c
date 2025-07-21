@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 23:34:59 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/19 17:11:48 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/21 13:57:09 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@ static void	execute_single(t_command *command)
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execvp(command->args[0], command->args) == -1) //TODO burası execve olacak
-			printf("minishel: command not found\n");
+		if (execvp(command->args[0], command->args) == -1)
+			printf("minishell: command not found\n");
+		exit(127);
 	}
 	else
 		waitpid(pid, &status, 0);

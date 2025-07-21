@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/18 14:58:58 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/21 13:01:56 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,19 @@ static char	**pipe_split(const char *line, int start, int k, int i)
 {
 	char	**shell;
 	char	*temp;
+	int		line_len;
 
 	if (!validate_pipes(line))
 		return (NULL);
+	line_len = ft_strlen(line);
 	shell = malloc(sizeof(char *) * (pipe_count(line) + 2));
 	if (!shell)
 		return (NULL);
-	while (line[k])
+	while (k < line_len && line[k])
 	{
 		pass_quote(line, &k);
+		if (k >= line_len)
+			break ;
 		if (line[k] == '|')
 		{
 			temp = ft_substr(line, start, k - start);
@@ -97,6 +101,7 @@ static char	**pipe_split(const char *line, int start, int k, int i)
 void	parse_command(char *command_line, t_envp *env_list)
 {
 	char	**shell;
+	int		i;
 
 	shell = pipe_split(command_line, 0, 0, 0);
 	if (!shell)
@@ -105,5 +110,12 @@ void	parse_command(char *command_line, t_envp *env_list)
 		return ;
 	}
 	add_node(shell, env_list);
+	
+	i = 0;
+	while (shell[i])
+	{
+		free(shell[i]);
+		i++;
+	}
 	free(shell);
 }

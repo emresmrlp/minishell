@@ -6,7 +6,7 @@
 #    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/19 16:59:34 by makpolat         ###   ########.fr        #
+#    Updated: 2025/07/21 14:00:35 by makpolat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,4 +61,20 @@ test: all clean #TODO DELETE THIS
 
 re: fclean all
 
-.PHONY: all clean fclean re
+valgrind: $(NAME)
+	@echo "$(BLUE) Running Valgrind with readline suppression...$(RESET)"
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=.valgrind_suppress --track-origins=yes ./$(NAME)
+
+valgrind-clean: $(NAME)
+	@echo "$(BLUE) Running Valgrind (clean output)...$(RESET)"
+	valgrind --leak-check=full --suppressions=.valgrind_suppress ./$(NAME)
+
+valgrind-debug: $(NAME)
+	@echo "$(BLUE) Running Valgrind with full debug...$(RESET)"
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(NAME)
+
+valgrind-gen-suppress: $(NAME)
+	@echo "$(BLUE) Generating suppressions...$(RESET)"
+	valgrind --leak-check=full --show-leak-kinds=all --gen-suppressions=yes ./$(NAME)
+
+.PHONY: all clean fclean re valgrind valgrind-clean valgrind-debug valgrind-gen-suppress

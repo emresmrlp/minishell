@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 23:33:34 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/21 13:57:27 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,29 @@
 static void export_add(t_command *iter)
 {
 	t_envp	*temp;
+	t_envp	*new_node;
 	char	*index;
 
-	temp = iter->env_list;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = (t_envp *)malloc(sizeof(t_envp));
-	temp->next->next = NULL;
+	new_node = (t_envp *)malloc(sizeof(t_envp));
+	if (!new_node)
+		return ;
+	
 	index = ft_strchr(iter->args[1], '=');
 	if (index)
 	{
-		temp->next->key = ft_substr(iter->args[1], 0, index - iter->args[1]);
-		temp->next->value = ft_strdup(index + 1);
+		new_node->key = ft_substr(iter->args[1], 0, index - iter->args[1]);
+		new_node->value = ft_strdup(index + 1);
+		new_node->next = NULL;
+		
+		// List'in sonuna ekle
+		temp = iter->env_list;
+		while (temp->next)
+			temp = temp->next;
+		temp->next = new_node;
+	}
+	else
+	{
+		free(new_node);
 	}
 }
 
