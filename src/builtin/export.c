@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/21 13:57:27 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/25 11:09:32 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,98 +18,94 @@
 // TODO - value NULL olanlar env'de listelenmeyip export'ta listelenecek.
 // TODO - mevcut kodda AD= yada AD gibi girdiler kabul edilmiyor, düzeltilecek ve bu tarz girdilerde value NULL olarak ayarlanacak.
 
+static void print_export(t_command *command)
+{
+	t_envp *temp;
+
+	temp = command->env_list;
+	while (temp)
+	{
+		if (temp->value)
+			printf("declare -x %s=\"%s\"\n", temp->key, temp->value);
+		else
+			printf("declare -x %s\n", temp->key);
+		temp = temp->next;
+	}
+}
+
 static void export_add(t_command *iter)
 {
 	t_envp	*temp;
-	t_envp	*new_node;
 	char	*index;
 
-	new_node = (t_envp *)malloc(sizeof(t_envp));
-	if (!new_node)
-		return ;
-	
+	temp = iter->env_list;
+	while (temp->next)
+		temp = temp->next;
 	index = ft_strchr(iter->args[1], '=');
 	if (index)
 	{
-		new_node->key = ft_substr(iter->args[1], 0, index - iter->args[1]);
-		new_node->value = ft_strdup(index + 1);
-		new_node->next = NULL;
-		
-		// List'in sonuna ekle
-		temp = iter->env_list;
-		while (temp->next)
-			temp = temp->next;
-		temp->next = new_node;
+		temp->key = ft_substr(iter->args[1], 0, index - iter->args[1]);
+		temp->value = ft_strdup(index + 1);
+		temp->next = NULL;
 	}
 	else
 	{
-		free(new_node);
+		temp->key = ft_strdup(iter->args[1]);
+		temp->value = NULL;
+		temp->next = NULL;
 	}
 }
 
 static int is_valid_key(char *arg)
 {
-    int key_len;
-    int i;
-    char *value;
+	int key_len;
+	int i;
+	char *value;
 
-    i = 1;
-    value = ft_strchr(arg, '=');
-    if (!value)
-        return (FAILURE);
-    key_len = value - arg;
-    if (!arg || arg[0] == '\0')
-        return (FAILURE);
-    if (!ft_isalpha(arg[0]) && arg[0] != '_')
-        return (FAILURE);
-    while (arg[i] && i < key_len)
-    {
-        if (!ft_isalnum(arg[i]) && arg[i] != '_')
-            return (FAILURE);
-        i++;
-    }
-    return (SUCCESS);
-}
-
-static int is_valid_var(char *var)
-{
-    char *value;
-
-    if (!var || !is_valid_key(var))
-        return (FAILURE);
-    value = ft_strchr(var, '=');
-    if (!value)
-        return (FAILURE);
-    if (*(value + 1) == '\0')
-        return (FAILURE);
-    return (SUCCESS);
+	if (!arg || arg[0] == '\0')
+		return (0);
+	i = 1;
+	value = ft_strchr(arg, '=');
+	if (!value)
+		key_len = ft_strlen(arg);
+	else
+		key_len = value - arg;
+	if (!ft_isalpha(arg[0]) && arg[0] != '_')
+		return (0);
+	while (arg[i] && i < key_len)
+	{
+		if (!ft_isalnum(arg[i]) && arg[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
 static int handle_export(t_command *command, char **args)
 {
-    int i;
+	int i;
 
-    i = 1;
-    while (args[i])
-    {
-        if (is_valid_var(args[i]))
-            export_add(command);
-        else
-            error_handler("export: not a valid identifier");
-        i++;
-    }
-    return (SUCCESS);
+	i = 1;
+	while (args[i])
+	{
+		if (is_valid_key(args[i]))
+			export_add(command);
+		else
+			error_handler("export: not a valid identifier\n");
+		i++;
+	}
+	return (SUCCESS);
 }
 
 int builtin_export(t_command *command, char **args)
 {
-    if (args[1] == NULL)
-    {
-        print_env(command);
-        return (SUCCESS);
-    }
-    if (handle_export(command, args))
-        return (SUCCESS);
-    else
-        return (FAILURE);
+	if (args[1] == NULL)
+	{
+		print_export(command);
+		return (SUCCESS);
+	}
+	if (handle_export(command, args))
+		return (SUCCESS);
+	else
+		return (FAILURE);
 }

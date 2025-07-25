@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/21 14:00:35 by makpolat         ###   ########.fr        #
+#    Updated: 2025/07/25 11:36:37 by ysumeral         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ SRC =	src/main.c \
 		src/builtin/export.c \
 		src/builtin/env.c \
 		src/execute/execute.c \
+		src/execute/execute_util.c \
 		src/parse/find_redirect.c
 
 OBJ = $(SRC:.c=.o)
