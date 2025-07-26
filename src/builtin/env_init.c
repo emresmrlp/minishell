@@ -6,7 +6,7 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:01:54 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 00:29:39 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:11:49 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,21 @@ char	*find_env(t_envp *head, char *search)
 		temp = temp->next;
 	}
 	return (NULL);
+}
+
+int	get_env_size(t_envp *env_list)
+{
+	int		size;
+	t_envp	*temp;
+
+	size = 0;
+	temp = env_list;
+	while (temp)
+	{
+		size++;
+		temp = temp->next;
+	}
+	return (size);
 }
 
 void	print_env(t_command *iter)

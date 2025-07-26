@@ -6,30 +6,29 @@
 /*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/25 11:09:32 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/26 23:36:29 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-// TODO - export env listesini alacak.
-// TODO - başına declare -x eklenecek.
 // TODO - alfabetik olarak bubble algoritmasıyla sıralanacak.
-// TODO - value NULL olanlar env'de listelenmeyip export'ta listelenecek.
-// TODO - mevcut kodda AD= yada AD gibi girdiler kabul edilmiyor, düzeltilecek ve bu tarz girdilerde value NULL olarak ayarlanacak.
 
 static void print_export(t_command *command)
 {
-	t_envp *temp;
+	char	**env_array;
+	int		i;
 
-	temp = command->env_list;
-	while (temp)
+	i = 0;
+	env_array = env_list_to_array(command->env_list);
+	env_array = sort_array(env_array, get_env_size(command->env_list));
+	if(!env_array)
+		return ;
+	while (env_array[i])
 	{
-		if (temp->value)
-			printf("declare -x %s=\"%s\"\n", temp->key, temp->value);
-		else
-			printf("declare -x %s\n", temp->key);
-		temp = temp->next;
+		if (env_array[i])
+			printf("declare -x %s\n", env_array[i]);
+		i++;
 	}
 }
 

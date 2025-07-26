@@ -3,45 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/21 13:33:05 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/26 18:26:57 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 // TODO - env_int silinip env_handler.c gibi bir isimlendirme yapılacak buradaki fazla fonksiyonlar taşınacak.
-
-char **env_to_array(t_envp *env_list)
-{
-	t_envp	*temp;
-	int		count;
-	char	**envp;
-	int		i;
-
-	count = 0;
-	temp = env_list;
-	while (temp)
-	{
-		count++;
-		temp = temp->next;
-	}
-	envp = (char **)malloc(sizeof(char *) * (count + 1));
-	if (!envp)
-		return (NULL);
-	i = 0;
-	while (env_list)
-	{
-		envp[i] = ft_strjoin(env_list->key, "=");
-		envp[i] = ft_strjoin(envp[i], env_list->value);
-		env_list = env_list->next;
-		i++;
-	}
-	envp[i] = NULL;
-	return (envp);
-}
 
 t_envp	*env_head(char **envp)
 {
