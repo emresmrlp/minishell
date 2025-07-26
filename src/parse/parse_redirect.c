@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/26 19:39:11 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:52:17 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,13 +152,29 @@ void	print_command_list(t_command *cmd)
 static void	handle_redirection(t_command *node, char **tokens, int *j)
 {
 	if (ft_strcmp(tokens[*j], "<<") == 0)
+	{
+		if (node->heredoc_fd)
+			free(node->heredoc_fd);
 		node->heredoc_fd = ft_strdup(tokens[++(*j)]);
+	}
 	else if (ft_strcmp(tokens[*j], ">>") == 0)
+	{
+		if (node->append_output_fd)
+			free(node->append_output_fd);
 		node->append_output_fd = ft_strdup(tokens[++(*j)]);
+	}
 	else if (ft_strcmp(tokens[*j], "<") == 0)
+	{
+		if (node->input_fd)
+			free(node->input_fd);
 		node->input_fd = ft_strdup(tokens[++(*j)]);
+	}
 	else if (ft_strcmp(tokens[*j], ">") == 0)
+	{
+		if (node->output_fd)
+			free(node->output_fd);
 		node->output_fd = ft_strdup(tokens[++(*j)]);
+	}
 }
 
 static int	is_redirection(char *token)
