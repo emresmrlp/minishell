@@ -6,11 +6,94 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/26 17:43:19 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:39:11 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+// Forward declarations
+static void	free_tokens(char **tokens);
+
+// Helper fonksiyonlar
+static int has_single_quotes(char *str)
+{
+	int i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+static char **split_with_quotes_preserved(char *str, char delimiter)
+{
+	// Daha güvenli buffer boyutu hesaplama
+	int estimated_tokens = 1;
+	int i = 0;
+	
+	// Token sayısını tahmin et
+	while (str[i])
+	{
+		if (str[i] == delimiter)
+			estimated_tokens++;
+		i++;
+	}
+	
+	// Buffer boyutunu güvenli şekilde ayarla
+	int buffer_size = estimated_tokens + 10; // Güvenlik marjı
+	if (buffer_size < 20)
+		buffer_size = 20;
+	if (buffer_size > 1000)
+		buffer_size = 1000;
+	
+	char **result = malloc(sizeof(char *) * buffer_size);
+	if (!result)
+		return (NULL);
+		
+	int count = 0;
+	int start = 0;
+	i = 0;
+	int in_single = 0;
+	int in_double = 0;
+	
+	while (str[i])
+	{
+		if (str[i] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (str[i] == '"' && !in_single)
+			in_double = !in_double;
+		else if (str[i] == delimiter && !in_single && !in_double)
+		{
+			if (i > start)
+			{
+				// Buffer overflow kontrolü
+				if (count >= buffer_size - 1)
+				{
+					printf("WARNING: Token buffer full, stopping at %d tokens\n", count);
+					break;
+				}
+				result[count] = ft_substr(str, start, i - start);
+				count++;
+			}
+			// Skip multiple spaces
+			while (str[i] == delimiter)
+				i++;
+			start = i;
+			continue;
+		}
+		i++;
+	}
+	if (i > start && count < buffer_size - 1)
+	{
+		result[count] = ft_substr(str, start, i - start);
+		count++;
+	}
+	result[count] = NULL;
+	return result;
+}
 
 static t_command *create_node(void)
 {   
@@ -26,6 +109,7 @@ static t_command *create_node(void)
 	node->output_fd = NULL;
 	node->next = NULL;
 	node->dollar = 0;
+	node->skip_expansion = NULL; // Yeni eklenen field
 	return node;
 }
 
@@ -123,7 +207,7 @@ static int	ft_arg_count(char **tokens)
 	return (arg_count);
 }
 
-static int	parse_argv(t_command *node, char **tokens)
+static int	parse_argv(t_command *node, char **tokens, char *original_string)
 {
 	int i = 0;
 	int arg_count;
@@ -140,8 +224,13 @@ static int	parse_argv(t_command *node, char **tokens)
 		return (1);
 	
 	node->args = (char **)ft_calloc(arg_count + 1, sizeof(char *));
-	if (!node->args)
+	node->skip_expansion = (int *)ft_calloc(arg_count + 1, sizeof(int));
+	if (!node->args || !node->skip_expansion)
 		return (0);
+	
+	// Orijinal string'de single quote kontrolü yap
+	char **original_tokens = split_with_quotes_preserved(original_string, ' ');
+	
 	i = 0;
 	arg_count = 0;
 	while (tokens[i])
@@ -152,10 +241,22 @@ static int	parse_argv(t_command *node, char **tokens)
 		}
 		else
 		{
-			node->args[arg_count++] = ft_strdup(tokens[i]);
+			node->args[arg_count] = ft_strdup(tokens[i]);
+			
+			// Eğer orijinal token single quote içindeyse expansion skip et
+			if (original_tokens && original_tokens[arg_count])
+			{
+				node->skip_expansion[arg_count] = has_single_quotes(original_tokens[arg_count]);
+			}
+			arg_count++;
 		}
 		i++;
 	}
+	
+	// Original tokens'ı temizle
+	if (original_tokens)
+		free_tokens(original_tokens);
+	
 	return (1);
 }
 
@@ -231,7 +332,7 @@ void	add_node(char **shell, t_envp *env_list)
 			return ;
 		node->env_list = env_list;
 
-		if (!parse_argv(node, tokens))
+		if (!parse_argv(node, tokens, joined))
 		{
 			free(joined);
 			free_tokens(tokens);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/25 11:49:15 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:26:24 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_command
 	char				*heredoc_fd; // <<
 	t_envp				*env_list; // Environment linked list
 	int					dollar;
+	int					*skip_expansion; // Her argüman için expansion skip flag'i
 	struct s_command	*next;
 }	t_command;
 

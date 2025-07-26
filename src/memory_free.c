@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:32:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/21 13:32:00 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/26 19:26:28 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ static void	free_command_node(t_command *cmd)
 		free(cmd->append_output_fd);
 	if (cmd->heredoc_fd)
 		free(cmd->heredoc_fd);
+	if (cmd->skip_expansion)
+		free(cmd->skip_expansion);
 }
 
 void	memory_free(t_command *command)
