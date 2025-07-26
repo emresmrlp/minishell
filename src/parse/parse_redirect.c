@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/19 16:46:27 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:43:19 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,48 +186,68 @@ static char	**split_redirects_for_command(char *command)
 	return (result);
 }
 
+
+static char	*space_strjoin_function(char **arr)
+{
+	int		i = 0;
+	char	*result = NULL;
+	char	*tmp;
+
+	if (!arr || !arr[0])
+		return (NULL);
+	result = ft_strdup(arr[0]);
+	i = 1;
+	while (arr[i])
+	{
+		tmp = result;
+		result = ft_strjoin(result, " ");
+		free(tmp);
+		tmp = result;
+		result = ft_strjoin(result, arr[i]);
+		free(tmp);
+		i++;
+	}
+	return (result);
+}
+
 void	add_node(char **shell, t_envp *env_list)
 {
-	t_command	*head;
-	t_command	*curr;
+	t_command	*head = NULL;
+	t_command	*curr = NULL;
 	t_command	*node;
+	char		**redirect_split_result;
+	char		*joined;
 	char		**tokens;
-	char		**split_shell;
 	int			i;
-	int			j;
 
-	head = NULL;
-	curr = NULL;
 	i = 0;
 	while (shell[i])
 	{
-		//redirect ayırma fonksştyonu
-		split_shell = split_redirects_for_command(shell[i]);
-		if (!split_shell)
-			split_shell = ft_split(shell[i], ' ');
-		j = 0;
-		while (split_shell[j])
+		redirect_split_result = split_redirects_for_command(shell[i]);
+		joined = space_strjoin_function(redirect_split_result);
+		tokens = ft_split(joined, ' ');
+		node = create_node();
+		if (!node)
+			return ;
+		node->env_list = env_list;
+
+		if (!parse_argv(node, tokens))
 		{
-			node = create_node();
-			if (!node)
-				return ;
-			node->env_list = env_list;
-			tokens = ft_split(split_shell[j], ' ');
-			if (!parse_argv(node, tokens))
-			{
-				free_tokens(tokens);
-				free(node);
-				return ;
-			}
-			if (!head)
-				head = node;
-			else
-				curr->next = node;
-			curr = node;
+			free(joined);
 			free_tokens(tokens);
-			j++;
+			free_tokens(redirect_split_result);
+			free(node);
+			return ;
 		}
-		free_tokens(split_shell);
+		if (!head)
+			head = node;
+		else
+			curr->next = node;
+		curr = node;
+
+		free(joined);
+		free_tokens(tokens);
+		free_tokens(redirect_split_result);
 		i++;
 	}
 	if (head)
