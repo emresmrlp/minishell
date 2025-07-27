@@ -6,13 +6,11 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 12:34:35 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:05:35 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-// TODO - env_int silinip env_handler.c gibi bir isimlendirme yapılacak buradaki fazla fonksiyonlar taşınacak.
 
 t_envp	*env_head(char **envp)
 {

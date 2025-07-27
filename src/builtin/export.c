@@ -6,33 +6,25 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 12:58:24 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:04:57 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-// TODO - alfabetik olarak bubble algoritmasıyla sıralanacak.
-
-static void print_export(t_command *command)
+static void	print_export(t_command *command)
 {
 	char	**env_array;
 	int		i;
 
 	i = 0;
 	env_array = env_list_to_array(command->env_list,
-		get_env_size(command->env_list));
+			get_env_size(command->env_list));
 	if (!env_array)
-	{
-		printf("hatata\n");
 		return ;
-	}
 	env_array = sort_array(env_array, get_env_size(command->env_list));
-	if(!env_array)
-	{
-		printf("hatata\n");
+	if (!env_array)
 		return ;
-	}
 	while (env_array[i])
 	{
 		if (env_array[i])
@@ -41,7 +33,7 @@ static void print_export(t_command *command)
 	}
 }
 
-static void export_add(t_command *iter, int arg_index)
+static void	export_add(t_command *iter, int arg_index)
 {
 	t_envp	*temp;
 	t_envp	*new_node;
@@ -58,7 +50,7 @@ static void export_add(t_command *iter, int arg_index)
 	if (index)
 	{
 		new_node->key = ft_substr(iter->args[arg_index], 0,
-			index - iter->args[arg_index]);
+				index - iter->args[arg_index]);
 		if (*(index + 1) == '\0')
 			new_node->value = ft_strdup("");
 		else
@@ -70,10 +62,10 @@ static void export_add(t_command *iter, int arg_index)
 	temp->next = new_node;
 }
 
-static void export_update(t_command *iter, int arg_index, char *key)
+static void	export_update(t_command *iter, int arg_index, char *key)
 {
-	t_envp *temp;
-	char *index;
+	t_envp	*temp;
+	char	*index;
 
 	temp = iter->env_list;
 	while (temp)
@@ -98,11 +90,11 @@ static void export_update(t_command *iter, int arg_index, char *key)
 	}
 }
 
-static int handle_export(t_command *command, char **args)
+static int	handle_export(t_command *command, char **args)
 {
-	int i;
-	char *index;
-	char *key;
+	int		i;
+	char	*index;
+	char	*key;
 
 	i = 1;
 	while (args[i])
@@ -112,15 +104,9 @@ static int handle_export(t_command *command, char **args)
 		if (is_valid_key(key))
 		{
 			if (find_env_value(command, key))
-			{
 				export_update(command, i, key);
-				printf("%s updated.\n", args[i]);
-			}
 			else
-			{
 				export_add(command, i);
-				printf("%s added.\n", args[i]);
-			}
 		}
 		else
 			error_handler("export: not a valid identifier\n");
@@ -129,7 +115,7 @@ static int handle_export(t_command *command, char **args)
 	return (SUCCESS);
 }
 
-int builtin_export(t_command *command, char **args)
+int	builtin_export(t_command *command, char **args)
 {
 	if (args[1] == NULL)
 	{

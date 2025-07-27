@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:39:40 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 14:26:08 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:00:26 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	builtin_unset(t_command *command, char **args)
 {
-	t_envp *temp;
-	int status;
-	int i;
+	t_envp	*temp;
+	int		status;
+	int		i;
 
 	status = FAILURE;
 	if (args[1] != NULL)

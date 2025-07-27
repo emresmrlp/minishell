@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/26 23:38:00 by ysumeral         ###   ########.fr        #
+#    Updated: 2025/07/27 14:06:39 by ysumeral         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,6 @@ SRC =	src/main.c \
 		src/builtin/export_util.c \
 		src/builtin/env.c \
 		src/builtin/env_util.c \
-		src/builtin/env_init.c \
 		src/execute/execute.c \
 		src/execute/execute_util.c \
 		src/parse/find_redirect.c

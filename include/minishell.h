@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 12:34:43 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:15:17 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ t_envp	*env_head(char **envp);
 void	update_env(t_command *iter, char *key, char *new_value);
 char	*find_env_value(t_command *iter, char *key);
 char	*get_env_value(char *var_name, t_envp *env_list);
-void	print_env(t_command *iter);
 void	remove_env(t_command *command, char *key);
 
 void	shell_loop(t_envp *env_list);
@@ -74,7 +73,7 @@ char	**redirect_split(char **shell);
 
 // builtin
 int		handle_builtin(t_command *command);
-int 	builtin_cd(t_command *iter);
+int		builtin_cd(t_command *command, char **args);
 int		builtin_echo(t_command *command);
 int		builtin_pwd(void);
 void	builtin_unset(t_command *command, char **args);

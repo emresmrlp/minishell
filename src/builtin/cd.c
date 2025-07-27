@@ -3,45 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 23:51:53 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 00:36:09 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:22:01 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	builtin_cd(t_command *iter)
+int	builtin_cd(t_command *command, char **args)
 {
-	char	*current_pwd = getcwd(NULL, 0);
-	char	*target_dir;
-	char	*new_pwd;
+	char	*path;
 
-	if (!iter->args[1] || ft_strcmp(iter->args[1], "~") == 0)
-		target_dir = find_env_value(iter, "HOME");
-	else if (ft_strcmp(iter->args[1], "-") == 0)
-	{
-		target_dir = find_env_value(iter, "OLDPWD");
-		if (!target_dir)
-		{
-			printf("cd: OLDPWD not set\n");
-			free(current_pwd);
-			return (FAILURE);
-		}
-	}
+	if (args[1])
+		path = args[1];
 	else
-		target_dir = iter->args[1];
-	if (chdir(target_dir) == -1)
 	{
-		perror("cd");
-		free(current_pwd);
-		return (FAILURE);
+		path = find_env_value(command, "HOME");
+		if (!path)
+			return (error_handler("cd: HOME Not set\n"));
 	}
-	update_env(iter, "OLDPWD", current_pwd);
-	new_pwd = getcwd(NULL, 0);
-	update_env(iter, "PWD", new_pwd);
-	free(current_pwd);
-	free(new_pwd);
+	if (chdir(path) != 0)
+		return (perror("cd"), 1);
 	return (SUCCESS);
 }

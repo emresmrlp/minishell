@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_state.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:11:56 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/21 13:57:15 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:19:55 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
