@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 14:15:17 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 17:00:03 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char	**redirect_split(char **shell);
 
 // builtin
 int		handle_builtin(t_command *command);
-int		builtin_cd(t_command *command, char **args);
+int		builtin_cd(t_command *iter);
 int		builtin_echo(t_command *command);
 int		builtin_pwd(void);
 void	builtin_unset(t_command *command, char **args);

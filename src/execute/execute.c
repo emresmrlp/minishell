@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 23:34:59 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 13:59:01 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 17:36:32 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,22 @@ static void	execute_single(t_command *command)
 	if (pid == 0)
 	{
 		path = find_path(command->args[0], command);
+		if (!path && ft_strchr(command->args[0], '/'))
+			path = ft_strdup(command->args[0]);
+		if (!path)
+		{
+			error_handler("minishell: command not found\n");
+			exit(127);
+		}	
 		env_list_array = env_list_to_array(command->env_list,
 				get_env_size(command->env_list));
 		if (execve(path, command->args, env_list_array) == -1)
-			printf("minishell: command not found\n");
+			error_handler("minishell: No such file or directory\n");
 		exit(127);
 	}
-	else
-		waitpid(pid, &status, 0);
+	else if (pid < 0)
+		return (perror("fork"), exit(127));
+	waitpid(pid, &status, 0);
 }
 
 /*static void execute_pipeline(t_command *command)
@@ -52,7 +60,7 @@ static int	is_builtin(const char *cmd)
 }
 
 void	execute(t_command *command)
-{
+{	
 	if (!command)
 		return ;
 	if (!command->next)
