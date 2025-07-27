@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:36:28 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/26 18:07:26 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:24:43 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void free_array(char **array)
     free(array);
 }
 
-char *find_path(char *arg, t_envp *env_list)
+char *find_path(char *arg, t_command *command)
 {
     char *path;
     char *command_path;
@@ -34,7 +34,7 @@ char *find_path(char *arg, t_envp *env_list)
     char **path_array;
     char **original_path_array;
 
-    path = find_env(env_list, "PATH");
+    path = find_env_value(command, "PATH");
     if (!path)
         return (NULL);
     path_array = ft_split(path, ':');

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/26 23:36:51 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:34:43 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,11 @@ int 	builtin_env(t_command *command);
 void memory_free(t_command *command);
 
 char **sort_array(char **env_array, int size);
-char **env_list_to_array(t_envp *env_list);
-char *find_path(char *arg, t_envp *env_list);
+char **env_list_to_array(t_envp *env_list, int size);
+char *find_path(char *arg, t_command *command);
+int is_valid_key(char *arg);
 int get_env_size(t_envp *env_list);
+char	*get_env_value(char *var_name, t_envp *env_list);
 
 int error_handler(char *message);
 int shell_exit_with_error(char *message, t_command *command);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_dollar.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/26 19:39:13 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:20:12 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ static char	*my_strdup(char *src)
 	if (!src)
 		return (NULL);
 	len = ft_strlen(src);
-	printf("my_strdup: allocating %d bytes for '%s'\n", len + 1, src);
 	dst = malloc(len + 1);
 	if (!dst)
 	{
@@ -146,7 +145,6 @@ static char	*process_string(char *str, t_envp *env_list)
 		return (NULL);
 	
 	// Dinamik buffer boyutu hesaplama - değişken genişleme boyutunu tahmin et
-	int str_len = ft_strlen(str);
 	int estimated_expansion_size = 0;
 	int idx = 0;
 	
@@ -194,10 +192,6 @@ static char	*process_string(char *str, t_envp *env_list)
 		buffer_size = 500;  // Minimum 500 byte
 	if (buffer_size > 50000)
 		buffer_size = 50000; // Maksimum 50KB
-	
-	printf("Allocating buffer of size %d for input '%s' (len=%d, estimated_expansion=%d)\n", 
-		buffer_size, str, str_len, estimated_expansion_size);
-	
 	result = malloc(buffer_size);
 	i = 0;
 	j = 0;

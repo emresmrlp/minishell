@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/26 18:26:57 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:34:35 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,12 @@ char	*find_env_value(t_command *iter, char *key)
 	while (temp)
 	{
 		if (ft_strcmp(temp->key, key) == 0)
-			return (temp->value);
+		{
+			if (temp->value)
+				return (temp->value);
+			else
+				return (ft_strdup(""));
+		}
 		temp = temp->next;
 	}
 	return (NULL);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_util.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 18:02:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/26 23:37:24 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:56:08 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,37 @@ char  **sort_array(char **env_array, int size)
     return (env_array);
 }
 
-char **env_list_to_array(t_envp *env_list)
+int is_valid_key(char *arg)
+{
+	int key_len;
+	int i;
+	char *value;
+
+	if (!arg || arg[0] == '\0')
+		return (0);
+	i = 1;
+	value = ft_strchr(arg, '=');
+	if (!value)
+		key_len = ft_strlen(arg);
+	else
+		key_len = value - arg;
+	if (!ft_isalpha(arg[0]) && arg[0] != '_')
+		return (0);
+	while (arg[i] && i < key_len)
+	{
+		if (!ft_isalnum(arg[i]) && arg[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+char **env_list_to_array(t_envp *env_list, int size)
 {
     t_envp  *temp;
     char  **env_array;
-    int     size;
     int     i;
 
-    size = get_env_size(env_list);
     i = 0;
     env_array = malloc(sizeof(char *) * (size + 1));
     if (!env_array)
@@ -54,10 +77,15 @@ char **env_list_to_array(t_envp *env_list)
     temp = env_list;
     while (temp)
     {
-        env_array[i] = ft_strjoin(temp->key, "=");
         if (temp->value)
-            env_array[i] = ft_strjoin(env_array[i], temp->value);
-        i++;
+		{
+			env_array[i] = ft_strjoin(temp->key, "=\"");
+		    env_array[i] = ft_strjoin(env_array[i], temp->value);
+			env_array[i] = ft_strjoin(env_array[i], "\"");
+		}
+		else
+			env_array[i] = ft_strdup(temp->key);
+		i++;
         temp = temp->next;
     }
     env_array[i] = NULL;

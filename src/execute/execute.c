@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 23:34:59 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/25 11:53:51 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:25:10 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@ static void	execute_single(t_command *command)
 	pid = fork();
 	if (pid == 0)
 	{
-		path = find_path(command->args[0], command->env_list);
-		env_list_array = env_list_to_array(command->env_list);
+		path = find_path(command->args[0], command);
+		env_list_array = env_list_to_array(command->env_list,
+			get_env_size(command->env_list));
 		if (execve(path, command->args, env_list_array) == -1)
 			printf("minishell: command not found\n");
 		exit(127);
