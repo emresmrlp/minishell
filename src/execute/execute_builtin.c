@@ -6,13 +6,13 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/27 17:08:12 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 17:00:49 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	handle_builtin(t_command *command)
+int	execute_builtin(t_command *command)
 {
 	if (ft_strcmp(command->args[0], "pwd") == 0)
 		return (builtin_pwd());

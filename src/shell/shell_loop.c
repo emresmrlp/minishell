@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_loop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/21 13:20:43 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/28 20:08:45 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	banner(void)
 {
-	int i;
+	int	i;
 
 	i = 2000000000;
 	write(1, "\033[H\033[J", 6);
@@ -41,6 +41,7 @@ static void	banner(void)
 void	shell_loop(t_envp *env_list)
 {
 	char	*command_line;
+	t_envp	*temp;
 
 	banner();
 	while (1)
@@ -50,7 +51,7 @@ void	shell_loop(t_envp *env_list)
 		{
 			// Ctrl+D (EOF) durumu - programı temiz şekilde kapat
 			printf("exit\n");
-			break;
+			break ;
 		}
 		if (*command_line)
 		{
@@ -61,7 +62,7 @@ void	shell_loop(t_envp *env_list)
 	}
 	while (env_list)
 	{
-		t_envp *temp = env_list;
+		temp = env_list;
 		env_list = env_list->next;
 		free(temp->key);
 		free(temp->value);

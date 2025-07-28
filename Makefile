@@ -6,7 +6,7 @@
 #    By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/27 14:06:39 by ysumeral         ###   ########.fr        #
+#    Updated: 2025/07/28 17:37:24 by ysumeral         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,6 @@ SRC =	src/main.c \
 		src/parse/parse_redirect.c \
 		src/parse/parse_dollar.c \
 		src/parse/parse_pipe.c \
-		src/builtin/handle_builtin.c \
 		src/builtin/unset.c \
 		src/builtin/cd.c \
 		src/builtin/pwd.c \
@@ -31,7 +30,10 @@ SRC =	src/main.c \
 		src/builtin/env.c \
 		src/builtin/env_util.c \
 		src/execute/execute.c \
+		src/execute/execute_single.c \
+		src/execute/execute_multiple.c \
 		src/execute/execute_util.c \
+		src/execute/execute_builtin.c \
 		src/parse/find_redirect.c
 
 OBJ = $(SRC:.c=.o)

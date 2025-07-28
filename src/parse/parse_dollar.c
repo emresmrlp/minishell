@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/27 11:20:12 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:57:33 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,21 +246,6 @@ static int	has_expansion(char *str)
 	return (0);
 }
 
-void    split_built_in(t_command *head)
-{
-	t_command *iter;
-
-	iter = head;
-	while (iter)
-	{
-		if (iter->args && iter->args[0])
-		{
-			execute(iter);
-		}
-		iter = iter->next;
-	}
-}
-
 void	parse_dollar(t_command *head)
 {
 	t_command	*iter;
@@ -298,7 +283,7 @@ void	parse_dollar(t_command *head)
 		}
 		iter = iter->next;
 	}
-	split_built_in(head);
+	execute(head);
 	print_command_list(head);
 	memory_free(head);
 }
