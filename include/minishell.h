@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 21:38:09 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 22:28:04 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <stdio.h>
+# include <signal.h>
 # include <fcntl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -51,6 +52,7 @@ typedef struct s_command
 	struct s_command	*next;
 }	t_command;
 
+void	sigint_handler(int signal);
 void	execute_redirection(t_command *command);
 void	execute(t_command *command);
 void	execute_command(t_command *command);

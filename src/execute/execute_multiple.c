@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 21:38:50 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 22:21:26 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static void	child_process(t_command *command, int prev_fd, int write_fd)
 {
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (prev_fd != -1)
 	{
 		dup2(prev_fd, STDIN_FILENO);

@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 20:08:45 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 23:15:47 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	shell_loop(t_envp *env_list)
 		command_line = readline("\033[38;2;139;170;255mMiniShell$ \033[0m");
 		if (!command_line)
 		{
-			// Ctrl+D (EOF) durumu - programı temiz şekilde kapat
 			printf("exit\n");
 			break ;
 		}

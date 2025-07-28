@@ -6,7 +6,7 @@
 #    By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/28 21:21:19 by ysumeral         ###   ########.fr        #
+#    Updated: 2025/07/28 23:00:51 by ysumeral         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ LIBFT = external/libft/libft.a
 SRC =	src/main.c \
 		src/memory_free.c \
 		src/shell/shell_loop.c \
+		src/shell/shell_signal.c \
 		src/shell/shell_state.c \
 		src/parse/parse_redirect.c \
 		src/parse/parse_dollar.c \
