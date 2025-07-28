@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/26 19:52:17 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:40:23 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,11 +228,6 @@ static int	parse_argv(t_command *node, char **tokens, char *original_string)
 	int i = 0;
 	int arg_count;
 	
-	if (tokens[0] && is_redirection(tokens[0]))
-	{
-		printf("minishell: syntax error near unexpected token `%s'\n", tokens[0]);
-		return (0);
-	}
 	arg_count = ft_arg_count(tokens);
 	if (arg_count == -1) // Hata durumu
 		return (0);
@@ -249,22 +244,25 @@ static int	parse_argv(t_command *node, char **tokens, char *original_string)
 	
 	i = 0;
 	arg_count = 0;
+	int original_index = 0;
 	while (tokens[i])
 	{
 		if (is_redirection(tokens[i]))
 		{
 			handle_redirection(node, tokens, &i);
+			original_index += 2; // Skip redirection operator and filename in original_tokens
 		}
 		else
 		{
 			node->args[arg_count] = ft_strdup(tokens[i]);
 			
 			// Eğer orijinal token single quote içindeyse expansion skip et
-			if (original_tokens && original_tokens[arg_count])
+			if (original_tokens && original_tokens[original_index])
 			{
-				node->skip_expansion[arg_count] = has_single_quotes(original_tokens[arg_count]);
+				node->skip_expansion[arg_count] = has_single_quotes(original_tokens[original_index]);
 			}
 			arg_count++;
+			original_index++;
 		}
 		i++;
 	}
