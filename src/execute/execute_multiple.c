@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 20:03:55 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:38:50 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 		dup2(write_fd, STDOUT_FILENO);
 		close(write_fd);
 	}
+	execute_redirection(command);
 	if (is_builtin(command->args[0]))
 		exit(execute_builtin(command));
 	execute_command(command);

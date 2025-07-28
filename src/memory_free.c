@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:32:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 20:10:18 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:38:45 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ static void	free_command_node(t_command *cmd)
 		free(cmd->input_fd);
 	if (cmd->output_fd)
 		free(cmd->output_fd);
-	if (cmd->append_output_fd)
-		free(cmd->append_output_fd);
+	if (cmd->append_fd)
+		free(cmd->append_fd);
 	if (cmd->heredoc_fd)
 		free(cmd->heredoc_fd);
 	if (cmd->skip_expansion)

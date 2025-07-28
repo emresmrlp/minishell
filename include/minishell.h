@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 20:07:13 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:38:09 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <stdio.h>
+# include <fcntl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <unistd.h>
@@ -42,7 +43,7 @@ typedef struct s_command
 	char				**args;
 	char				*input_fd;
 	char				*output_fd;
-	char				*append_output_fd;
+	char				*append_fd;
 	char				*heredoc_fd;
 	t_envp				*env_list;
 	int					dollar;
@@ -50,6 +51,7 @@ typedef struct s_command
 	struct s_command	*next;
 }	t_command;
 
+void	execute_redirection(t_command *command);
 void	execute(t_command *command);
 void	execute_command(t_command *command);
 void	execute_single(t_command *command);

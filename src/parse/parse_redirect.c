@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/28 16:40:23 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:38:47 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ static t_command *create_node(void)
 	node = (t_command *)malloc(sizeof(t_command));
 	if (!node)
 		return NULL;
-	node->append_output_fd = NULL;
+	node->append_fd = NULL;
 	node->args = NULL;
 	node->heredoc_fd = NULL;
 	node->input_fd = NULL;
@@ -138,8 +138,8 @@ void	print_command_list(t_command *cmd)
 			printf("  Girdi yönlendirme (<): %s\n", cmd->input_fd);
 		if (cmd->output_fd)
 			printf("  Çikti yönlendirme (>): %s\n", cmd->output_fd);
-		if (cmd->append_output_fd)
-			printf("  Ekli çikti yönlendirme (>>): %s\n", cmd->append_output_fd);
+		if (cmd->append_fd)
+			printf("  Ekli çikti yönlendirme (>>): %s\n", cmd->append_fd);
 		if (cmd->heredoc_fd)
 			printf("  Heredoc (<<): %s\n", cmd->heredoc_fd);
 		if (cmd->dollar == 1)
@@ -159,9 +159,9 @@ static void	handle_redirection(t_command *node, char **tokens, int *j)
 	}
 	else if (ft_strcmp(tokens[*j], ">>") == 0)
 	{
-		if (node->append_output_fd)
-			free(node->append_output_fd);
-		node->append_output_fd = ft_strdup(tokens[++(*j)]);
+		if (node->append_fd)
+			free(node->append_fd);
+		node->append_fd = ft_strdup(tokens[++(*j)]);
 	}
 	else if (ft_strcmp(tokens[*j], "<") == 0)
 	{
