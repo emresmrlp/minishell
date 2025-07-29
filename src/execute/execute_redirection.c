@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:36:38 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 14:55:55 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:38:58 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,9 @@ static void	redirect_output(t_command *command)
 
 	fd = open(command->output_fd, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
-	{
 		perror("open output");
-		exit(EXIT_FAILURE);
-	}
-	if (dup2(fd, STDOUT_FILENO) < 0)
-	{
+	else if (dup2(fd, STDOUT_FILENO) < 0)
 		perror("dup2 output");
-		exit(EXIT_FAILURE);
-	}
 	close(fd);
 }
 

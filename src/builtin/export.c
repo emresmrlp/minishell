@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 14:04:57 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:52:41 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,24 +95,32 @@ static int	handle_export(t_command *command, char **args)
 	int		i;
 	char	*index;
 	char	*key;
+	int		error_found;
 
 	i = 1;
+	error_found = 0;
 	while (args[i])
 	{
-		index = ft_strchr(command->args[i], '=');
-		key = ft_substr(command->args[i], 0, index - command->args[i]);
-		if (is_valid_key(key))
+		if (!is_valid_key(args[i]))
 		{
-			if (find_env_value(command, key))
-				export_update(command, i, key);
-			else
-				export_add(command, i);
-		}
-		else
 			error_handler("export: not a valid identifier\n");
+			error_found = 1;
+			i++;
+			continue;
+		}
+		index = ft_strchr(args[i], '=');
+		if (index)
+			key = ft_substr(args[i], 0, index - args[i]);
+		else
+			key = ft_strdup(args[i]);
+		if (find_env_value(command, key))
+			export_update(command, i, key);
+		else
+			export_add(command, i);
+		free(key);
 		i++;
 	}
-	return (SUCCESS);
+	return (error_found ? FAILURE : SUCCESS);
 }
 
 int	builtin_export(t_command *command, char **args)
@@ -122,8 +130,5 @@ int	builtin_export(t_command *command, char **args)
 		print_export(command);
 		return (SUCCESS);
 	}
-	if (handle_export(command, args))
-		return (SUCCESS);
-	else
-		return (FAILURE);
+	return (handle_export(command, args));
 }

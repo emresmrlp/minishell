@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 15:27:06 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:54:46 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ typedef struct s_command
 
 void	sigint_handler(int signal);
 void	execute_redirection(t_command *command);
+int		execute_builtin_redirection(t_command *command);
 void	execute(t_command *command);
 void	execute_command(t_command *command);
 void	execute_single(t_command *command);

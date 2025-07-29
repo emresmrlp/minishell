@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_builtin.c                                   :+:      :+:    :+:   */
+/*   execute_builtin.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/28 17:00:49 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:03:37 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ int	execute_builtin(t_command *command)
 	else if (ft_strcmp(command->args[0], "export") == 0)
 		return (builtin_export(command, command->args));
 	else if (ft_strcmp(command->args[0], "unset") == 0)
+	{
 		builtin_unset(command, command->args);
+		return (SUCCESS);  // unset always returns 0 in bash
+	}
 	else if (ft_strcmp(command->args[0], "env") == 0)
 		return (builtin_env(command));
 	else if (ft_strcmp(command->args[0], "exit") == 0)

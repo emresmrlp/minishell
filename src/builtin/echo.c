@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral <ysumeral@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:22:03 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/18 00:23:23 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:54:48 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ int	builtin_echo(t_command *command)
 	}
 	while (command->args[i])
 	{
-		printf("%s", command->args[i]);
+		ft_putstr_fd(command->args[i], STDOUT_FILENO);
 		if (command->args[++i])
-			printf(" ");
+			ft_putstr_fd(" ", STDOUT_FILENO);
 	}
 	if (newline)
-		printf("\n");
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (SUCCESS);
 }

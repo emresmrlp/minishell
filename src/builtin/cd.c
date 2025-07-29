@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 23:51:53 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 17:09:00 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:58:22 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,17 @@ int	builtin_cd(t_command *iter)
 	char	*current_pwd;
 	char	*target_dir;
 	char	*new_pwd;
+	int		arg_count;
+
+	// Argüman sayısını kontrol et
+	arg_count = 0;
+	while (iter->args[arg_count])
+		arg_count++;
+	if (arg_count > 2)
+	{
+		error_handler("cd: too many arguments\n");
+		return (FAILURE);
+	}
 
 	current_pwd = getcwd(NULL, 0);
 	if (!current_pwd)
@@ -58,7 +69,9 @@ int	builtin_cd(t_command *iter)
 		return (FAILURE);
 	if (chdir(target_dir) == -1)
 	{
-		perror("cd");
+		write(2, "cd: ", 4);
+		write(2, target_dir, ft_strlen(target_dir));
+		write(2, ": No such file or directory\n", 28);
 		free(current_pwd);
 		return (FAILURE);
 	}
