@@ -270,6 +270,5 @@ void	parse_dollar(t_command *head)
 		iter = iter->next;
 	}
 	execute(head);
-	print_command_list(head);
 	memory_free(head);
 }
