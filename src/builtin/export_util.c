@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_util.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 18:02:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 14:02:12 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:36:32 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,8 @@ char	**env_list_to_array(t_envp *env_list, int size)
 	{
 		if (temp->value)
 		{
-			env_array[i] = ft_strjoin(temp->key, "=\"");
+			env_array[i] = ft_strjoin(temp->key, "=");
 			env_array[i] = ft_strjoin(env_array[i], temp->value);
-			env_array[i] = ft_strjoin(env_array[i], "\"");
 		}
 		else
 			env_array[i] = ft_strdup(temp->key);
