@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 22:28:04 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:27:06 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 
 # define SUCCESS 0
 # define FAILURE 1
+
+extern int g_exit_status;
 
 typedef struct s_envp
 {

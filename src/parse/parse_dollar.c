@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_dollar.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/28 16:57:33 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:27:09 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,7 @@ static char	*my_strdup(char *src)
 	len = ft_strlen(src);
 	dst = malloc(len + 1);
 	if (!dst)
-	{
-		printf("my_strdup: malloc failed!\n");
 		return (NULL);
-	}
-	printf("my_strdup: allocated at %p\n", dst);
 	i = 0;
 	while (i < len)
 	{
@@ -40,7 +36,6 @@ static char	*my_strdup(char *src)
 		i++;
 	}
 	dst[i] = '\0';
-	printf("my_strdup: copied string '%s' to %p\n", dst, dst);
 	return (dst);
 }
 
@@ -53,6 +48,15 @@ static char	*expand_var(char *str, int *i, t_envp *env_list)
 	int		j;
 
 	start = ++(*i);
+	
+	// $? özel durumu
+	if (str[*i] == '?')
+	{
+		(*i)++;
+		value = get_env_value("?", env_list);
+		return (my_strdup(value));
+	}
+	
 	while (str[*i] && is_var_char(str[*i]))
 		(*i)++;
 	if (start == *i)
@@ -65,18 +69,14 @@ static char	*expand_var(char *str, int *i, t_envp *env_list)
 		var_name[j++] = str[start++];
 	var_name[j] = '\0';
 	value = get_env_value(var_name, env_list);
-	printf("Variable '%s' = '%s' (ptr: %p)\n", var_name, value, value);
 	if (!value)
 	{
-		printf("get_env_value returned NULL\n");
 		free(var_name);
 		return (my_strdup(""));
 	}
 	result = my_strdup(value);
-	printf("Duplicated result: %p\n", result);
 	if (!result)
 	{
-		printf("my_strdup failed!\n");
 		free(var_name);
 		return (NULL);
 	}
@@ -112,72 +112,62 @@ static void	append_expansion(char **result, int *j, char *str, int *i, t_envp *e
 			k++;
 		}
 		
-		// Eğer tüm içerik kopyalanamadıysa uyar
-		if (k < len)
-		{
-			printf("WARNING: Content truncated! Copied %d/%d chars, buffer full at %d/%d\n", 
-				k, len, *j, buffer_size);
-		}
-		else
-		{
-			printf("Successfully copied %d chars from expansion\n", len);
-		}
-		
 		free(temp);
-		printf("Freed expansion temp successfully\n");
-	}
-	else
-	{
-		printf("expand_var returned NULL\n");
 	}
 }
-
 static char	*process_string(char *str, t_envp *env_list)
 {
 	char	*result;
-	int		i;
-	int		j;
-	int		in_single;
-	int		in_double;
-	int		buffer_size;
+	int		i, j, in_single, in_double, buffer_size;
+	int		estimated_expansion_size, idx;
+	int		var_start, var_end, k;
+	char	*var_name, *var_value;
 
 	if (!str)
 		return (NULL);
 	
 	// Dinamik buffer boyutu hesaplama - değişken genişleme boyutunu tahmin et
-	int estimated_expansion_size = 0;
-	int idx = 0;
+	estimated_expansion_size = 0;
+	idx = 0;
 	
 	// String içindeki her $ değişkeni için tahmini boyut hesapla
 	while (str[idx])
 	{
-		if (str[idx] == '$' && str[idx + 1] && is_var_char(str[idx + 1]))
+		if (str[idx] == '$' && str[idx + 1] && (is_var_char(str[idx + 1]) || str[idx + 1] == '?'))
 		{
-			// Değişken ismini bul
-			int var_start = idx + 1;
-			int var_end = var_start;
-			while (str[var_end] && is_var_char(str[var_end]))
-				var_end++;
-			
-			// Değişken ismini çıkar
-			char *var_name = malloc(var_end - var_start + 1);
-			if (var_name)
+			if (str[idx + 1] == '?')
 			{
-				int j = 0;
-				while (var_start < var_end)
-					var_name[j++] = str[var_start++];
-				var_name[j] = '\0';
-				
-				// Değişkenin değerini al ve boyutunu hesapla
-				char *var_value = get_env_value(var_name, env_list);
-				if (var_value && ft_strlen(var_value) > 0)
-					estimated_expansion_size += ft_strlen(var_value);
-				else
-					estimated_expansion_size += 1; // Boş değişken için
-				
-				free(var_name);
+				estimated_expansion_size += 3; // Max 3 digit exit code
+				idx += 2;
 			}
-			idx = var_end;
+			else
+			{
+				// Değişken ismini bul
+				var_start = idx + 1;
+				var_end = var_start;
+				while (str[var_end] && is_var_char(str[var_end]))
+					var_end++;
+				
+				// Değişken ismini çıkar
+				var_name = malloc(var_end - var_start + 1);
+				if (var_name)
+				{
+					k = 0;
+					while (var_start < var_end)
+						var_name[k++] = str[var_start++];
+					var_name[k] = '\0';
+					
+					// Değişkenin değerini al ve boyutunu hesapla
+					var_value = get_env_value(var_name, env_list);
+					if (var_value && ft_strlen(var_value) > 0)
+						estimated_expansion_size += ft_strlen(var_value);
+					else
+						estimated_expansion_size += 1; // Boş değişken için
+					
+					free(var_name);
+				}
+				idx = var_end;
+			}
 		}
 		else
 		{
@@ -203,10 +193,7 @@ static char	*process_string(char *str, t_envp *env_list)
 	{
 		// Buffer overflow kontrolü - güvenli marj bırak
 		if (j >= buffer_size - 10)
-		{
-			printf("WARNING: Approaching buffer limit at j=%d/%d, stopping processing\n", j, buffer_size);
 			break;
-		}
 		
 		if ((str[i] == '\'' || str[i] == '"'))
 		{
@@ -214,7 +201,7 @@ static char	*process_string(char *str, t_envp *env_list)
 			result[j++] = str[i++];
 		}
 		else if (str[i] == '$' && !in_single
-			&& str[i + 1] && is_var_char(str[i + 1]))
+			&& str[i + 1] && (is_var_char(str[i + 1]) || str[i + 1] == '?'))
 			append_expansion(&result, &j, str, &i, env_list, buffer_size);
 		else
 			result[j++] = str[i++];
@@ -239,7 +226,7 @@ static int	has_expansion(char *str)
 		else if (str[i] == '"' && !in_single)
 			in_double = !in_double;
 		else if (str[i] == '$' && !in_single && str[i + 1]
-			&& is_var_char(str[i + 1]))
+			&& (is_var_char(str[i + 1]) || str[i + 1] == '?'))
 			return (1);
 		i++;
 	}
@@ -267,7 +254,6 @@ void	parse_dollar(t_command *head)
 			// Skip expansion eğer single quote içindeyse
 			if (iter->skip_expansion && iter->skip_expansion[i])
 			{
-				printf("Skipping expansion for arg[%d]: '%s' (was in single quotes)\n", i, iter->args[i]);
 				i++;
 				continue;
 			}

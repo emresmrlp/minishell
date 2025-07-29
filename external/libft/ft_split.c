@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 12:46:11 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/17 15:37:54 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:31:11 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,19 @@ static int	get_len_and_remove_quotes(const char *s, char c, char *result)
 static char	*create_word(const char *s, char c)
 {
 	char	*result;
-	int		len;
+	int		len, in_single, in_double;
 
 	len = 0;
-	while (s[len] && (s[len] != c))
+	in_single = 0;
+	in_double = 0;
+	while (s[len] && (s[len] != c || in_single || in_double))
+	{
+		if (s[len] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (s[len] == '"' && !in_single)
+			in_double = !in_double;
 		len++;
+	}
 	result = malloc(len + 1);
 	if (!result)
 		return (NULL);
@@ -98,7 +106,7 @@ static char	*create_word(const char *s, char c)
 char	**ft_split(char const *s, char c)
 {
 	char	**tab;
-	int		i;
+	int		i, in_single, in_double;
 
 	if (!s)
 		return (NULL);
@@ -106,17 +114,25 @@ char	**ft_split(char const *s, char c)
 	if (tab == NULL)
 		return (NULL);
 	i = 0;
+	in_single = 0;
+	in_double = 0;
 	while (*s)
 	{
-		while (*s == c)
+		while (*s == c && !in_single && !in_double)
 			s++;
 		if (*s)
 		{
 			tab[i] = create_word(s, c);
 			if (tab[i++] == NULL)
 				return (check(tab));
-			while (*s && *s != c)
+			while (*s && (*s != c || in_single || in_double))
+			{
+				if (*s == '\'' && !in_double)
+					in_single = !in_single;
+				else if (*s == '"' && !in_single)
+					in_double = !in_double;
 				s++;
+			}
 		}
 	}
 	tab[i] = NULL;

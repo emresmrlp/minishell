@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/21 13:01:56 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:16:07 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,20 @@ static int	pipe_count(const char *line)
 {
 	int	i;
 	int	count;
+	int	in_single;
+	int	in_double;
 
 	i = 0;
 	count = 0;
+	in_single = 0;
+	in_double = 0;
 	while (line[i])
 	{
-		if (line[i] == '|')
+		if (line[i] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (line[i] == '"' && !in_single)
+			in_double = !in_double;
+		else if (line[i] == '|' && !in_single && !in_double)
 			count++;
 		i++;
 	}
@@ -32,8 +40,12 @@ int	validate_pipes(const char *line)
 {
 	int	i;
 	int	len;
+	int	in_single;
+	int	in_double;
 
 	i = 0;
+	in_single = 0;
+	in_double = 0;
 	while (line[i] == ' ')
 		i++;
 	if (line[i] == '|')
@@ -43,26 +55,24 @@ int	validate_pipes(const char *line)
 		len--;
 	if (len >= 0 && line[len] == '|')
 		return (0);
-	if (ft_strnstr(line, "||", ft_strlen(line)))
-		return (0);
-	if (ft_strnstr(line, "| |", ft_strlen(line)))
-		return (0);
-	return (1);
-}
-
-static void	pass_quote(const char *line, int *i)
-{
-	char	quote_char;
-
-	if (line[*i] == '"' || line[*i] == '\'')
+	
+	i = 0;
+	while (line[i])
 	{
-		quote_char = line[*i];
-		(*i)++;
-		while (line[*i] && line[*i] != quote_char)
-			(*i)++;
-		if (line[*i] == quote_char)
-			(*i)++;
+		if (line[i] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (line[i] == '"' && !in_single)
+			in_double = !in_double;
+		else if (line[i] == '|' && !in_single && !in_double)
+		{
+			if (line[i + 1] == '|')
+				return (0);
+			if (line[i + 1] == ' ' && line[i + 2] == '|')
+				return (0);
+		}
+		i++;
 	}
+	return (1);
 }
 
 static char	**pipe_split(const char *line, int start, int k, int i)
@@ -70,6 +80,7 @@ static char	**pipe_split(const char *line, int start, int k, int i)
 	char	**shell;
 	char	*temp;
 	int		line_len;
+	int		in_single, in_double;
 
 	if (!validate_pipes(line))
 		return (NULL);
@@ -77,12 +88,15 @@ static char	**pipe_split(const char *line, int start, int k, int i)
 	shell = malloc(sizeof(char *) * (pipe_count(line) + 2));
 	if (!shell)
 		return (NULL);
+	in_single = 0;
+	in_double = 0;
 	while (k < line_len && line[k])
 	{
-		pass_quote(line, &k);
-		if (k >= line_len)
-			break ;
-		if (line[k] == '|')
+		if (line[k] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (line[k] == '"' && !in_single)
+			in_double = !in_double;
+		else if (line[k] == '|' && !in_single && !in_double)
 		{
 			temp = ft_substr(line, start, k - start);
 			shell[i++] = ft_strtrim(temp, " ");

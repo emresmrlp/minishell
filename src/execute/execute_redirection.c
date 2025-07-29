@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_redirection.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:36:38 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 22:01:14 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:55:55 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

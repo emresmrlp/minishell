@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 14:05:35 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:27:04 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,15 @@ void	remove_env(t_command *command, char *key)
 char	*get_env_value(char *var_name, t_envp *env_list)
 {
 	t_envp	*temp;
+	static char	*exit_status_str = NULL;
 
+	if (ft_strcmp(var_name, "?") == 0)
+	{
+		if (exit_status_str)
+			free(exit_status_str);
+		exit_status_str = ft_itoa(g_exit_status);
+		return (exit_status_str);
+	}
 	temp = env_list;
 	while (temp)
 	{

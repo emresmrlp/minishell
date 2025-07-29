@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/28 23:12:28 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 15:27:07 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+int g_exit_status = 0;
 
 int	main(int argc, char **argv, char **envp)
 {
