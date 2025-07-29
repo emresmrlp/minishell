@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:36:28 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 20:01:38 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 20:27:23 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	free_array(char **array)
 
 int	is_builtin(const char *cmd)
 {
+	if (!cmd)
+		return (0);
 	if (ft_strcmp(cmd, "pwd") == 0
 		|| ft_strcmp(cmd, "echo") == 0
 		|| ft_strcmp(cmd, "cd") == 0

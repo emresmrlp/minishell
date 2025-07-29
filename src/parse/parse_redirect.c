@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/29 15:52:45 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/29 20:27:19 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,12 +111,6 @@ static t_command *create_node(void)
 	node->dollar = 0;
 	node->skip_expansion = NULL; // Yeni eklenen field
 	return node;
-}
-
-void	print_command_list(t_command *cmd)
-{
-	// Debug mesajları production'da kapalı
-	(void)cmd;
 }
 
 static void	handle_redirection(t_command *node, char **tokens, int *j)
