@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 15:27:06 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/29 20:27:09 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,31 @@ void	execute_single(t_command *command)
 {
 	int		status;
 	pid_t	pid;
+	int		saved_stdin;
+	int		saved_stdout;
+
+	// Args kontrolü - eğer komut yoksa hata
+	if (!command->args || !command->args[0])
+	{
+		printf("minishell: syntax error near unexpected token\n");
+		g_exit_status = 2;
+		return ;
+	}
 
 	if (is_builtin(command->args[0]))
 	{
+		// Orijinal file descriptorleri kaydet
+		saved_stdin = dup(STDIN_FILENO);
+		saved_stdout = dup(STDOUT_FILENO);
+		
 		execute_redirection(command);
 		g_exit_status = execute_builtin(command);
+		
+		// File descriptorleri eski haline getir
+		dup2(saved_stdin, STDIN_FILENO);
+		dup2(saved_stdout, STDOUT_FILENO);
+		close(saved_stdin);
+		close(saved_stdout);
 		return ;
 	}
 	pid = fork();

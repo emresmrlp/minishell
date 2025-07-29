@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/28 21:38:47 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/29 20:27:19 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,42 +111,6 @@ static t_command *create_node(void)
 	node->dollar = 0;
 	node->skip_expansion = NULL; // Yeni eklenen field
 	return node;
-}
-
-void	print_command_list(t_command *cmd)
-{
-	int i;
-	int j;
-
-	i = 0;
-	j = 0;
-	while (cmd)
-	{
-		printf("Komut %d:\n", i);
-		
-		if (cmd->args)
-		{
-			j = 0;
-			printf("  Argümanlar:\n");
-			while (cmd->args[j])
-			{
-				printf("    - %s\n", cmd->args[j]);
-				j++;
-			}
-		}
-		if (cmd->input_fd)
-			printf("  Girdi yönlendirme (<): %s\n", cmd->input_fd);
-		if (cmd->output_fd)
-			printf("  Çikti yönlendirme (>): %s\n", cmd->output_fd);
-		if (cmd->append_fd)
-			printf("  Ekli çikti yönlendirme (>>): %s\n", cmd->append_fd);
-		if (cmd->heredoc_fd)
-			printf("  Heredoc (<<): %s\n", cmd->heredoc_fd);
-		if (cmd->dollar == 1)
-			printf("  DOLLAR BULUNDU %d($)\n", cmd->dollar);
-		cmd = cmd->next;
-		i++;
-	}
 }
 
 static void	handle_redirection(t_command *node, char **tokens, int *j)
