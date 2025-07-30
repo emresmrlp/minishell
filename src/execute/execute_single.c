@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_single.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/30 17:37:46 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:12:47 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	execute_single(t_command *command)
 	// Args kontrolü - eğer komut yoksa hata
 	if (!command->args || !command->args[0])
 	{
-		printf("minishell: syntax error near unexpected token\n");
+		error_handler("minishell: syntax error near unexpected token\n");
 		g_exit_status = 2;
 		return ;
 	}

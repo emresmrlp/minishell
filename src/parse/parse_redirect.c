@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/30 18:05:25 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:28:04 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,12 +151,12 @@ static int	validate_redirection(char **tokens, int index)
 {
 	if (!tokens[index + 1])
 	{
-		printf("minishell: syntax error near unexpected token `newline'\n");
+		error_handler("minishell: syntax error near unexpected token\n");
 		return (0);
 	}
 	if (is_redirection(tokens[index + 1]))
 	{
-		printf("minishell: syntax error near unexpected token `%s'\n", tokens[index + 1]);
+		error_handler("minishell: syntax error near unexpected token\n");
 		return (0);
 	}
 	

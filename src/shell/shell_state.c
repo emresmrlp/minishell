@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:11:56 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 23:16:28 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:11:55 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	error_handler(char *message)
 {
 	if (message)
 		write(2, message, ft_strlen(message));
+	g_exit_status = 2;
 	return (FAILURE);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_pipe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/29 15:16:07 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:14:08 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void	parse_command(char *command_line, t_envp *env_list)
 	shell = pipe_split(command_line, 0, 0, 0);
 	if (!shell)
 	{
-		printf("syntax error: invalid pipe usage\n");
+		error_handler("minishell: syntax error near unexpected token\n");
 		return ;
 	}
 	add_node(shell, env_list);
