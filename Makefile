@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+         #
+#    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/28 23:00:51 by ysumeral         ###   ########.fr        #
+#    Updated: 2025/07/30 18:49:20 by makpolat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,8 @@ SRC =	src/main.c \
 		src/execute/execute_redirection.c \
 		src/parse/find_redirect.c
 
-OBJ = $(SRC:.c=.o)
+OBJDIR = objs
+OBJ = $(SRC:src/%.c=$(OBJDIR)/%.o)
 NAME = minishell
 
 RESET	= \033[0m
@@ -46,6 +47,10 @@ GREEN	= \033[0;32m(SUCCESS)$(RESET) -
 BLUE	= \033[0;34m(BUILD)$(RESET) -
 
 all: $(NAME)
+
+$(OBJDIR)/%.o: src/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJ)
 	@echo "$(BLUE) Linking (Seriously The Best MiniShell Ever)...$(RESET)"
@@ -56,7 +61,7 @@ $(NAME): $(OBJ)
 
 clean:
 	@make clean -C ./external/libft
-	@rm -rf $(OBJ)
+	@rm -rf $(OBJDIR)
 
 fclean: clean
 	@make fclean -C ./external/libft

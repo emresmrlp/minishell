@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_single.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/30 18:12:47 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:58:08 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,14 @@ void	execute_single(t_command *command)
 
 	if (is_builtin(command->args[0]))
 	{
+		// Exit komutu için özel durum - fork kullanma
+		if (ft_strcmp(command->args[0], "exit") == 0)
+		{
+			g_exit_status = builtin_exit(command, command->args);
+			return ;
+		}
+		
+		// Diğer builtin komutlar için
 		// Orijinal file descriptorleri kaydet
 		saved_stdin = dup(STDIN_FILENO);
 		saved_stdout = dup(STDOUT_FILENO);
