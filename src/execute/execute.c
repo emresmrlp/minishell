@@ -19,12 +19,14 @@ void	execute_command(t_command *command)
 
 	path = get_valid_path(command);
 	if (!path)
-		exit(127);
+		exit(g_exit_status);  // get_valid_path zaten exit code'u set etti
 	env_list_array = env_list_to_array(command->env_list,
 			get_env_size(command->env_list));
 	if (execve(path, command->args, env_list_array) == -1)
+	{
 		error_handler("minishell: No such file or directory\n");
-	exit(127);
+		exit(127);
+	}
 }
 
 void	execute(t_command *command)

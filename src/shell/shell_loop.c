@@ -17,6 +17,8 @@ void	shell_loop(t_envp *env_list)
 	char	*command_line;
 	t_envp	*temp;
 
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		command_line = readline("\033[38;2;139;170;255mMiniShell$ \033[0m");

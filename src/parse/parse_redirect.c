@@ -123,6 +123,12 @@ static void	handle_redirection(t_command *node, char **tokens, int *j)
 	}
 	else if (ft_strcmp(tokens[*j], ">>") == 0)
 	{
+		// Clear any previous output redirection (only last one counts)
+		if (node->output_fd)
+		{
+			free(node->output_fd);
+			node->output_fd = NULL;
+		}
 		if (node->append_fd)
 			free(node->append_fd);
 		node->append_fd = ft_strdup(tokens[++(*j)]);
@@ -135,6 +141,12 @@ static void	handle_redirection(t_command *node, char **tokens, int *j)
 	}
 	else if (ft_strcmp(tokens[*j], ">") == 0)
 	{
+		// Clear any previous output redirection (only last one counts)
+		if (node->append_fd)
+		{
+			free(node->append_fd);
+			node->append_fd = NULL;
+		}
 		if (node->output_fd)
 			free(node->output_fd);
 		node->output_fd = ft_strdup(tokens[++(*j)]);

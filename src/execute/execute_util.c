@@ -73,13 +73,46 @@ char	*find_path(char *arg, t_command *command)
 char	*get_valid_path(t_command *command)
 {
 	char	*path;
+	struct stat file_stat;
 
 	path = find_path(command->args[0], command);
 	if (!path && ft_strchr(command->args[0], '/'))
-		path = ft_strdup(command->args[0]);
+	{
+		// Tam path verildi, dosya var mı kontrol et
+		if (access(command->args[0], F_OK) == 0)
+		{
+			// Dosya var, directory mi kontrol et
+			if (stat(command->args[0], &file_stat) == 0)
+			{
+				if (S_ISDIR(file_stat.st_mode))
+				{
+					error_handler("minishell: Is a directory\n");
+					g_exit_status = 126;
+					return (NULL);
+				}
+			}
+			
+			// Execute permission var mı kontrol et
+			if (access(command->args[0], X_OK) == 0)
+				path = ft_strdup(command->args[0]);
+			else
+			{
+				error_handler("minishell: Permission denied\n");
+				g_exit_status = 126;
+				return (NULL);
+			}
+		}
+		else
+		{
+			error_handler("minishell: No such file or directory\n");
+			g_exit_status = 127;
+			return (NULL);
+		}
+	}
 	if (!path)
 	{
 		error_handler("minishell: command not found\n");
+		g_exit_status = 127;
 		return (NULL);
 	}
 	return (path);

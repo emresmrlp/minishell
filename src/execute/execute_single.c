@@ -18,6 +18,7 @@ void	execute_single(t_command *command)
 	pid_t	pid;
 	int		saved_stdin;
 	int		saved_stdout;
+	int		i;
 
 	// Args kontrolü - eğer komut yoksa hata
 	if (!command->args || !command->args[0])
@@ -25,6 +26,30 @@ void	execute_single(t_command *command)
 		error_handler("minishell: syntax error near unexpected token\n");
 		g_exit_status = 2;
 		return ;
+	}
+
+	// Boş argument'ları skip et ve ilk valid command'ı bul
+	i = 0;
+	while (command->args[i] && command->args[i][0] == '\0')
+		i++;
+	
+	// Hiç valid command yok
+	if (!command->args[i])
+	{
+		g_exit_status = 0;
+		return ;
+	}
+	
+	// Args array'ini shift et
+	if (i > 0)
+	{
+		int j = 0;
+		while (command->args[i + j])
+		{
+			command->args[j] = command->args[i + j];
+			j++;
+		}
+		command->args[j] = NULL;
 	}
 
 	if (is_builtin(command->args[0]))
