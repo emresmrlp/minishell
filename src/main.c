@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/29 16:43:10 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:00:39 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,5 @@ int	main(int argc, char **argv, char **envp)
 	// 		"number just run 'minishell'\n", NULL);
 	env_list = env_head(envp);
 	shell_loop(env_list);
-	return (0);
+	return (g_exit_status);
 }

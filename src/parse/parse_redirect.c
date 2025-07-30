@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/29 20:27:19 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:05:25 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,7 @@ static int	parse_argv(t_command *node, char **tokens, char *original_string)
 		{
 			handle_redirection(node, tokens, &i);
 			original_index += 2; // Skip redirection operator and filename in original_tokens
+			i++; // handle_redirection increments i to point to filename, we need to skip it
 		}
 		else
 		{
@@ -227,8 +228,8 @@ static int	parse_argv(t_command *node, char **tokens, char *original_string)
 			}
 			arg_count++;
 			original_index++;
+			i++;
 		}
-		i++;
 	}
 	
 	// Original tokens'ı temizle

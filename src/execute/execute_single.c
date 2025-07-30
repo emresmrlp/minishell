@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 20:27:09 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:37:46 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,26 @@ void	execute_single(t_command *command)
 		saved_stdin = dup(STDIN_FILENO);
 		saved_stdout = dup(STDOUT_FILENO);
 		
-		execute_redirection(command);
-		g_exit_status = execute_builtin(command);
+		// Redirection error handling için fork kullan
+		pid = fork();
+		if (pid == 0)
+		{
+			execute_redirection(command);
+			exit(execute_builtin(command));
+		}
+		else if (pid < 0)
+		{
+			perror("fork");
+			close(saved_stdin);
+			close(saved_stdout);
+			return ;
+		}
+		
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			g_exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			g_exit_status = 128 + WTERMSIG(status);
 		
 		// File descriptorleri eski haline getir
 		dup2(saved_stdin, STDIN_FILENO);

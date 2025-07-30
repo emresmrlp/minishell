@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 15:27:08 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:56:05 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
+	signal(SIGPIPE, SIG_DFL);  // SIGPIPE'ı default haline getir
 	if (prev_fd != -1)
 	{
 		dup2(prev_fd, STDIN_FILENO);
@@ -26,6 +27,12 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 		dup2(write_fd, STDOUT_FILENO);
 		close(write_fd);
 	}
+	
+	// Close all other file descriptors
+	int fd;
+	for (fd = 3; fd < 1024; fd++)
+		close(fd);
+	
 	execute_redirection(command);
 	if (is_builtin(command->args[0]))
 		exit(execute_builtin(command));
@@ -53,8 +60,9 @@ void	execute_multiple(t_command *command)
 {
 	int			pipe_fd[2];
 	int			prev_fd;
-	int			status;
 	pid_t		pid;
+	int			status;
+	pid_t		first_pid = 0;
 
 	prev_fd = -1;
 	while (command)
@@ -66,19 +74,32 @@ void	execute_multiple(t_command *command)
 			pipe_fd[0] = -1;
 			pipe_fd[1] = -1;
 		}
+		
 		pid = fork_and_run_child(command, prev_fd, pipe_fd[1]);
+		if (first_pid == 0)
+			first_pid = pid;
+		
 		if (prev_fd != -1)
 			close(prev_fd);
 		if (pipe_fd[1] != -1)
 			close(pipe_fd[1]);
+		
 		prev_fd = pipe_fd[0];
 		command = command->next;
 	}
-	while (wait(&status) > 0)
-	{
-		if (WIFEXITED(status))
-			g_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			g_exit_status = 128 + WTERMSIG(status);
-	}
+	
+	// Close the last pipe read end
+	if (prev_fd != -1)
+		close(prev_fd);
+	
+	// Wait for last command first (pipeline exit status)
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		g_exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		g_exit_status = 128 + WTERMSIG(status);
+	
+	// Then wait for any remaining children
+	while (wait(NULL) > 0)
+		;
 }

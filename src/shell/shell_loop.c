@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 16:54:24 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/30 16:31:16 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	shell_loop(t_envp *env_list)
 	char	*command_line;
 	t_envp	*temp;
 
-	write(1, "\033[H\033[J", 6);
 	while (1)
 	{
 		command_line = readline("\033[38;2;139;170;255mMiniShell$ \033[0m");
