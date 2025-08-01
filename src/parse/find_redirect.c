@@ -1,22 +1,4 @@
-/* ***********static int	is_in_quotes(char *str, int pos)
-{
-	int	i;
-	int	in_single;
-	int	in_double;
-
-	i = 0;
-	in_single = 0;
-	in_double = 0;
-	while (i < pos)
-	{
-		if (str[i] == '\'' && !in_double)
-			in_single = !in_single;
-		else if (str[i] == '"' && !in_single)
-			in_double = !in_double;
-		i++;
-	}
-	return (in_single || in_double);
-}******************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   find_redirect.c                                    :+:      :+:    :+:   */
@@ -24,11 +6,13 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:29:50 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/01 18:02:34 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 21:22:14 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+static void	add_parts(char *str, int j, char **result, int *k);
 
 static int	is_in_quotes(char *str, int pos)
 {
@@ -50,94 +34,122 @@ static int	is_in_quotes(char *str, int pos)
 	return (in_single || in_double);
 }
 
+static int	count_redirect_tokens(char *token, int *j, int *found_redirect)
+{
+	int	start;
+	int	token_count;
+
+	token_count = 0;
+	if (*j > 0 && !*found_redirect)
+		token_count++;
+	token_count++;
+	if (token[*j + 1] && token[*j + 1] == token[*j])
+		(*j)++;
+	(*j)++;
+	start = *j;
+	while (token[*j] && token[*j] != '>' && token[*j] != '<')
+		(*j)++;
+	if (*j > start)
+		token_count++;
+	*found_redirect = 1;
+	return (token_count);
+}
+
 static int	token_count(char **shell)
 {
 	int	i;
 	int	j;
 	int	count;
+	int	found_redirect;
 
 	i = 0;
 	count = 0;
 	while (shell[i])
 	{
 		j = 0;
-		int found_redirect = 0;
+		found_redirect = 0;
 		while (shell[i][j])
 		{
 			if ((shell[i][j] == '>' || shell[i][j] == '<') 
 				&& !is_in_quotes(shell[i], j))
 			{
-				if (j > 0 && !found_redirect)
-					count++; // Part before first redirection
-				count++; // Redirection operator
-				if (shell[i][j + 1] && shell[i][j + 1] == shell[i][j])
-					j++; // Skip double operator
-				j++; // Move past operator
-				
-				// Count tokens after this redirection
-				int start = j;
-				while (shell[i][j] && shell[i][j] != '>' && shell[i][j] != '<')
-					j++;
-				if (j > start)
-					count++; // Token after redirection
-				
-				found_redirect = 1;
-				continue;
+				count += count_redirect_tokens(shell[i], &j, &found_redirect);
+				continue ;
 			}
 			j++;
 		}
 		if (!found_redirect)
-			count++; // No redirection found, count the whole token
+			count++;
 		i++;
 	}
 	return (count);
 }
 
+static int	find_next_redirect(char *str, int start)
+{
+	int	next_redirect;
+
+	next_redirect = start;
+	while (str[next_redirect] && ((str[next_redirect] != '>' 
+			&& str[next_redirect] != '<') || is_in_quotes(str, next_redirect)))
+		next_redirect++;
+	return (next_redirect);
+}
+
+static void	process_remaining_redirections(char *str, int next_redirect, 
+		char **result, int *k)
+{
+	char	*remaining_str;
+
+	remaining_str = ft_strdup(str + next_redirect);
+	add_parts(remaining_str, 0, result, k);
+	free(remaining_str);
+}
+
 static void	add_parts(char *str, int j, char **result, int *k)
 {
-	int	is_double;
-	int	remaining_start;
-	int	next_redirect;
-	char	*remaining_str;
-	static int depth = 0;
-	
+	int			is_double;
+	int			remaining_start;
+	int			next_redirect;
+	static int	depth = 0;
+
 	depth++;
-	if (depth > 10)  // Prevent infinite recursion
+	if (depth > 10)
 	{
 		depth--;
-		return;
+		return ;
 	}
-
 	if (j > 0)
 		result[(*k)++] = ft_substr(str, 0, j);
 	is_double = (str[j + 1] == str[j]);
 	result[(*k)++] = ft_substr(str, j, 1 + is_double);
 	j += 1 + is_double;
 	remaining_start = j;
-	
-	// Look for next redirection in the remaining part
-	next_redirect = j;
-	while (str[next_redirect] && ((str[next_redirect] != '>' && str[next_redirect] != '<')
-		|| is_in_quotes(str, next_redirect)))
-		next_redirect++;
-	
-	if (str[next_redirect])  // Found another redirection
+	next_redirect = find_next_redirect(str, j);
+	if (str[next_redirect])
 	{
-		// Add the part before the next redirection
 		if (next_redirect > remaining_start)
-			result[(*k)++] = ft_substr(str, remaining_start, next_redirect - remaining_start);
-		// Create a new string starting from the next redirection
-		remaining_str = ft_strdup(str + next_redirect);
-		// Recursively handle the remaining string starting from position 0
-		add_parts(remaining_str, 0, result, k);
-		free(remaining_str);
+			result[(*k)++] = ft_substr(str, remaining_start, 
+					next_redirect - remaining_start);
+		process_remaining_redirections(str, next_redirect, result, k);
 	}
-	else  // No more redirections
+	else
 	{
 		if (str[j])
 			result[(*k)++] = ft_strdup(str + j);
 	}
 	depth--;
+}
+
+static int	find_redirection_pos(char *token)
+{
+	int	j;
+
+	j = -1;
+	while (token[++j] && ((token[j] != '>' && token[j] != '<')
+			|| is_in_quotes(token, j)))
+		;
+	return (j);
 }
 
 char	**redirect_split(char **shell)
@@ -149,19 +161,15 @@ char	**redirect_split(char **shell)
 
 	if (!shell)
 		return (NULL);
-	result = malloc(sizeof(char *) * (token_count(shell) + 20)); // Extra space for multiple redirections
+	result = malloc(sizeof(char *) * (token_count(shell) + 20));
 	if (!result)
 		return (NULL);
 	i = -1;
 	k = 0;
 	while (shell[++i])
 	{
-		j = -1;
-		// Check if this shell token has redirection operators (not in quotes)
-		while (shell[i][++j] && ((shell[i][j] != '>' && shell[i][j] != '<')
-			|| is_in_quotes(shell[i], j)))
-			;
-		if (shell[i][j])  // Found redirection in this token
+		j = find_redirection_pos(shell[i]);
+		if (shell[i][j])
 			add_parts(shell[i], j, result, &k);
 		else
 			result[k++] = ft_strdup(shell[i]);

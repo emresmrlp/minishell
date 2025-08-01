@@ -16,47 +16,39 @@
 static void	free_tokens(char **tokens);
 
 // Basit array helper - dosya eklemek için
-static void add_to_fd_array(char ***fd_array, char *filename)
+static void	add_to_fd_array(char ***fd_array, char *filename)
 {
-	int count = 0;
-	char **new_array;
-	int i;
-	
-	// Mevcut dosya sayısını say
+	int		count;
+	char	**new_array;
+	int		i;
+
+	count = 0;
 	if (*fd_array)
 	{
 		while ((*fd_array)[count])
 			count++;
 	}
-	
-	// Yeni array oluştur
 	new_array = malloc(sizeof(char *) * (count + 2));
 	if (!new_array)
-		return;
-	
-	// Eski dosyaları kopyala
+		return ;
 	i = 0;
 	while (i < count)
 	{
 		new_array[i] = (*fd_array)[i];
 		i++;
 	}
-	
-	// Yeni dosyayı ekle
 	new_array[count] = ft_strdup(filename);
 	new_array[count + 1] = NULL;
-	
-	// Eski array'i serbest bırak
 	if (*fd_array)
 		free(*fd_array);
-	
 	*fd_array = new_array;
 }
 
-// Helper fonksiyonlar
-static int has_single_quotes(char *str)
+static int	has_single_quotes(char *str)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'')
@@ -66,80 +58,84 @@ static int has_single_quotes(char *str)
 	return (0);
 }
 
-static char **split_with_quotes_preserved(char *str, char delimiter)
+static int	calculate_buffer_size(char *str, char delimiter)
 {
-	// Daha güvenli buffer boyutu hesaplama
-	int estimated_tokens = 1;
-	int i = 0;
-	
-	// Token sayısını tahmin et
+	int	estimated_tokens;
+	int	buffer_size;
+	int	i;
+
+	estimated_tokens = 1;
+	i = 0;
 	while (str[i])
 	{
 		if (str[i] == delimiter)
 			estimated_tokens++;
 		i++;
 	}
-	
-	// Buffer boyutunu güvenli şekilde ayarla
-	int buffer_size = estimated_tokens + 10; // Güvenlik marjı
+	buffer_size = estimated_tokens + 10;
 	if (buffer_size < 20)
 		buffer_size = 20;
 	if (buffer_size > 1000)
 		buffer_size = 1000;
-	
-	char **result = malloc(sizeof(char *) * buffer_size);
-	if (!result)
-		return (NULL);
-		
-	int count = 0;
-	int start = 0;
-	i = 0;
-	int in_single = 0;
-	int in_double = 0;
-	
-	while (str[i])
-	{
-		if (str[i] == '\'' && !in_double)
-			in_single = !in_single;
-		else if (str[i] == '"' && !in_single)
-			in_double = !in_double;
-		else if (str[i] == delimiter && !in_single && !in_double)
-		{
-			if (i > start)
-			{
-				// Buffer overflow kontrolü
-				if (count >= buffer_size - 1)
-				{
-					printf("WARNING: Token buffer full, stopping at %d tokens\n", count);
-					break;
-				}
-				result[count] = ft_substr(str, start, i - start);
-				count++;
-			}
-			// Skip multiple spaces
-			while (str[i] == delimiter)
-				i++;
-			start = i;
-			continue;
-		}
-		i++;
-	}
-	if (i > start && count < buffer_size - 1)
-	{
-		result[count] = ft_substr(str, start, i - start);
-		count++;
-	}
-	result[count] = NULL;
-	return result;
+	return (buffer_size);
 }
 
-static t_command *create_node(void)
+static void	process_token_split(char *str, char delimiter, char **result, 
+		int *params)
 {
-	t_command *node;
-	
+	if (str[params[3]] == '\'' && !params[2])
+		params[1] = !params[1];
+	else if (str[params[3]] == '"' && !params[1])
+		params[2] = !params[2];
+	else if (str[params[3]] == delimiter && !params[1] && !params[2])
+	{
+		if (params[3] > params[4])
+		{
+			if (params[0] >= params[5] - 1)
+				return ;
+			result[params[0]] = ft_substr(str, params[4], params[3] - params[4]);
+			params[0]++;
+		}
+		while (str[params[3]] == delimiter)
+			params[3]++;
+		params[4] = params[3];
+		return ;
+	}
+	params[3]++;
+}
+
+static char	**split_with_quotes_preserved(char *str, char delimiter)
+{
+	char	**result;
+	int		params[6];
+
+	params[5] = calculate_buffer_size(str, delimiter);
+	result = malloc(sizeof(char *) * params[5]);
+	if (!result)
+		return (NULL);
+	params[0] = 0;
+	params[1] = 0;
+	params[2] = 0;
+	params[3] = 0;
+	params[4] = 0;
+	while (str[params[3]])
+		process_token_split(str, delimiter, result, params);
+	if (params[3] > params[4] && params[0] < params[5] - 1)
+	{
+		result[params[0]] = ft_substr(str, params[4], params[3] - params[4]);
+		params[0]++;
+	}
+	result[params[0]] = NULL;
+	return (result);
+}
+
+static t_command	*create_node(void)
+{
+	t_command	*node;
+
 	node = (t_command *)malloc(sizeof(t_command));
 	if (!node)
-		return NULL;
+		return (NULL);
 	node->args = NULL;
 	node->input_fds = NULL;
 	node->output_fds = NULL;
@@ -149,43 +145,37 @@ static t_command *create_node(void)
 	node->next = NULL;
 	node->dollar = 0;
 	node->skip_expansion = NULL;
-	return node;
+	return (node);
 }
 
-static void	handle_redirection(t_command *node, char **tokens, int *j, char **original_tokens, int original_index)
+static int	is_token_quoted(char **original_tokens, int original_index)
 {
-	// Orijinal token'da quotes varsa redirection olarak algılama
-	if (original_tokens && original_tokens[original_index])
-	{
-		int len = ft_strlen(original_tokens[original_index]);
-		if (len >= 2 && ((original_tokens[original_index][0] == '"' && original_tokens[original_index][len-1] == '"') ||
-						 (original_tokens[original_index][0] == '\'' && original_tokens[original_index][len-1] == '\'')))
-		{
-			// Quotes içindeyse normal argüman olarak işle
-			return;
-		}
-	}
-	
+	int	len;
+
+	if (!original_tokens || !original_tokens[original_index])
+		return (0);
+	len = ft_strlen(original_tokens[original_index]);
+	if (len >= 2 && ((original_tokens[original_index][0] == '"' 
+				&& original_tokens[original_index][len - 1] == '"') 
+			|| (original_tokens[original_index][0] == '\'' 
+				&& original_tokens[original_index][len - 1] == '\'')))
+		return (1);
+	return (0);
+}
+
+static void	handle_redirection(t_command *node, char **tokens, int *j, 
+		char **original_tokens, int original_index)
+{
+	if (is_token_quoted(original_tokens, original_index))
+		return ;
 	if (ft_strcmp(tokens[*j], "<<") == 0)
-	{
-		// Heredoc'u listeye ekle
 		add_to_fd_array(&node->heredoc_fds, tokens[++(*j)]);
-	}
 	else if (ft_strcmp(tokens[*j], ">>") == 0)
-	{
-		// Append dosyasını listeye ekle
 		add_to_fd_array(&node->append_fds, tokens[++(*j)]);
-	}
 	else if (ft_strcmp(tokens[*j], "<") == 0)
-	{
-		// Input dosyasını listeye ekle
 		add_to_fd_array(&node->input_fds, tokens[++(*j)]);
-	}
 	else if (ft_strcmp(tokens[*j], ">") == 0)
-	{
-		// Output dosyasını listeye ekle
 		add_to_fd_array(&node->output_fds, tokens[++(*j)]);
-	}
 }
 
 static int	is_redirection(char *token)
@@ -212,17 +202,17 @@ static int	validate_redirection(char **tokens, int index)
 
 static int	ft_arg_count(char **tokens)
 {
-	int i;
-	int arg_count;
+	int	i;
+	int	arg_count;
 
 	i = 0;
 	arg_count = 0;
 	while (tokens[i])
-	{        
+	{
 		if (is_redirection(tokens[i]))
 		{
 			if (!validate_redirection(tokens, i))
-				return (-1); // Hata durumu
+				return (-1);
 			i += 2;
 		}
 		else
@@ -234,79 +224,63 @@ static int	ft_arg_count(char **tokens)
 	return (arg_count);
 }
 
+static void	process_redirection_token(t_command *node, char **tokens, 
+		char **original_tokens, int *indexes)
+{
+	handle_redirection(node, tokens, &indexes[0], original_tokens, indexes[2]);
+	if (!is_token_quoted(original_tokens, indexes[2]))
+	{
+		indexes[2] += 2;
+		indexes[0]++;
+		return ;
+	}
+	node->args[indexes[1]] = ft_strdup(tokens[indexes[0]]);
+	if (original_tokens && original_tokens[indexes[2]])
+		node->skip_expansion[indexes[1]] = has_single_quotes(original_tokens[indexes[2]]);
+	indexes[1]++;
+	indexes[2]++;
+	indexes[0]++;
+}
+
+static void	process_regular_token(t_command *node, char **tokens, 
+		char **original_tokens, int *indexes)
+{
+	node->args[indexes[1]] = ft_strdup(tokens[indexes[0]]);
+	if (original_tokens && original_tokens[indexes[2]])
+		node->skip_expansion[indexes[1]] = has_single_quotes(original_tokens[indexes[2]]);
+	indexes[1]++;
+	indexes[2]++;
+	indexes[0]++;
+}
+
 static int	parse_argv(t_command *node, char **tokens, char *original_string)
 {
-	int i = 0;
-	int arg_count;
-	
+	int		arg_count;
+	char	**original_tokens;
+	int		indexes[3];
+
 	arg_count = ft_arg_count(tokens);
-	if (arg_count == -1) // Hata durumu
+	if (arg_count == -1)
 		return (0);
 	if (arg_count == 0)
 		return (1);
-	
 	node->args = (char **)ft_calloc(arg_count + 1, sizeof(char *));
 	node->skip_expansion = (int *)ft_calloc(arg_count + 1, sizeof(int));
 	if (!node->args || !node->skip_expansion)
 		return (0);
-	
-	// Orijinal string'de single quote kontrolü yap
-	char **original_tokens = split_with_quotes_preserved(original_string, ' ');
-	
-	i = 0;
-	arg_count = 0;
-	int original_index = 0;
-	while (tokens[i])
+	original_tokens = split_with_quotes_preserved(original_string, ' ');
+	indexes[0] = 0;
+	indexes[1] = 0;
+	indexes[2] = 0;
+	while (tokens[indexes[0]])
 	{
-		if (is_redirection(tokens[i]))
-		{
-			handle_redirection(node, tokens, &i, original_tokens, original_index);
-			
-			// Eğer redirection işlendiyse (quotes yoksa) index'leri ayarla
-			if (original_tokens && original_tokens[original_index])
-			{
-				int len = ft_strlen(original_tokens[original_index]);
-				if (!(len >= 2 && ((original_tokens[original_index][0] == '"' && original_tokens[original_index][len-1] == '"') ||
-								   (original_tokens[original_index][0] == '\'' && original_tokens[original_index][len-1] == '\''))))
-				{
-					// Gerçek redirection işlendi
-					original_index += 2; // Skip redirection operator and filename in original_tokens
-					i++; // handle_redirection increments i to point to filename, we need to skip it
-					continue;
-				}
-			}
-			
-			// Quotes içindeyse normal argüman olarak işle
-			node->args[arg_count] = ft_strdup(tokens[i]);
-			
-			// Eğer orijinal token single quote içindeyse expansion skip et
-			if (original_tokens && original_tokens[original_index])
-			{
-				node->skip_expansion[arg_count] = has_single_quotes(original_tokens[original_index]);
-			}
-			arg_count++;
-			original_index++;
-			i++;
-		}
+		if (is_redirection(tokens[indexes[0]]))
+			process_redirection_token(node, tokens, original_tokens, indexes);
 		else
-		{
-			node->args[arg_count] = ft_strdup(tokens[i]);
-			
-			// Eğer orijinal token single quote içindeyse expansion skip et
-			if (original_tokens && original_tokens[original_index])
-			{
-				node->skip_expansion[arg_count] = has_single_quotes(original_tokens[original_index]);
-			}
-			arg_count++;
-			original_index++;
-			i++;
-		}
+			process_regular_token(node, tokens, original_tokens, indexes);
 	}
-	
-	// Original tokens'ı temizle
 	if (original_tokens)
 		free_tokens(original_tokens);
-	
 	return (1);
 }
 
@@ -337,11 +311,10 @@ static char	**split_redirects_for_command(char *command)
 	return (result);
 }
 
-
 static char	*space_strjoin_function(char **arr)
 {
-	int		i = 0;
-	char	*result = NULL;
+	int		i;
+	char	*result;
 	char	*tmp;
 
 	if (!arr || !arr[0])

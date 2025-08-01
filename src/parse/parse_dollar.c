@@ -50,15 +50,12 @@ static char	*expand_var(char *str, int *i, t_envp *env_list)
 	int		j;
 
 	start = ++(*i);
-	
-	// $? özel durumu
 	if (str[*i] == '?')
 	{
 		(*i)++;
 		value = get_env_value("?", env_list);
 		return (my_strdup(value));
 	}
-	
 	while (str[*i] && is_var_char(str[*i]))
 		(*i)++;
 	if (start == *i)
@@ -77,11 +74,6 @@ static char	*expand_var(char *str, int *i, t_envp *env_list)
 		return (my_strdup(""));
 	}
 	result = my_strdup(value);
-	if (!result)
-	{
-		free(var_name);
-		return (NULL);
-	}
 	free(var_name);
 	return (result);
 }
@@ -94,7 +86,8 @@ static void	handle_quotes(char c, int *in_single, int *in_double)
 		*in_double = !*in_double;
 }
 
-static void	append_expansion(char **result, int *j, char *str, int *i, t_envp *env_list, int buffer_size)
+static void	append_expansion(char **result, int *j, char *str, int *i, 
+		t_envp *env_list, int buffer_size)
 {
 	char	*temp;
 	int		len;
@@ -103,24 +96,25 @@ static void	append_expansion(char **result, int *j, char *str, int *i, t_envp *e
 	temp = expand_var(str, i, env_list);
 	if (temp)
 	{
-		len = ft_strlen(temp);		
+		len = ft_strlen(temp);
 		k = 0;
-		
-		// Güvenli kopyalama - buffer overflow'u önle
 		while (k < len && *j < buffer_size - 1)
 		{
 			(*result)[*j] = temp[k];
 			(*j)++;
 			k++;
 		}
-		
 		free(temp);
 	}
 }
+
 static char	*process_string(char *str, t_envp *env_list)
 {
 	char	*result;
-	int		i, j, in_single, in_double;
+	int		i;
+	int		j;
+	int		in_single;
+	int		in_double;
 
 	if (!str)
 		return (NULL);
@@ -171,10 +165,26 @@ static int	has_expansion(char *str)
 	return (0);
 }
 
+static void	process_argument(t_command *iter, int i)
+{
+	char	*processed;
+
+	if (!iter->args[i])
+		return ;
+	if (iter->skip_expansion && iter->skip_expansion[i])
+		return ;
+	iter->dollar = has_expansion(iter->args[i]);
+	processed = process_string(iter->args[i], iter->env_list);
+	if (processed)
+	{
+		free(iter->args[i]);
+		iter->args[i] = processed;
+	}
+}
+
 void	parse_dollar(t_command *head)
 {
 	t_command	*iter;
-	char		*processed;
 	int			i;
 
 	iter = head;
@@ -183,31 +193,9 @@ void	parse_dollar(t_command *head)
 		i = 0;
 		while (iter->args && iter->args[i])
 		{
-			if (!iter->args[i])
-			{
-				i++;
-				continue;
-			}
-			
-			// Skip expansion eğer single quote içindeyse
-			if (iter->skip_expansion && iter->skip_expansion[i])
-			{
-				i++;
-				continue;
-			}
-			
-			iter->dollar = has_expansion(iter->args[i]);
-			processed = process_string(iter->args[i], iter->env_list);
-			
-			// Her zaman processed buffer'ı assign et
-			if (processed)
-			{
-				free(iter->args[i]);
-				iter->args[i] = processed;
-			}
+			process_argument(iter, i);
 			i++;
 		}
-		
 		iter = iter->next;
 	}
 }

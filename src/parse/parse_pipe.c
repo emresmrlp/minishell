@@ -36,16 +36,12 @@ static int	pipe_count(const char *line)
 	return (count);
 }
 
-int	validate_pipes(const char *line)
+static int	check_pipe_at_edges(const char *line)
 {
 	int	i;
 	int	len;
-	int	in_single;
-	int	in_double;
 
 	i = 0;
-	in_single = 0;
-	in_double = 0;
 	while (line[i] == ' ')
 		i++;
 	if (line[i] == '|')
@@ -55,8 +51,18 @@ int	validate_pipes(const char *line)
 		len--;
 	if (len >= 0 && line[len] == '|')
 		return (0);
-	
+	return (1);
+}
+
+static int	check_double_pipes(const char *line)
+{
+	int	i;
+	int	in_single;
+	int	in_double;
+
 	i = 0;
+	in_single = 0;
+	in_double = 0;
 	while (line[i])
 	{
 		if (line[i] == '\'' && !in_double)
@@ -75,12 +81,37 @@ int	validate_pipes(const char *line)
 	return (1);
 }
 
+int	validate_pipes(const char *line)
+{
+	if (!check_pipe_at_edges(line))
+		return (0);
+	return (check_double_pipes(line));
+}
+
+static void	handle_quotes_in_pipe(const char c, int *in_single, int *in_double)
+{
+	if (c == '\'' && !(*in_double))
+		*in_single = !(*in_single);
+	else if (c == '"' && !(*in_single))
+		*in_double = !(*in_double);
+}
+
+static void	add_pipe_segment(const char *line, char **shell, int *vars)
+{
+	char	*temp;
+
+	temp = ft_substr(line, vars[1], vars[2] - vars[1]);
+	shell[vars[0]++] = ft_strtrim(temp, " ");
+	free(temp);
+	vars[1] = vars[2] + 1;
+}
+
 static char	**pipe_split(const char *line, int start, int k, int i)
 {
 	char	**shell;
 	char	*temp;
 	int		line_len;
-	int		in_single, in_double;
+	int		vars[5];
 
 	if (!validate_pipes(line))
 		return (NULL);
@@ -88,34 +119,41 @@ static char	**pipe_split(const char *line, int start, int k, int i)
 	shell = malloc(sizeof(char *) * (pipe_count(line) + 2));
 	if (!shell)
 		return (NULL);
-	in_single = 0;
-	in_double = 0;
-	while (k < line_len && line[k])
+	vars[0] = i;
+	vars[1] = start;
+	vars[2] = k;
+	vars[3] = 0;
+	vars[4] = 0;
+	while (vars[2] < line_len && line[vars[2]])
 	{
-		if (line[k] == '\'' && !in_double)
-			in_single = !in_single;
-		else if (line[k] == '"' && !in_single)
-			in_double = !in_double;
-		else if (line[k] == '|' && !in_single && !in_double)
-		{
-			temp = ft_substr(line, start, k - start);
-			shell[i++] = ft_strtrim(temp, " ");
-			free(temp);
-			start = k + 1;
-		}
-		k++;
+		handle_quotes_in_pipe(line[vars[2]], &vars[3], &vars[4]);
+		if (line[vars[2]] == '|' && !vars[3] && !vars[4])
+			add_pipe_segment(line, shell, vars);
+		vars[2]++;
 	}
-	temp = ft_substr(line, start, k - start);
-	shell[i++] = ft_strtrim(temp, " ");
+	temp = ft_substr(line, vars[1], vars[2] - vars[1]);
+	shell[vars[0]++] = ft_strtrim(temp, " ");
 	free(temp);
-	shell[i] = NULL;
+	shell[vars[0]] = NULL;
 	return (shell);
+}
+
+static void	free_shell_array(char **shell)
+{
+	int	i;
+
+	i = 0;
+	while (shell[i])
+	{
+		free(shell[i]);
+		i++;
+	}
+	free(shell);
 }
 
 void	parse_command(char *command_line, t_envp *env_list)
 {
 	char		**shell;
-	int			i;
 	t_command	*head;
 
 	shell = pipe_split(command_line, 0, 0, 0);
@@ -125,16 +163,7 @@ void	parse_command(char *command_line, t_envp *env_list)
 		return ;
 	}
 	head = add_node(shell, env_list);
-	
-	i = 0;
-	while (shell[i])
-	{
-		free(shell[i]);
-		i++;
-	}
-	free(shell);
-	
-	// Execute and cleanup the command structure
+	free_shell_array(shell);
 	if (head)
 	{
 		cleanup_exit_status_str();
