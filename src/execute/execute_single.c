@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/30 18:58:08 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/07/31 22:30:37 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,14 @@ void	execute_single(t_command *command)
 		return ;
 	}
 
-	// Boş argument'ları skip et ve ilk valid command'ı bul
+	// Boş argument'ları free et ve skip et
 	i = 0;
 	while (command->args[i] && command->args[i][0] == '\0')
+	{
+		free(command->args[i]);
+		command->args[i] = NULL;
 		i++;
+	}
 	
 	// Hiç valid command yok
 	if (!command->args[i])
@@ -54,19 +58,34 @@ void	execute_single(t_command *command)
 
 	if (is_builtin(command->args[0]))
 	{
-		// Exit komutu için özel durum - fork kullanma
+		// Shell state'ini değiştiren komutlar - fork kullanma
 		if (ft_strcmp(command->args[0], "exit") == 0)
 		{
 			g_exit_status = builtin_exit(command, command->args);
 			return ;
 		}
+		if (ft_strcmp(command->args[0], "cd") == 0)
+		{
+			g_exit_status = builtin_cd(command);
+			return ;
+		}
+		if (ft_strcmp(command->args[0], "export") == 0)
+		{
+			g_exit_status = builtin_export(command, command->args);
+			return ;
+		}
+		if (ft_strcmp(command->args[0], "unset") == 0)
+		{
+			builtin_unset(command, command->args);
+			g_exit_status = SUCCESS;
+			return ;
+		}
 		
-		// Diğer builtin komutlar için
-		// Orijinal file descriptorleri kaydet
+		// Sadece output üreten builtin komutlar için fork kullan
+		// (pwd, echo, env - redirection desteği için)
 		saved_stdin = dup(STDIN_FILENO);
 		saved_stdout = dup(STDOUT_FILENO);
 		
-		// Redirection error handling için fork kullan
 		pid = fork();
 		if (pid == 0)
 		{

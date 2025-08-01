@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/30 17:56:05 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 12:08:03 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGPIPE, SIG_DFL);  // SIGPIPE'ı default haline getir
+	
+	// NULL check'ler
+	if (!command || !command->args || !command->args[0])
+		exit(127);
+	
 	if (prev_fd != -1)
 	{
 		dup2(prev_fd, STDIN_FILENO);

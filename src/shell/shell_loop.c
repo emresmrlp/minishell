@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/30 16:31:16 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 13:56:35 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	shell_loop(t_envp *env_list)
 		}
 		free(command_line);
 	}
+	cleanup_exit_status_str();
 	while (env_list)
 	{
 		temp = env_list;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 23:34:59 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 20:01:21 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/01 13:56:32 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,6 @@ void	execute(t_command *command)
 		execute_single(command);
 	else
 		execute_multiple(command);
+	// Her command execute'den sonra exit status string'ini temizle
+	cleanup_exit_status_str();
 }

@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 15:52:41 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:43:38 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static void	print_export(t_command *command)
 			printf("declare -x %s\n", env_array[i]);
 		i++;
 	}
+	free_array(env_array);
 }
 
 static void	export_add(t_command *iter, int arg_index)
@@ -47,6 +48,7 @@ static void	export_add(t_command *iter, int arg_index)
 	if (!new_node)
 		return ;
 	new_node->value = NULL;
+	new_node->is_temporary = 1;  // Export ile eklenen variable'lar temporary
 	if (index)
 	{
 		new_node->key = ft_substr(iter->args[arg_index], 0,
@@ -57,7 +59,10 @@ static void	export_add(t_command *iter, int arg_index)
 			new_node->value = ft_strdup(index + 1);
 	}
 	else
+	{
+
 		new_node->key = ft_strdup(iter->args[arg_index]);
+	}
 	new_node->next = NULL;
 	temp->next = new_node;
 }

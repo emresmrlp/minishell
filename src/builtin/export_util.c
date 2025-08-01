@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 18:02:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 15:36:32 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 12:08:00 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,9 @@ char	**env_list_to_array(t_envp *env_list, int size)
 	{
 		if (temp->value)
 		{
-			env_array[i] = ft_strjoin(temp->key, "=");
-			env_array[i] = ft_strjoin(env_array[i], temp->value);
+			char *temp_str = ft_strjoin(temp->key, "=");
+			env_array[i] = ft_strjoin(temp_str, temp->value);
+			free(temp_str);
 		}
 		else
 			env_array[i] = ft_strdup(temp->key);

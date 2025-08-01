@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/30 18:28:04 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/01 12:28:56 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,44 @@
 
 // Forward declarations
 static void	free_tokens(char **tokens);
+
+// Basit array helper - dosya eklemek için
+static void add_to_fd_array(char ***fd_array, char *filename)
+{
+	int count = 0;
+	char **new_array;
+	int i;
+	
+	// Mevcut dosya sayısını say
+	if (*fd_array)
+	{
+		while ((*fd_array)[count])
+			count++;
+	}
+	
+	// Yeni array oluştur
+	new_array = malloc(sizeof(char *) * (count + 2));
+	if (!new_array)
+		return;
+	
+	// Eski dosyaları kopyala
+	i = 0;
+	while (i < count)
+	{
+		new_array[i] = (*fd_array)[i];
+		i++;
+	}
+	
+	// Yeni dosyayı ekle
+	new_array[count] = ft_strdup(filename);
+	new_array[count + 1] = NULL;
+	
+	// Eski array'i serbest bırak
+	if (*fd_array)
+		free(*fd_array);
+	
+	*fd_array = new_array;
+}
 
 // Helper fonksiyonlar
 static int has_single_quotes(char *str)
@@ -96,20 +134,21 @@ static char **split_with_quotes_preserved(char *str, char delimiter)
 }
 
 static t_command *create_node(void)
-{   
+{
 	t_command *node;
 	
 	node = (t_command *)malloc(sizeof(t_command));
 	if (!node)
 		return NULL;
-	node->append_fd = NULL;
 	node->args = NULL;
-	node->heredoc_fd = NULL;
-	node->input_fd = NULL;
-	node->output_fd = NULL;
+	node->input_fds = NULL;
+	node->output_fds = NULL;
+	node->append_fds = NULL;
+	node->heredoc_fds = NULL;
+	node->env_list = NULL;
 	node->next = NULL;
 	node->dollar = 0;
-	node->skip_expansion = NULL; // Yeni eklenen field
+	node->skip_expansion = NULL;
 	return node;
 }
 
@@ -117,39 +156,23 @@ static void	handle_redirection(t_command *node, char **tokens, int *j)
 {
 	if (ft_strcmp(tokens[*j], "<<") == 0)
 	{
-		if (node->heredoc_fd)
-			free(node->heredoc_fd);
-		node->heredoc_fd = ft_strdup(tokens[++(*j)]);
+		// Heredoc'u listeye ekle
+		add_to_fd_array(&node->heredoc_fds, tokens[++(*j)]);
 	}
 	else if (ft_strcmp(tokens[*j], ">>") == 0)
 	{
-		// Clear any previous output redirection (only last one counts)
-		if (node->output_fd)
-		{
-			free(node->output_fd);
-			node->output_fd = NULL;
-		}
-		if (node->append_fd)
-			free(node->append_fd);
-		node->append_fd = ft_strdup(tokens[++(*j)]);
+		// Append dosyasını listeye ekle
+		add_to_fd_array(&node->append_fds, tokens[++(*j)]);
 	}
 	else if (ft_strcmp(tokens[*j], "<") == 0)
 	{
-		if (node->input_fd)
-			free(node->input_fd);
-		node->input_fd = ft_strdup(tokens[++(*j)]);
+		// Input dosyasını listeye ekle
+		add_to_fd_array(&node->input_fds, tokens[++(*j)]);
 	}
 	else if (ft_strcmp(tokens[*j], ">") == 0)
 	{
-		// Clear any previous output redirection (only last one counts)
-		if (node->append_fd)
-		{
-			free(node->append_fd);
-			node->append_fd = NULL;
-		}
-		if (node->output_fd)
-			free(node->output_fd);
-		node->output_fd = ft_strdup(tokens[++(*j)]);
+		// Output dosyasını listeye ekle
+		add_to_fd_array(&node->output_fds, tokens[++(*j)]);
 	}
 }
 
@@ -163,8 +186,8 @@ static int	validate_redirection(char **tokens, int index)
 {
 	if (!tokens[index + 1])
 	{
-		error_handler("minishell: syntax error near unexpected token\n");
-		return (0);
+		// Allow incomplete redirection - just skip it
+		return (1);
 	}
 	if (is_redirection(tokens[index + 1]))
 	{
@@ -302,7 +325,7 @@ static char	*space_strjoin_function(char **arr)
 	return (result);
 }
 
-void	add_node(char **shell, t_envp *env_list)
+t_command	*add_node(char **shell, t_envp *env_list)
 {
 	t_command	*head = NULL;
 	t_command	*curr = NULL;
@@ -320,7 +343,10 @@ void	add_node(char **shell, t_envp *env_list)
 		tokens = ft_split(joined, ' ');
 		node = create_node();
 		if (!node)
-			return ;
+		{
+			memory_free(head);
+			return (NULL);
+		}
 		node->env_list = env_list;
 
 		if (!parse_argv(node, tokens, joined))
@@ -329,7 +355,8 @@ void	add_node(char **shell, t_envp *env_list)
 			free_tokens(tokens);
 			free_tokens(redirect_split_result);
 			free(node);
-			return ;
+			memory_free(head); // Önceki node'ları da temizle
+			return (NULL);
 		}
 		if (!head)
 			head = node;
@@ -344,4 +371,5 @@ void	add_node(char **shell, t_envp *env_list)
 	}
 	if (head)
 		parse_dollar(head);
+	return (head);
 }

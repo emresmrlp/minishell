@@ -6,11 +6,13 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:15:24 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/30 16:28:44 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 11:12:50 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+static int	has_expansion(char *str);
 
 static int	is_var_char(char c)
 {
@@ -118,83 +120,19 @@ static void	append_expansion(char **result, int *j, char *str, int *i, t_envp *e
 static char	*process_string(char *str, t_envp *env_list)
 {
 	char	*result;
-	int		i, j, in_single, in_double, buffer_size;
-	int		estimated_expansion_size, idx;
-	int		var_start, var_end, k;
-	char	*var_name, *var_value;
+	int		i, j, in_single, in_double;
 
 	if (!str)
 		return (NULL);
-	
-	// Dinamik buffer boyutu hesaplama - değişken genişleme boyutunu tahmin et
-	estimated_expansion_size = 0;
-	idx = 0;
-	
-	// String içindeki her $ değişkeni için tahmini boyut hesapla
-	while (str[idx])
-	{
-		if (str[idx] == '$' && str[idx + 1] && (is_var_char(str[idx + 1]) || str[idx + 1] == '?'))
-		{
-			if (str[idx + 1] == '?')
-			{
-				estimated_expansion_size += 3; // Max 3 digit exit code
-				idx += 2;
-			}
-			else
-			{
-				// Değişken ismini bul
-				var_start = idx + 1;
-				var_end = var_start;
-				while (str[var_end] && is_var_char(str[var_end]))
-					var_end++;
-				
-				// Değişken ismini çıkar
-				var_name = malloc(var_end - var_start + 1);
-				if (var_name)
-				{
-					k = 0;
-					while (var_start < var_end)
-						var_name[k++] = str[var_start++];
-					var_name[k] = '\0';
-					
-					// Değişkenin değerini al ve boyutunu hesapla
-					var_value = get_env_value(var_name, env_list);
-					if (var_value && ft_strlen(var_value) > 0)
-						estimated_expansion_size += ft_strlen(var_value);
-					else
-						estimated_expansion_size += 1; // Boş değişken için
-					
-					free(var_name);
-				}
-				idx = var_end;
-			}
-		}
-		else
-		{
-			estimated_expansion_size++; // Normal karakter
-			idx++;
-		}
-	}
-	
-	// Buffer boyutunu hesapla
-	buffer_size = estimated_expansion_size + 200; // Güvenlik marjı
-	if (buffer_size < 500)
-		buffer_size = 500;  // Minimum 500 byte
-	if (buffer_size > 50000)
-		buffer_size = 50000; // Maksimum 50KB
-	result = malloc(buffer_size);
+	result = malloc(500);
+	if (!result)
+		return (NULL);
 	i = 0;
 	j = 0;
 	in_single = 0;
 	in_double = 0;
-	if (!result)
-		return (NULL);
 	while (str[i])
 	{
-		// Buffer overflow kontrolü - güvenli marj bırak
-		if (j >= buffer_size - 10)
-			break;
-		
 		if ((str[i] == '\'' || str[i] == '"'))
 		{
 			handle_quotes(str[i], &in_single, &in_double);
@@ -202,7 +140,7 @@ static char	*process_string(char *str, t_envp *env_list)
 		}
 		else if (str[i] == '$' && !in_single
 			&& str[i + 1] && (is_var_char(str[i + 1]) || str[i + 1] == '?'))
-			append_expansion(&result, &j, str, &i, env_list, buffer_size);
+			append_expansion(&result, &j, str, &i, env_list, 500);
 		else
 			result[j++] = str[i++];
 	}
@@ -260,6 +198,8 @@ void	parse_dollar(t_command *head)
 			
 			iter->dollar = has_expansion(iter->args[i]);
 			processed = process_string(iter->args[i], iter->env_list);
+			
+			// Her zaman processed buffer'ı assign et
 			if (processed)
 			{
 				free(iter->args[i]);
@@ -267,8 +207,7 @@ void	parse_dollar(t_command *head)
 			}
 			i++;
 		}
+		
 		iter = iter->next;
 	}
-	execute(head);
-	memory_free(head);
 }

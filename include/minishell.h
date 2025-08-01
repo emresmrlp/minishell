@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/30 18:05:17 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:43:33 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,17 @@ typedef struct s_envp
 {
 	char			*key;
 	char			*value;
+	int				is_temporary;
 	struct s_envp	*next;
 }	t_envp;
 
 typedef struct s_command
 {
 	char				**args;
-	char				*input_fd;
-	char				*output_fd;
-	char				*append_fd;
-	char				*heredoc_fd;
+	char				**input_fds;
+	char				**output_fds;
+	char				**append_fds;
+	char				**heredoc_fds;
 	t_envp				*env_list;
 	int					dollar;
 	int					*skip_expansion;
@@ -73,7 +74,7 @@ void	shell_loop(t_envp *env_list);
 void	split_built_in(t_command *head);
 void	parse_command(char *command_line, t_envp *env_list);
 void	parse_dollar(t_command *head);
-void	add_node(char **shell, t_envp *env_list);
+t_command	*add_node(char **shell, t_envp *env_list);
 void	print_command_list(t_command *cmd);
 int		ft_strcmp(const char *s1, const char *s2);
 char	**redirect_split(char **shell);
@@ -89,11 +90,15 @@ void	memory_free(t_command *command);
 char	**sort_array(char **env_array, int size);
 char	**env_list_to_array(t_envp *env_list, int size);
 char	*find_path(char *arg, t_command *command);
+void	free_array(char **array);
 int		is_valid_key(char *arg);
+void	cleanup_empty_env_vars(t_envp **env_list);
 int		get_env_size(t_envp *env_list);
 char	*get_env_value(char *var_name, t_envp *env_list);
+void	cleanup_exit_status_str(void);
 int		error_handler(char *message);
 int		shell_exit_with_error(char *message, t_command *command);
 int		shell_exit(t_command *command, int exit_code);
+void	free_env_list(t_envp *env_list);
 
 #endif

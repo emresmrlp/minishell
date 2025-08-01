@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_pipe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/30 18:14:08 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:43:28 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,9 @@ static char	**pipe_split(const char *line, int start, int k, int i)
 
 void	parse_command(char *command_line, t_envp *env_list)
 {
-	char	**shell;
-	int		i;
+	char		**shell;
+	int			i;
+	t_command	*head;
 
 	shell = pipe_split(command_line, 0, 0, 0);
 	if (!shell)
@@ -123,7 +124,7 @@ void	parse_command(char *command_line, t_envp *env_list)
 		error_handler("minishell: syntax error near unexpected token\n");
 		return ;
 	}
-	add_node(shell, env_list);
+	head = add_node(shell, env_list);
 	
 	i = 0;
 	while (shell[i])
@@ -132,4 +133,12 @@ void	parse_command(char *command_line, t_envp *env_list)
 		i++;
 	}
 	free(shell);
+	
+	// Execute and cleanup the command structure
+	if (head)
+	{
+		cleanup_exit_status_str();
+		execute(head);
+		memory_free(head);
+	}
 }
