@@ -19,7 +19,9 @@ static int	redirect_input_simple(char *filename)
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 	{
-		perror("minishell");
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(filename, STDERR_FILENO);
+		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
 		return (1);
 	}
 	if (dup2(fd, STDIN_FILENO) < 0)
@@ -167,7 +169,7 @@ void	execute_redirection(t_command *command)
 {
 	int	heredoc_fd;
 	int	i;
-	char *last_input, *last_output, *last_append;
+	char *last_output, *last_append;
 
 	// Heredoc'ları sırayla işle (tüm heredoc'ları consume et, son olanını kullan)
 	if (command->heredoc_fds)
@@ -192,10 +194,17 @@ void	execute_redirection(t_command *command)
 	}
 	else
 	{
-		// Son input dosyasını kullan
-		last_input = get_last_element(command->input_fds);
-		if (last_input && redirect_input_simple(last_input) != 0)
-			exit(1);
+		// Tüm input dosyalarını sırayla kontrol et ve açmaya çalış
+		if (command->input_fds)
+		{
+			i = 0;
+			while (command->input_fds[i])
+			{
+				if (redirect_input_simple(command->input_fds[i]) != 0)
+					exit(1);
+				i++;
+			}
+		}
 	}
 	
 	// Önceki dosyaları boş oluştur

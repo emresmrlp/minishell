@@ -1,4 +1,22 @@
-/* ************************************************************************** */
+/* ***********static int	is_in_quotes(char *str, int pos)
+{
+	int	i;
+	int	in_single;
+	int	in_double;
+
+	i = 0;
+	in_single = 0;
+	in_double = 0;
+	while (i < pos)
+	{
+		if (str[i] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (str[i] == '"' && !in_single)
+			in_double = !in_double;
+		i++;
+	}
+	return (in_single || in_double);
+}******************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   find_redirect.c                                    :+:      :+:    :+:   */
@@ -6,7 +24,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:29:50 by makpolat          #+#    #+#             */
-/*   Updated: 2025/07/30 17:21:44 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 18:02:34 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

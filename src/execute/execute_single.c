@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/31 22:30:37 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 17:44:21 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,32 +28,43 @@ void	execute_single(t_command *command)
 		return ;
 	}
 
-	// Boş argument'ları free et ve skip et
+	// Boş argument'ları free et ve compact et
 	i = 0;
-	while (command->args[i] && command->args[i][0] == '\0')
+	int write_idx = 0;
+	int total_args = 0;
+	
+	// Count total args first
+	while (command->args[total_args])
+		total_args++;
+	
+	// First pass: free empty strings
+	for (i = 0; i < total_args; i++)
 	{
-		free(command->args[i]);
-		command->args[i] = NULL;
-		i++;
+		if (command->args[i] && command->args[i][0] == '\0')
+		{
+			free(command->args[i]);
+			command->args[i] = NULL;
+		}
 	}
 	
+	// Second pass: compact array (remove NULLs)
+	write_idx = 0;
+	for (i = 0; i < total_args; i++)
+	{
+		if (command->args[i] != NULL)
+		{
+			if (i != write_idx)
+				command->args[write_idx] = command->args[i];
+			write_idx++;
+		}
+	}
+	command->args[write_idx] = NULL;  // Terminate compacted array
+	
 	// Hiç valid command yok
-	if (!command->args[i])
+	if (!command->args[0])
 	{
 		g_exit_status = 0;
 		return ;
-	}
-	
-	// Args array'ini shift et
-	if (i > 0)
-	{
-		int j = 0;
-		while (command->args[i + j])
-		{
-			command->args[j] = command->args[i + j];
-			j++;
-		}
-		command->args[j] = NULL;
 	}
 
 	if (is_builtin(command->args[0]))

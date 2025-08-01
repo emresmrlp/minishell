@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/01 12:28:56 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/01 18:13:42 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,8 +152,20 @@ static t_command *create_node(void)
 	return node;
 }
 
-static void	handle_redirection(t_command *node, char **tokens, int *j)
+static void	handle_redirection(t_command *node, char **tokens, int *j, char **original_tokens, int original_index)
 {
+	// Orijinal token'da quotes varsa redirection olarak algılama
+	if (original_tokens && original_tokens[original_index])
+	{
+		int len = ft_strlen(original_tokens[original_index]);
+		if (len >= 2 && ((original_tokens[original_index][0] == '"' && original_tokens[original_index][len-1] == '"') ||
+						 (original_tokens[original_index][0] == '\'' && original_tokens[original_index][len-1] == '\'')))
+		{
+			// Quotes içindeyse normal argüman olarak işle
+			return;
+		}
+	}
+	
 	if (ft_strcmp(tokens[*j], "<<") == 0)
 	{
 		// Heredoc'u listeye ekle
@@ -248,9 +260,33 @@ static int	parse_argv(t_command *node, char **tokens, char *original_string)
 	{
 		if (is_redirection(tokens[i]))
 		{
-			handle_redirection(node, tokens, &i);
-			original_index += 2; // Skip redirection operator and filename in original_tokens
-			i++; // handle_redirection increments i to point to filename, we need to skip it
+			handle_redirection(node, tokens, &i, original_tokens, original_index);
+			
+			// Eğer redirection işlendiyse (quotes yoksa) index'leri ayarla
+			if (original_tokens && original_tokens[original_index])
+			{
+				int len = ft_strlen(original_tokens[original_index]);
+				if (!(len >= 2 && ((original_tokens[original_index][0] == '"' && original_tokens[original_index][len-1] == '"') ||
+								   (original_tokens[original_index][0] == '\'' && original_tokens[original_index][len-1] == '\''))))
+				{
+					// Gerçek redirection işlendi
+					original_index += 2; // Skip redirection operator and filename in original_tokens
+					i++; // handle_redirection increments i to point to filename, we need to skip it
+					continue;
+				}
+			}
+			
+			// Quotes içindeyse normal argüman olarak işle
+			node->args[arg_count] = ft_strdup(tokens[i]);
+			
+			// Eğer orijinal token single quote içindeyse expansion skip et
+			if (original_tokens && original_tokens[original_index])
+			{
+				node->skip_expansion[arg_count] = has_single_quotes(original_tokens[original_index]);
+			}
+			arg_count++;
+			original_index++;
+			i++;
 		}
 		else
 		{
