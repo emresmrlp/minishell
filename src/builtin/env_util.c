@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 14:43:35 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:50:05 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_envp	*env_head(char **envp)
 	{
 		temp->key = ft_substr(envp[i], 0, ft_strchr(envp[i], '=') - envp[i]);
 		temp->value = ft_strdup(ft_strchr(envp[i], '=') + 1);
-		temp->is_temporary = 0;  // Başlangıç environment'ı kalıcı
+		temp->is_temporary = 0;
 		if (envp[i + 1])
 		{
 			temp->next = (t_envp *)malloc(sizeof(t_envp));
@@ -54,7 +54,7 @@ char	*find_env_value(t_command *iter, char *key)
 			if (temp->value)
 				return (temp->value);
 			else
-				return ("");  // Boş string literal döndür, malloc gerektirmez
+				return ("");
 		}
 		temp = temp->next;
 	}
@@ -80,7 +80,7 @@ void	update_env(t_command *iter, char *key, char *new_value)
 	new_node = (t_envp *)malloc(sizeof(t_envp));
 	new_node->key = ft_strdup(key);
 	new_node->value = ft_strdup(new_value);
-	new_node->is_temporary = 1;  // Yeni eklenen variable'lar temporary
+	new_node->is_temporary = 1;
 	new_node->next = iter->env_list;
 	iter->env_list = new_node;
 }
@@ -110,12 +110,11 @@ void	remove_env(t_command *command, char *key)
 	}
 }
 
-char	*get_env_value(char *var_name, t_envp *env_list)
+char	*get_env_value(t_command *command, char *var_name, t_envp *env_list)
 {
-	t_envp	*temp;
+	t_envp		*temp;
 	static char	*exit_status_str = NULL;
 
-	// Cleanup çağrısı
 	if (var_name && ft_strcmp(var_name, "__CLEANUP__") == 0)
 	{
 		if (exit_status_str)
@@ -130,7 +129,7 @@ char	*get_env_value(char *var_name, t_envp *env_list)
 	{
 		if (exit_status_str)
 			free(exit_status_str);
-		exit_status_str = ft_itoa(g_exit_status);
+		exit_status_str = ft_itoa(command->exit_status);
 		return (exit_status_str);
 	}
 	temp = env_list;
@@ -141,11 +140,4 @@ char	*get_env_value(char *var_name, t_envp *env_list)
 		temp = temp->next;
 	}
 	return ("");
-}
-
-void	cleanup_exit_status_str(void)
-{
-	// get_env_value fonksiyonunu özel parametre ile çağırarak cleanup yapıyoruz
-	// Her çağrıda cleanup yapılabilir, tekrar çağırma koruması olmayacak
-	get_env_value("__CLEANUP__", NULL);
 }

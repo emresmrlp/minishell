@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_util.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 18:02:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 12:08:00 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:00:01 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ int	is_valid_key(char *arg)
 char	**env_list_to_array(t_envp *env_list, int size)
 {
 	t_envp	*temp;
+	char 	*temp_str;
 	char	**env_array;
 	int		i;
 
@@ -79,7 +80,7 @@ char	**env_list_to_array(t_envp *env_list, int size)
 	{
 		if (temp->value)
 		{
-			char *temp_str = ft_strjoin(temp->key, "=");
+			temp_str = ft_strjoin(temp->key, "=");
 			env_array[i] = ft_strjoin(temp_str, temp->value);
 			free(temp_str);
 		}

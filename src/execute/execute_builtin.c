@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_builtin.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 20:40:47 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/01 12:08:03 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:51:32 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	execute_builtin(t_command *command)
 		result = FAILURE;
 		
 	// Tüm builtin komutlardan sonra static memory cleanup
-	cleanup_exit_status_str();
+	cleanup_exit_status_str(command);
 	
 	// Value'su olmayan environment variable'ları temizle
 	cleanup_empty_env_vars(&command->env_list);

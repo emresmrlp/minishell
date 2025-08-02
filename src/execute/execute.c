@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 23:34:59 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 13:56:32 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:51:36 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,11 @@ void	execute_command(t_command *command)
 	char	*path;
 	char	**env_list_array;
 
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	path = get_valid_path(command);
 	if (!path)
-		exit(g_exit_status);  // get_valid_path zaten exit code'u set etti
+		exit(command->exit_status);
 	env_list_array = env_list_to_array(command->env_list,
 			get_env_size(command->env_list));
 	if (execve(path, command->args, env_list_array) == -1)
@@ -38,5 +40,5 @@ void	execute(t_command *command)
 	else
 		execute_multiple(command);
 	// Her command execute'den sonra exit status string'ini temizle
-	cleanup_exit_status_str();
+	cleanup_exit_status_str(command);
 }

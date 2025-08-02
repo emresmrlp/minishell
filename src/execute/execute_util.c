@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:36:28 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 20:27:23 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:49:04 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ char	*get_valid_path(t_command *command)
 				if (S_ISDIR(file_stat.st_mode))
 				{
 					error_handler("minishell: Is a directory\n");
-					g_exit_status = 126;
+					command->exit_status = 126;
 					return (NULL);
 				}
 			}
@@ -98,21 +98,21 @@ char	*get_valid_path(t_command *command)
 			else
 			{
 				error_handler("minishell: Permission denied\n");
-				g_exit_status = 126;
+				command->exit_status = 126;
 				return (NULL);
 			}
 		}
 		else
 		{
 			error_handler("minishell: No such file or directory\n");
-			g_exit_status = 127;
+			command->exit_status = 127;
 			return (NULL);
 		}
 	}
 	if (!path)
 	{
 		error_handler("minishell: command not found\n");
-		g_exit_status = 127;
+		command->exit_status = 127;
 		return (NULL);
 	}
 	return (path);

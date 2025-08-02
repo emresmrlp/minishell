@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_multiple.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 15:44:07 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:49:32 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,12 +100,14 @@ void	execute_multiple(t_command *command)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	if (WIFEXITED(status))
-		g_exit_status = WEXITSTATUS(status);
+		command->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
-		g_exit_status = 128 + WTERMSIG(status);
+		command->exit_status = 128 + WTERMSIG(status);
 		if (WTERMSIG(status) == SIGINT)
 			write(STDOUT_FILENO, "\n", 1);
+		else if (WTERMSIG(status) == SIGQUIT)
+			write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 	}
 	/* Then wait for any remaining children */
 	while (wait(NULL) > 0)

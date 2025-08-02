@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_redirection.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:36:38 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 17:08:35 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:49:32 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ void	execute_redirection(t_command *command)
 			heredoc_fd = redirect_heredoc(command->heredoc_fd[i], command->env_list);
 			if (heredoc_fd == -1)
 			{
-				g_exit_status = 130;
+				command->exit_status = 130;
 				return;
 			}
 			// Sadece son heredoc'u stdin'e yönlendir

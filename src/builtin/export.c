@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 14:43:38 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 19:55:27 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	export_add(t_command *iter, int arg_index)
 	if (!new_node)
 		return ;
 	new_node->value = NULL;
-	new_node->is_temporary = 1;  // Export ile eklenen variable'lar temporary
+	new_node->is_temporary = 1;
 	if (index)
 	{
 		new_node->key = ft_substr(iter->args[arg_index], 0,
@@ -60,7 +60,6 @@ static void	export_add(t_command *iter, int arg_index)
 	}
 	else
 	{
-
 		new_node->key = ft_strdup(iter->args[arg_index]);
 	}
 	new_node->next = NULL;
@@ -111,7 +110,7 @@ static int	handle_export(t_command *command, char **args)
 			error_handler("export: not a valid identifier\n");
 			error_found = 1;
 			i++;
-			continue;
+			continue ;
 		}
 		index = ft_strchr(args[i], '=');
 		if (index)
@@ -125,7 +124,7 @@ static int	handle_export(t_command *command, char **args)
 		free(key);
 		i++;
 	}
-	return (error_found ? FAILURE : SUCCESS);
+	return (error_found);
 }
 
 int	builtin_export(t_command *command, char **args)

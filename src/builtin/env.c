@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:26:24 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/27 14:07:07 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:51:27 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,9 @@ int	builtin_env(t_command *command)
 	}
 	print_env(command);
 	return (SUCCESS);
+}
+
+void	cleanup_exit_status_str(t_command *command)
+{
+	get_env_value(command, "__CLEANUP__", NULL);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_redirect_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:23:45 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/02 17:27:09 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 19:59:10 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,11 @@ int	token_count_redirect(char *token, int *j, int *found_redirect)
 	return (token_count);
 }
 
-int	process_token_char(char *token, int *j, int *find_redirect, int *count)
+int	process_token_char(char *token, int *j, int *find, int *count)
 {
 	if ((token[*j] == '>' || token[*j] == '<') && !inside_quote(token, *j))
 	{
-		*count += token_count_redirect(token, j, find_redirect);
+		*count += token_count_redirect(token, j, find);
 		return (1);
 	}
 	(*j)++;

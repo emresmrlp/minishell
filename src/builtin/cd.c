@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 23:51:53 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/31 22:37:11 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:58:43 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static char	*target_directory(t_command *iter, char *current_pwd)
 		target_dir = find_env_value(iter, "HOME");
 		if (!target_dir)
 		{
-			error_handler("cd: HOME not set\n");
+			error_handler(iter, "cd: HOME not set\n");
 			free(current_pwd);
 			return (NULL);
 		}
@@ -31,7 +31,7 @@ static char	*target_directory(t_command *iter, char *current_pwd)
 		target_dir = find_env_value(iter, "OLDPWD");
 		if (!target_dir)
 		{
-			error_handler("cd: OLDPWD not set\n");
+			error_handler(iter, "cd: OLDPWD not set\n");
 			free(current_pwd);
 			return (NULL);
 		}
@@ -41,23 +41,28 @@ static char	*target_directory(t_command *iter, char *current_pwd)
 	return (target_dir);
 }
 
+int	arg_check(t_command *command)
+{
+	int		arg_count;
+
+	arg_count = 0;
+	while (command->args[arg_count])
+		arg_count++;
+	if (arg_count > 2)
+	{
+		error_handler(command, "cd: too many arguments\n");
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
 int	builtin_cd(t_command *iter)
 {
 	char	*current_pwd;
 	char	*target_dir;
 	char	*new_pwd;
-	int		arg_count;
-
-	// Argüman sayısını kontrol et
-	arg_count = 0;
-	while (iter->args[arg_count])
-		arg_count++;
-	if (arg_count > 2)
-	{
-		error_handler("cd: too many arguments\n");
-		return (FAILURE);
-	}
-
+	
+	
 	current_pwd = getcwd(NULL, 0);
 	if (!current_pwd)
 	{

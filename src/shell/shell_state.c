@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   shell_state.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:11:56 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 14:43:36 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:52:34 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	error_handler(char *message)
+int	error_handler(t_command *command, char *message)
 {
 	if (message)
 		write(2, message, ft_strlen(message));
-	g_exit_status = 2;
+	command->exit_status = 2;
 	return (FAILURE);
 }
 
@@ -75,7 +75,7 @@ int	shell_exit_with_error(char *message, t_command *command)
 {
 	if (message)
 		write(2, message, ft_strlen(message));
-	cleanup_exit_status_str();
+	cleanup_exit_status_str(command);
 	memory_free(command);
 	exit(FAILURE);
 	return (FAILURE);
@@ -83,7 +83,7 @@ int	shell_exit_with_error(char *message, t_command *command)
 
 int	shell_exit(t_command *command, int exit_code)
 {
-	cleanup_exit_status_str();
+	cleanup_exit_status_str(command);
 	if (command && command->env_list)
 		free_env_list(command->env_list);
 	memory_free(command);

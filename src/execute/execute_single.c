@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_single.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 15:44:06 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:49:32 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	execute_single(t_command *command)
 	if (!command->args || !command->args[0])
 	{
 		error_handler("minishell: syntax error near unexpected token\n");
-		g_exit_status = 2;
+		command->exit_status = 2;
 		return ;
 	}
 	/* Boş argument'ları free et ve compact et */
@@ -60,7 +60,7 @@ void	execute_single(t_command *command)
 	/* Hiç valid command yok */
 	if (!command->args[0])
 	{
-		g_exit_status = 0;
+		command->exit_status = 0;
 		return ;
 	}
 
@@ -69,23 +69,23 @@ void	execute_single(t_command *command)
 		// Shell state'ini değiştiren komutlar - fork kullanma
 		if (ft_strcmp(command->args[0], "exit") == 0)
 		{
-			g_exit_status = builtin_exit(command, command->args);
+			command->exit_status = builtin_exit(command, command->args);
 			return ;
 		}
 		if (ft_strcmp(command->args[0], "cd") == 0)
 		{
-			g_exit_status = builtin_cd(command);
+			command->exit_status = builtin_cd(command);
 			return ;
 		}
 		if (ft_strcmp(command->args[0], "export") == 0)
 		{
-			g_exit_status = builtin_export(command, command->args);
+			command->exit_status = builtin_export(command, command->args);
 			return ;
 		}
 		if (ft_strcmp(command->args[0], "unset") == 0)
 		{
 			builtin_unset(command, command->args);
-			g_exit_status = SUCCESS;
+			command->exit_status = SUCCESS;
 			return ;
 		}
 		/*
@@ -113,12 +113,14 @@ void	execute_single(t_command *command)
 		signal(SIGINT, sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 		if (WIFEXITED(status))
-			g_exit_status = WEXITSTATUS(status);
+			command->exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 		{
-			g_exit_status = 128 + WTERMSIG(status);
+			command->exit_status = 128 + WTERMSIG(status);
 			if (WTERMSIG(status) == SIGINT)
 				write(STDOUT_FILENO, "\n", 1);
+			else if (WTERMSIG(status) == SIGQUIT)
+				write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 		}
 		/* File descriptorleri eski haline getir */
 		dup2(saved_stdin, STDIN_FILENO);
@@ -145,11 +147,13 @@ void	execute_single(t_command *command)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	if (WIFEXITED(status))
-		g_exit_status = WEXITSTATUS(status);
+		command->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
-		g_exit_status = 128 + WTERMSIG(status);
+		command->exit_status = 128 + WTERMSIG(status);
 		if (WTERMSIG(status) == SIGINT)
 			write(STDOUT_FILENO, "\n", 1);
+		else if (WTERMSIG(status) == SIGQUIT)
+			write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 	}
 }

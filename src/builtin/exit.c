@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 10:32:35 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 15:58:17 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 19:53:02 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,18 +51,18 @@ unsigned long long	ft_safe_atol(char *str)
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		if (result > (ULLONG_MAX - (str[i] - '0')) / 10)
-			return (ULLONG_MAX); // Overflow
+			return (ULLONG_MAX);
 		result = result * 10 + (str[i] - '0');
 		i++;
 	}
 	if (sign == -1)
 	{
 		if (result > (unsigned long long)LLONG_MAX + 1)
-			return (ULLONG_MAX); // Overflow
+			return (ULLONG_MAX);
 		return ((unsigned long long)((long long)result * -1));
 	}
 	if (result > LLONG_MAX)
-		return (ULLONG_MAX); // Overflow
+		return (ULLONG_MAX);
 	return (result);
 }
 
@@ -75,20 +75,15 @@ int	handle_exit_code(char *arg)
 	if (is_numeric(arg) == FAILURE)
 	{
 		error_handler("exit: numeric argument required\n");
-		return (2); // Bash uses 2 for non-numeric
+		return (2);
 	}
-	
 	result = ft_safe_atol(arg);
 	if (result == ULLONG_MAX)
 	{
 		error_handler("exit: numeric argument required\n");
 		return (2);
 	}
-	
-	// Convert to signed for proper modulo calculation
 	exit_code = (long long)result;
-	
-	// Bash-compatible exit code: proper modulo 256 handling
 	return ((int)((exit_code % 256 + 256) % 256));
 }
 
