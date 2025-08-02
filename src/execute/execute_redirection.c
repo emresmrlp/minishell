@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:36:38 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 12:42:13 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:08:35 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,48 +78,85 @@ static void	heredoc_sigint_handler(int signal)
 {
 	(void)signal;
 	write(STDOUT_FILENO, "\n", 1);
-	// Exit the readline call
+	/* Exit the readline call */
 	exit(130);
 }
 
-static int	redirect_heredoc(char *delimiter)
+static char	*expand_heredoc_line(char *line, t_envp *env_list)
+{
+	char	*result;
+	char	*temp;
+	int		i;
+	int		j;
+
+	if (!line || !ft_strchr(line, '$'))
+		return (ft_strdup(line));
+	result = ft_strdup("");
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '$' && line[i + 1] && (ft_isalnum(line[i + 1]) || line[i + 1] == '_'))
+		{
+			j = i + 1;
+			while (line[j] && (ft_isalnum(line[j]) || line[j] == '_'))
+				j++;
+			temp = ft_substr(line, i + 1, j - i - 1);
+			if (temp)
+			{
+				char *env_value = get_env_value(temp, env_list);
+				char *old_result = result;
+				if (env_value)
+					result = ft_strjoin(result, env_value);
+				else
+					result = ft_strjoin(result, "");
+				free(old_result);
+				free(temp);
+			}
+			i = j;
+		}
+		else
+		{
+			temp = ft_substr(line, i, 1);
+			char *old_result = result;
+			result = ft_strjoin(result, temp);
+			free(old_result);
+			free(temp);
+			i++;
+		}
+	}
+	return (result);
+}
+
+static int	redirect_heredoc(char *delimiter, t_envp *env_list)
 {
 	int		heredoc_fd[2];
 	char	*line;
+	char	*expanded_line;
 	void	(*old_sigint)(int);
 	void	(*old_sigquit)(int);
 
 	pipe(heredoc_fd);
-	
-	// Setup signal handlers
 	old_sigint = signal(SIGINT, heredoc_sigint_handler);
 	old_sigquit = signal(SIGQUIT, SIG_IGN);
-	
 	while (1)
 	{
 		line = readline("heredoc> ");
-		
-		// Check for EOF (Ctrl-D)
 		if (!line)
-		{
 			break;
-		}
-		
 		if (ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break;
 		}
-		write(heredoc_fd[1], line, ft_strlen(line));
+		expanded_line = expand_heredoc_line(line, env_list);
+		write(heredoc_fd[1], expanded_line, ft_strlen(expanded_line));
 		write(heredoc_fd[1], "\n", 1);
 		free(line);
+		free(expanded_line);
 	}
 	close(heredoc_fd[1]);
-	
-	// Restore original signal handlers
 	signal(SIGINT, old_sigint);
 	signal(SIGQUIT, old_sigquit);
-	
 	return (heredoc_fd[0]);
 }
 
@@ -172,19 +209,19 @@ void	execute_redirection(t_command *command)
 	char *last_output, *last_append;
 
 	// Heredoc'ları sırayla işle (tüm heredoc'ları consume et, son olanını kullan)
-	if (command->heredoc_fds)
+	if (command->heredoc_fd)
 	{
 		i = 0;
-		while (command->heredoc_fds[i])
+		while (command->heredoc_fd[i])
 		{
-			heredoc_fd = redirect_heredoc(command->heredoc_fds[i]);
+			heredoc_fd = redirect_heredoc(command->heredoc_fd[i], command->env_list);
 			if (heredoc_fd == -1)
 			{
 				g_exit_status = 130;
 				return;
 			}
 			// Sadece son heredoc'u stdin'e yönlendir
-			if (!command->heredoc_fds[i + 1])  // Son heredoc
+			if (!command->heredoc_fd[i + 1])  // Son heredoc
 			{
 				dup2(heredoc_fd, STDIN_FILENO);
 			}
@@ -195,12 +232,12 @@ void	execute_redirection(t_command *command)
 	else
 	{
 		// Tüm input dosyalarını sırayla kontrol et ve açmaya çalış
-		if (command->input_fds)
+		if (command->input_fd)
 		{
 			i = 0;
-			while (command->input_fds[i])
+			while (command->input_fd[i])
 			{
-				if (redirect_input_simple(command->input_fds[i]) != 0)
+				if (redirect_input_simple(command->input_fd[i]) != 0)
 					exit(1);
 				i++;
 			}
@@ -208,12 +245,12 @@ void	execute_redirection(t_command *command)
 	}
 	
 	// Önceki dosyaları boş oluştur
-	create_previous_files(command->output_fds, 0);  // Output files (truncate)
-	create_previous_files(command->append_fds, 1);  // Append files (no truncate)
+	create_previous_files(command->output_fd, 0);  // Output files (truncate)
+	create_previous_files(command->append_fd, 1);  // Append files (no truncate)
 	
 	// Son redirection'ı aktif olarak kullan
-	last_append = get_last_element(command->append_fds);
-	last_output = get_last_element(command->output_fds);
+	last_append = get_last_element(command->append_fd);
+	last_output = get_last_element(command->output_fd);
 	
 	if (last_append)
 	{

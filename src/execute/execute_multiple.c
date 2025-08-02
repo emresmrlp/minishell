@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 12:08:03 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 15:44:07 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 static void	child_process(t_command *command, int prev_fd, int write_fd)
 {
+	int	fd;
+
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	signal(SIGPIPE, SIG_DFL);  // SIGPIPE'ı default haline getir
-	
-	// NULL check'ler
+	signal(SIGPIPE, SIG_DFL); /* SIGPIPE'ı default haline getir */
+	/* NULL check'ler */
 	if (!command || !command->args || !command->args[0])
 		exit(127);
-	
 	if (prev_fd != -1)
 	{
 		dup2(prev_fd, STDIN_FILENO);
@@ -32,9 +32,7 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 		dup2(write_fd, STDOUT_FILENO);
 		close(write_fd);
 	}
-	
-	// Close all other file descriptors
-	int fd;
+	/* Close all other file descriptors */
 	for (fd = 3; fd < 1024; fd++)
 		close(fd);
 	
@@ -92,19 +90,24 @@ void	execute_multiple(t_command *command)
 		prev_fd = pipe_fd[0];
 		command = command->next;
 	}
-	
-	// Close the last pipe read end
+	/* Close the last pipe read end */
 	if (prev_fd != -1)
 		close(prev_fd);
-	
-	// Wait for last command first (pipeline exit status)
+	/* Wait for last command first (pipeline exit status) */
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	if (WIFEXITED(status))
 		g_exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
+	{
 		g_exit_status = 128 + WTERMSIG(status);
-	
-	// Then wait for any remaining children
+		if (WTERMSIG(status) == SIGINT)
+			write(STDOUT_FILENO, "\n", 1);
+	}
+	/* Then wait for any remaining children */
 	while (wait(NULL) > 0)
 		;
 }

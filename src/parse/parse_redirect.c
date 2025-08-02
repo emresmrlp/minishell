@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/01 18:13:42 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:08:41 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,10 +137,10 @@ static t_command	*create_node(void)
 	if (!node)
 		return (NULL);
 	node->args = NULL;
-	node->input_fds = NULL;
-	node->output_fds = NULL;
-	node->append_fds = NULL;
-	node->heredoc_fds = NULL;
+	node->input_fd = NULL;
+	node->output_fd = NULL;
+	node->append_fd = NULL;
+	node->heredoc_fd = NULL;
 	node->env_list = NULL;
 	node->next = NULL;
 	node->dollar = 0;
@@ -148,17 +148,17 @@ static t_command	*create_node(void)
 	return (node);
 }
 
-static int	is_token_quoted(char **original_tokens, int original_index)
+static int	is_token_quoted(char **original_tokens, int index)
 {
 	int	len;
 
-	if (!original_tokens || !original_tokens[original_index])
+	if (!original_tokens || !original_tokens[index])
 		return (0);
-	len = ft_strlen(original_tokens[original_index]);
-	if (len >= 2 && ((original_tokens[original_index][0] == '"' 
-				&& original_tokens[original_index][len - 1] == '"') 
-			|| (original_tokens[original_index][0] == '\'' 
-				&& original_tokens[original_index][len - 1] == '\'')))
+	len = ft_strlen(original_tokens[index]);
+	if (len >= 2 && ((original_tokens[index][0] == '"' 
+				&& original_tokens[index][len - 1] == '"') 
+			|| (original_tokens[index][0] == '\'' 
+				&& original_tokens[index][len - 1] == '\'')))
 		return (1);
 	return (0);
 }
@@ -169,13 +169,13 @@ static void	handle_redirection(t_command *node, char **tokens, int *j,
 	if (is_token_quoted(original_tokens, original_index))
 		return ;
 	if (ft_strcmp(tokens[*j], "<<") == 0)
-		add_to_fd_array(&node->heredoc_fds, tokens[++(*j)]);
+		add_to_fd_array(&node->heredoc_fd, tokens[++(*j)]);
 	else if (ft_strcmp(tokens[*j], ">>") == 0)
-		add_to_fd_array(&node->append_fds, tokens[++(*j)]);
+		add_to_fd_array(&node->append_fd, tokens[++(*j)]);
 	else if (ft_strcmp(tokens[*j], "<") == 0)
-		add_to_fd_array(&node->input_fds, tokens[++(*j)]);
+		add_to_fd_array(&node->input_fd, tokens[++(*j)]);
 	else if (ft_strcmp(tokens[*j], ">") == 0)
-		add_to_fd_array(&node->output_fds, tokens[++(*j)]);
+		add_to_fd_array(&node->output_fd, tokens[++(*j)]);
 }
 
 static int	is_redirection(char *token)
@@ -200,7 +200,7 @@ static int	validate_redirection(char **tokens, int index)
 	return (1);
 }
 
-static int	ft_arg_count(char **tokens)
+static int	ft_arg_count(char **tokens, char **original_tokens)
 {
 	int	i;
 	int	arg_count;
@@ -209,7 +209,7 @@ static int	ft_arg_count(char **tokens)
 	arg_count = 0;
 	while (tokens[i])
 	{
-		if (is_redirection(tokens[i]))
+		if (is_redirection(tokens[i]) && !is_token_quoted(original_tokens, i))
 		{
 			if (!validate_redirection(tokens, i))
 				return (-1);
@@ -259,22 +259,34 @@ static int	parse_argv(t_command *node, char **tokens, char *original_string)
 	char	**original_tokens;
 	int		indexes[3];
 
-	arg_count = ft_arg_count(tokens);
+	original_tokens = split_with_quotes_preserved(original_string, ' ');
+	arg_count = ft_arg_count(tokens, original_tokens);
 	if (arg_count == -1)
+	{
+		if (original_tokens)
+			free_tokens(original_tokens);
 		return (0);
+	}
 	if (arg_count == 0)
+	{
+		if (original_tokens)
+			free_tokens(original_tokens);
 		return (1);
+	}
 	node->args = (char **)ft_calloc(arg_count + 1, sizeof(char *));
 	node->skip_expansion = (int *)ft_calloc(arg_count + 1, sizeof(int));
 	if (!node->args || !node->skip_expansion)
+	{
+		if (original_tokens)
+			free_tokens(original_tokens);
 		return (0);
-	original_tokens = split_with_quotes_preserved(original_string, ' ');
+	}
 	indexes[0] = 0;
 	indexes[1] = 0;
 	indexes[2] = 0;
 	while (tokens[indexes[0]])
 	{
-		if (is_redirection(tokens[indexes[0]]))
+		if (is_redirection(tokens[indexes[0]]) && !is_token_quoted(original_tokens, indexes[0]))
 			process_redirection_token(node, tokens, original_tokens, indexes);
 		else
 			process_regular_token(node, tokens, original_tokens, indexes);

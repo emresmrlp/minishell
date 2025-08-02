@@ -6,7 +6,7 @@
 #    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/07/30 18:49:20 by makpolat         ###   ########.fr        #
+#    Updated: 2025/08/02 17:31:54 by makpolat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ SRC =	src/main.c \
 		src/shell/shell_state.c \
 		src/parse/parse_redirect.c \
 		src/parse/parse_dollar.c \
+		src/parse/parse_dollar_utils.c \
 		src/parse/parse_pipe.c \
 		src/builtin/unset.c \
 		src/builtin/cd.c \
@@ -36,7 +37,8 @@ SRC =	src/main.c \
 		src/execute/execute_util.c \
 		src/execute/execute_builtin.c \
 		src/execute/execute_redirection.c \
-		src/parse/find_redirect.c
+		src/parse/find_redirect.c \
+		src/parse/find_redirect_utils.c
 
 OBJDIR = objs
 OBJ = $(SRC:src/%.c=$(OBJDIR)/%.o)

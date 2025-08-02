@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/01 15:21:37 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:31:53 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ typedef struct s_envp
 typedef struct s_command
 {
 	char				**args;
-	char				**input_fds;
-	char				**output_fds;
-	char				**append_fds;
-	char				**heredoc_fds;
+	char				**input_fd;
+	char				**output_fd;
+	char				**append_fd;
+	char				**heredoc_fd;
 	t_envp				*env_list;
 	int					dollar;
 	int					*skip_expansion;
@@ -74,10 +74,22 @@ void	shell_loop(t_envp *env_list);
 void	split_built_in(t_command *head);
 void	parse_command(char *command_line, t_envp *env_list);
 void	parse_dollar(t_command *head);
+int		is_var_char(char c);
+char	*my_strdup(char *src);
+char	*expand_var(char *str, int *i, t_envp *env_list);
+void	handle_quotes(char c, int *in_single, int *in_double);
+void	append_expansion(char **result, int *j, char *str, int *i, 
+		t_envp *env_list, int buffer_size);
+int		has_expansion(char *str);
 t_command	*add_node(char **shell, t_envp *env_list);
 void	print_command_list(t_command *cmd);
 int		ft_strcmp(const char *s1, const char *s2);
 char	**redirect_split(char **shell);
+int		inside_quote(char *str, int pos);
+int		token_count_redirect(char *token, int *j, int *found_redirect);
+int		process_token_char(char *token, int *j, int *find_redirect, int *count);
+int		find_next_redirect(char *str, int start);
+int		find_redirection_pos(char *token);
 int		execute_builtin(t_command *command);
 int		builtin_cd(t_command *iter);
 int		builtin_echo(t_command *command);

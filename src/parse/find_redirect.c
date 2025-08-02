@@ -6,119 +6,55 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:29:50 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/01 21:22:14 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:27:13 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static void	add_parts(char *str, int j, char **result, int *k);
-
-static int	is_in_quotes(char *str, int pos)
-{
-	int	i;
-	int	in_single;
-	int	in_double;
-
-	i = 0;
-	in_single = 0;
-	in_double = 0;
-	while (i < pos)
-	{
-		if (str[i] == '\'' && !in_double)
-			in_single = !in_single;
-		else if (str[i] == '"' && !in_single)
-			in_double = !in_double;
-		i++;
-	}
-	return (in_single || in_double);
-}
-
-static int	count_redirect_tokens(char *token, int *j, int *found_redirect)
-{
-	int	start;
-	int	token_count;
-
-	token_count = 0;
-	if (*j > 0 && !*found_redirect)
-		token_count++;
-	token_count++;
-	if (token[*j + 1] && token[*j + 1] == token[*j])
-		(*j)++;
-	(*j)++;
-	start = *j;
-	while (token[*j] && token[*j] != '>' && token[*j] != '<')
-		(*j)++;
-	if (*j > start)
-		token_count++;
-	*found_redirect = 1;
-	return (token_count);
-}
+static void	process_remaining_redirections(char *str, int redirect, char **res, int *k);
+static void	add_redirect_parts(char *str, int j, char **result, int *k);
 
 static int	token_count(char **shell)
 {
 	int	i;
 	int	j;
 	int	count;
-	int	found_redirect;
+	int	find_redirect;
 
 	i = 0;
 	count = 0;
 	while (shell[i])
 	{
 		j = 0;
-		found_redirect = 0;
+		find_redirect = 0;
 		while (shell[i][j])
 		{
-			if ((shell[i][j] == '>' || shell[i][j] == '<') 
-				&& !is_in_quotes(shell[i], j))
-			{
-				count += count_redirect_tokens(shell[i], &j, &found_redirect);
+			if (process_token_char(shell[i], &j, &find_redirect, &count))
 				continue ;
-			}
-			j++;
 		}
-		if (!found_redirect)
+		if (!find_redirect)
 			count++;
 		i++;
 	}
 	return (count);
 }
 
-static int	find_next_redirect(char *str, int start)
-{
-	int	next_redirect;
-
-	next_redirect = start;
-	while (str[next_redirect] && ((str[next_redirect] != '>' 
-			&& str[next_redirect] != '<') || is_in_quotes(str, next_redirect)))
-		next_redirect++;
-	return (next_redirect);
-}
-
-static void	process_remaining_redirections(char *str, int next_redirect, 
-		char **result, int *k)
+static void	process_remaining_redirections(char *str, int redirect, char **res, int *k)
 {
 	char	*remaining_str;
 
-	remaining_str = ft_strdup(str + next_redirect);
-	add_parts(remaining_str, 0, result, k);
+	remaining_str = ft_strdup(str + redirect);
+	add_redirect_parts(remaining_str, 0, res, k);
 	free(remaining_str);
 }
 
-static void	add_parts(char *str, int j, char **result, int *k)
+static void	add_redirect_parts(char *str, int j, char **result, int *k)
 {
-	int			is_double;
-	int			remaining_start;
-	int			next_redirect;
-	static int	depth = 0;
+	int	is_double;
+	int	remaining_start;
+	int	next_redirect;
 
-	depth++;
-	if (depth > 10)
-	{
-		depth--;
-		return ;
-	}
 	if (j > 0)
 		result[(*k)++] = ft_substr(str, 0, j);
 	is_double = (str[j + 1] == str[j]);
@@ -133,23 +69,8 @@ static void	add_parts(char *str, int j, char **result, int *k)
 					next_redirect - remaining_start);
 		process_remaining_redirections(str, next_redirect, result, k);
 	}
-	else
-	{
-		if (str[j])
-			result[(*k)++] = ft_strdup(str + j);
-	}
-	depth--;
-}
-
-static int	find_redirection_pos(char *token)
-{
-	int	j;
-
-	j = -1;
-	while (token[++j] && ((token[j] != '>' && token[j] != '<')
-			|| is_in_quotes(token, j)))
-		;
-	return (j);
+	else if (str[j])
+		result[(*k)++] = ft_strdup(str + j);
 }
 
 char	**redirect_split(char **shell)
@@ -170,7 +91,7 @@ char	**redirect_split(char **shell)
 	{
 		j = find_redirection_pos(shell[i]);
 		if (shell[i][j])
-			add_parts(shell[i], j, result, &k);
+			add_redirect_parts(shell[i], j, result, &k);
 		else
 			result[k++] = ft_strdup(shell[i]);
 	}
