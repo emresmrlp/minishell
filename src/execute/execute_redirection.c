@@ -6,27 +6,31 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:36:38 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:49:32 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:25:49 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static int	redirect_input_simple(char *filename)
+static int	redirect_input_simple(char *filename, t_command *command)
 {
-	int	fd;
+	int		fd;
+	char	*error_msg;
+	char	*final_msg;
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(filename, STDERR_FILENO);
-		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		error_msg = ft_strjoin("minishell: ", filename);
+		final_msg = ft_strjoin(error_msg, ": No such file or directory\n");
+		error_handler(command, final_msg, 1);
+		free(error_msg);
+		free(final_msg);
 		return (1);
 	}
 	if (dup2(fd, STDIN_FILENO) < 0)
 	{
-		perror("dup2 input");
+		error_handler(command, "minishell: dup2 failed\n", 1);
 		close(fd);
 		return (1);
 	}
@@ -34,19 +38,25 @@ static int	redirect_input_simple(char *filename)
 	return (0);
 }
 
-static int	redirect_output_simple(char *filename)
+static int	redirect_output_simple(char *filename, t_command *command)
 {
-	int	fd;
+	int		fd;
+	char	*error_msg;
+	char	*final_msg;
 
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 	{
-		perror("minishell");
+		error_msg = ft_strjoin("minishell: ", filename);
+		final_msg = ft_strjoin(error_msg, ": Permission denied\n");
+		error_handler(command, final_msg, 1);
+		free(error_msg);
+		free(final_msg);
 		return (1);
 	}
 	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
-		perror("dup2 output");
+		error_handler(command, "minishell: dup2 failed\n", 1);
 		close(fd);
 		return (1);
 	}
@@ -54,19 +64,25 @@ static int	redirect_output_simple(char *filename)
 	return (0);
 }
 
-static int	redirect_append_simple(char *filename)
+static int	redirect_append_simple(char *filename, t_command *command)
 {
-	int	fd;
+	int		fd;
+	char	*error_msg;
+	char	*final_msg;
 
 	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd < 0)
 	{
-		perror("minishell");
+		error_msg = ft_strjoin("minishell: ", filename);
+		final_msg = ft_strjoin(error_msg, ": Permission denied\n");
+		error_handler(command, final_msg, 1);
+		free(error_msg);
+		free(final_msg);
 		return (1);
 	}
 	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
-		perror("dup2 append");
+		error_handler(command, "minishell: dup2 failed\n", 1);
 		close(fd);
 		return (1);
 	}
@@ -78,7 +94,6 @@ static void	heredoc_sigint_handler(int signal)
 {
 	(void)signal;
 	write(STDOUT_FILENO, "\n", 1);
-	/* Exit the readline call */
 	exit(130);
 }
 
@@ -86,6 +101,8 @@ static char	*expand_heredoc_line(char *line, t_envp *env_list)
 {
 	char	*result;
 	char	*temp;
+	char	*env_value;
+	char	*old_result;
 	int		i;
 	int		j;
 
@@ -95,7 +112,8 @@ static char	*expand_heredoc_line(char *line, t_envp *env_list)
 	i = 0;
 	while (line[i])
 	{
-		if (line[i] == '$' && line[i + 1] && (ft_isalnum(line[i + 1]) || line[i + 1] == '_'))
+		if (line[i] == '$' && line[i + 1] && 
+			(ft_isalnum(line[i + 1]) || line[i + 1] == '_'))
 		{
 			j = i + 1;
 			while (line[j] && (ft_isalnum(line[j]) || line[j] == '_'))
@@ -103,8 +121,8 @@ static char	*expand_heredoc_line(char *line, t_envp *env_list)
 			temp = ft_substr(line, i + 1, j - i - 1);
 			if (temp)
 			{
-				char *env_value = get_env_value(temp, env_list);
-				char *old_result = result;
+				env_value = get_env_value(NULL, temp, env_list);
+				old_result = result;
 				if (env_value)
 					result = ft_strjoin(result, env_value);
 				else
@@ -117,7 +135,7 @@ static char	*expand_heredoc_line(char *line, t_envp *env_list)
 		else
 		{
 			temp = ft_substr(line, i, 1);
-			char *old_result = result;
+			old_result = result;
 			result = ft_strjoin(result, temp);
 			free(old_result);
 			free(temp);
@@ -178,16 +196,17 @@ static char *get_last_element(char **array)
 }
 
 // Array'daki son eleman hariç tüm dosyaları oluştur
-static void create_previous_files(char **files, int is_append)
+static int create_previous_files(char **files, int is_append, t_command *command)
 {
 	int i = 0;
 	int fd;
+	char *error_msg;
 	
 	if (!files)
-		return;
+		return (0);
 	
-	// Son eleman hariç tüm dosyaları oluştur
-	while (files[i + 1])  // Son eleman (NULL) değilse devam et
+	// Önce tüm dosyaları kontrol et (son dahil)
+	while (files[i])
 	{
 		if (is_append)
 			fd = open(files[i], O_WRONLY | O_CREAT, 0644);
@@ -197,9 +216,17 @@ static void create_previous_files(char **files, int is_append)
 		if (fd >= 0)
 			close(fd);
 		else
-			perror("minishell");
+		{
+			error_msg = ft_strjoin("minishell: ", files[i]);
+			char *final_msg = ft_strjoin(error_msg, ": Permission denied\n");
+			error_handler(command, final_msg, 1);
+			free(error_msg);
+			free(final_msg);
+			return (1); // Hata varsa dur
+		}
 		i++;
 	}
+	return (0);
 }
 
 void	execute_redirection(t_command *command)
@@ -231,35 +258,37 @@ void	execute_redirection(t_command *command)
 	}
 	else
 	{
-		// Tüm input dosyalarını sırayla kontrol et ve açmaya çalış
+		// Önce input dosyalarını kontrol et - hata varsa dur
 		if (command->input_fd)
 		{
 			i = 0;
 			while (command->input_fd[i])
 			{
-				if (redirect_input_simple(command->input_fd[i]) != 0)
-					exit(1);
+				if (redirect_input_simple(command->input_fd[i], command) != 0)
+					exit(command->exit_status);
 				i++;
 			}
 		}
 	}
+
+	// Sonra tüm output redirection'ları kontrol et - hata varsa dur
+	if (command->output_fd && create_previous_files(command->output_fd, 0, command) != 0)  // Output files (truncate)
+		exit(command->exit_status);
+	if (command->append_fd && create_previous_files(command->append_fd, 1, command) != 0)  // Append files (no truncate)
+		exit(command->exit_status);
 	
-	// Önceki dosyaları boş oluştur
-	create_previous_files(command->output_fd, 0);  // Output files (truncate)
-	create_previous_files(command->append_fd, 1);  // Append files (no truncate)
-	
-	// Son redirection'ı aktif olarak kullan
+	// Output redirection'ları uygula
 	last_append = get_last_element(command->append_fd);
 	last_output = get_last_element(command->output_fd);
 	
 	if (last_append)
 	{
-		if (redirect_append_simple(last_append) != 0)
-			exit(1);
+		if (redirect_append_simple(last_append, command) != 0)
+			exit(command->exit_status);
 	}
 	else if (last_output)
 	{
-		if (redirect_output_simple(last_output) != 0)
-			exit(1);
+		if (redirect_output_simple(last_output, command) != 0)
+			exit(command->exit_status);
 	}
 }

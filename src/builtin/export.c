@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 19:55:27 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:40:38 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,22 +47,7 @@ static void	export_add(t_command *iter, int arg_index)
 	new_node = malloc(sizeof(t_envp));
 	if (!new_node)
 		return ;
-	new_node->value = NULL;
-	new_node->is_temporary = 1;
-	if (index)
-	{
-		new_node->key = ft_substr(iter->args[arg_index], 0,
-				index - iter->args[arg_index]);
-		if (*(index + 1) == '\0')
-			new_node->value = ft_strdup("");
-		else
-			new_node->value = ft_strdup(index + 1);
-	}
-	else
-	{
-		new_node->key = ft_strdup(iter->args[arg_index]);
-	}
-	new_node->next = NULL;
+	set_node_values(new_node, iter->args[arg_index], index);
 	temp->next = new_node;
 }
 
@@ -97,31 +82,14 @@ static void	export_update(t_command *iter, int arg_index, char *key)
 static int	handle_export(t_command *command, char **args)
 {
 	int		i;
-	char	*index;
-	char	*key;
 	int		error_found;
 
 	i = 1;
 	error_found = 0;
 	while (args[i])
 	{
-		if (!is_valid_key(args[i]))
-		{
-			error_handler("export: not a valid identifier\n");
+		if (process_export_arg(command, args[i], i))
 			error_found = 1;
-			i++;
-			continue ;
-		}
-		index = ft_strchr(args[i], '=');
-		if (index)
-			key = ft_substr(args[i], 0, index - args[i]);
-		else
-			key = ft_strdup(args[i]);
-		if (find_env_value(command, key))
-			export_update(command, i, key);
-		else
-			export_add(command, i);
-		free(key);
 		i++;
 	}
 	return (error_found);

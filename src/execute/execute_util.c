@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:36:28 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:49:04 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:52:04 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,49 +70,47 @@ char	*find_path(char *arg, t_command *command)
 	return (NULL);
 }
 
-char	*get_valid_path(t_command *command)
+static char	*handle_absolute_path(t_command *command)
 {
-	char	*path;
-	struct stat file_stat;
+	struct stat	file_stat;
+	char		*path;
 
-	path = find_path(command->args[0], command);
-	if (!path && ft_strchr(command->args[0], '/'))
+	if (access(command->args[0], F_OK) == 0)
 	{
-		// Tam path verildi, dosya var mı kontrol et
-		if (access(command->args[0], F_OK) == 0)
+		if (stat(command->args[0], &file_stat) == 0)
 		{
-			// Dosya var, directory mi kontrol et
-			if (stat(command->args[0], &file_stat) == 0)
+			if (S_ISDIR(file_stat.st_mode))
 			{
-				if (S_ISDIR(file_stat.st_mode))
-				{
-					error_handler("minishell: Is a directory\n");
-					command->exit_status = 126;
-					return (NULL);
-				}
-			}
-			
-			// Execute permission var mı kontrol et
-			if (access(command->args[0], X_OK) == 0)
-				path = ft_strdup(command->args[0]);
-			else
-			{
-				error_handler("minishell: Permission denied\n");
-				command->exit_status = 126;
+				error_handler(command, "minishell: Is a directory\n", 126);
 				return (NULL);
 			}
 		}
+		if (access(command->args[0], X_OK) == 0)
+			path = ft_strdup(command->args[0]);
 		else
 		{
-			error_handler("minishell: No such file or directory\n");
-			command->exit_status = 127;
+			error_handler(command, "minishell: Permission denied\n", 126);
 			return (NULL);
 		}
 	}
+	else
+	{
+		error_handler(command, "minishell: No such file or directory\n", 127);
+		return (NULL);
+	}
+	return (path);
+}
+
+char	*get_valid_path(t_command *command)
+{
+	char	*path;
+
+	path = find_path(command->args[0], command);
+	if (!path && ft_strchr(command->args[0], '/'))
+		path = handle_absolute_path(command);
 	if (!path)
 	{
-		error_handler("minishell: command not found\n");
-		command->exit_status = 127;
+		error_handler(command, "minishell: command not found\n", 127);
 		return (NULL);
 	}
 	return (path);

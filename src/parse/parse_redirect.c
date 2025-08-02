@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:58:12 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/02 17:08:41 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:40:35 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ static t_command	*create_node(void)
 	node->next = NULL;
 	node->dollar = 0;
 	node->skip_expansion = NULL;
+	node->exit_status = 0;
 	return (node);
 }
 
@@ -184,7 +185,7 @@ static int	is_redirection(char *token)
 			ft_strcmp(token, "<") == 0 || ft_strcmp(token, ">") == 0);
 }
 
-static int	validate_redirection(char **tokens, int index)
+static int	validate_redirection(char **tokens, int index, t_command *command)
 {
 	if (!tokens[index + 1])
 	{
@@ -193,14 +194,14 @@ static int	validate_redirection(char **tokens, int index)
 	}
 	if (is_redirection(tokens[index + 1]))
 	{
-		error_handler("minishell: syntax error near unexpected token\n");
+		error_handler(command, "minishell: syntax error near unexpected token\n", 2);
 		return (0);
 	}
 	
 	return (1);
 }
 
-static int	ft_arg_count(char **tokens, char **original_tokens)
+static int	ft_arg_count(char **tokens, char **original_tokens, t_command *command)
 {
 	int	i;
 	int	arg_count;
@@ -211,7 +212,7 @@ static int	ft_arg_count(char **tokens, char **original_tokens)
 	{
 		if (is_redirection(tokens[i]) && !is_token_quoted(original_tokens, i))
 		{
-			if (!validate_redirection(tokens, i))
+			if (!validate_redirection(tokens, i, command))
 				return (-1);
 			i += 2;
 		}
@@ -260,7 +261,7 @@ static int	parse_argv(t_command *node, char **tokens, char *original_string)
 	int		indexes[3];
 
 	original_tokens = split_with_quotes_preserved(original_string, ' ');
-	arg_count = ft_arg_count(tokens, original_tokens);
+	arg_count = ft_arg_count(tokens, original_tokens, node);
 	if (arg_count == -1)
 	{
 		if (original_tokens)

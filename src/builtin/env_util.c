@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:09:52 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:50:05 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:46:04 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_envp	*env_head(char **envp)
 		temp->key = ft_substr(envp[i], 0, ft_strchr(envp[i], '=') - envp[i]);
 		temp->value = ft_strdup(ft_strchr(envp[i], '=') + 1);
 		temp->is_temporary = 0;
+		temp->next = NULL;
 		if (envp[i + 1])
 		{
 			temp->next = (t_envp *)malloc(sizeof(t_envp));
@@ -35,8 +36,6 @@ t_envp	*env_head(char **envp)
 				return (NULL);
 			temp = temp->next;
 		}
-		else
-			temp->next = NULL;
 		i++;
 	}
 	return (head);
@@ -124,14 +123,8 @@ char	*get_env_value(t_command *command, char *var_name, t_envp *env_list)
 		}
 		return (NULL);
 	}
-	
 	if (ft_strcmp(var_name, "?") == 0)
-	{
-		if (exit_status_str)
-			free(exit_status_str);
-		exit_status_str = ft_itoa(command->exit_status);
-		return (exit_status_str);
-	}
+		return (handle_exit_status(command, env_list));
 	temp = env_list;
 	while (temp)
 	{

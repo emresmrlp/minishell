@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:49:32 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:40:31 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ void	execute_single(t_command *command)
 	/* Args kontrolü - eğer komut yoksa hata */
 	if (!command->args || !command->args[0])
 	{
-		error_handler("minishell: syntax error near unexpected token\n");
-		command->exit_status = 2;
+		error_handler(command, "minishell: syntax error near unexpected token\n", 0);
 		return ;
 	}
 	/* Boş argument'ları free et ve compact et */

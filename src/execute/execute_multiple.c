@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:49:32 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:59:57 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ void	execute_multiple(t_command *command)
 	pid_t		pid;
 	int			status;
 	pid_t		first_pid = 0;
+	t_command	*original_command;
 
+	original_command = command; // Save original command pointer
 	prev_fd = -1;
 	while (command)
 	{
@@ -100,10 +102,10 @@ void	execute_multiple(t_command *command)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	if (WIFEXITED(status))
-		command->exit_status = WEXITSTATUS(status);
+		original_command->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
-		command->exit_status = 128 + WTERMSIG(status);
+		original_command->exit_status = 128 + WTERMSIG(status);
 		if (WTERMSIG(status) == SIGINT)
 			write(STDOUT_FILENO, "\n", 1);
 		else if (WTERMSIG(status) == SIGQUIT)

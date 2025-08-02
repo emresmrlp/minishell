@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_dollar_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:28:14 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/02 17:33:19 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:44:05 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static char	*handle_special_var(char *str, int *i, t_envp *env_list)
 	if (str[*i] == '?')
 	{
 		(*i)++;
-		value = get_env_value("?", env_list);
+		value = get_env_value(NULL, "?", env_list);
 		return (my_strdup(value));
 	}
 	return (NULL);
@@ -87,7 +87,7 @@ char	*expand_var(char *str, int *i, t_envp *env_list)
 	var_name = extract_var_name(str, i, start);
 	if (!var_name)
 		return (NULL);
-	value = get_env_value(var_name, env_list);
+	value = get_env_value(NULL, var_name, env_list);
 	if (!value)
 	{
 		free(var_name);

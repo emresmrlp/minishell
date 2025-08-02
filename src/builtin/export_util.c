@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 18:02:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:00:01 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:41:07 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	is_valid_key(char *arg)
 char	**env_list_to_array(t_envp *env_list, int size)
 {
 	t_envp	*temp;
-	char 	*temp_str;
+	char	*temp_str;
 	char	**env_array;
 	int		i;
 
@@ -91,4 +91,46 @@ char	**env_list_to_array(t_envp *env_list, int size)
 	}
 	env_array[i] = NULL;
 	return (env_array);
+}
+
+void	set_node_values(t_envp *new_node, char *arg, char *index)
+{
+	new_node->value = NULL;
+	new_node->is_temporary = 1;
+	if (index)
+	{
+		new_node->key = ft_substr(arg, 0, index - arg);
+		if (*(index + 1) == '\0')
+			new_node->value = ft_strdup("");
+		else
+			new_node->value = ft_strdup(index + 1);
+	}
+	else
+	{
+		new_node->key = ft_strdup(arg);
+	}
+	new_node->next = NULL;
+}
+
+int	process_export_arg(t_command *command, char *arg, int i)
+{
+	char	*index;
+	char	*key;
+
+	if (!is_valid_key(arg))
+	{
+		error_handler(command, "export: not a valid identifier\n", 0);
+		return (1);
+	}
+	index = ft_strchr(arg, '=');
+	if (index)
+		key = ft_substr(arg, 0, index - arg);
+	else
+		key = ft_strdup(arg);
+	if (find_env_value(command, key))
+		export_update(command, i, key);
+	else
+		export_add(command, i);
+	free(key);
+	return (0);
 }

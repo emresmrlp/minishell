@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:53:22 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:46:06 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,16 +97,20 @@ void		builtin_unset(t_command *command, char **args);
 int			builtin_exit(t_command *command, char **args);
 int			builtin_export(t_command *command, char **args);
 int			builtin_env(t_command *command);
+char		*handle_exit_status(t_command *command, t_envp *env_list);
 void		memory_free(t_command *command);
 char		**sort_array(char **env_array, int size);
 char		**env_list_to_array(t_envp *env_list, int size);
+void		set_node_values(t_envp *new_node, char *arg, char *index);
+int			process_export_arg(t_command *command, char *arg, int i);
 char		*find_path(char *arg, t_command *command);
 void		free_array(char **array);
 int			is_valid_key(char *arg);
 void		cleanup_empty_env_vars(t_envp **env_list);
 int			get_env_size(t_envp *env_list);
 void		cleanup_exit_status_str(t_command *command);
-int			error_handler(t_command *command, char *message);
+void		save_exit_status_to_env(t_envp *env_list, int exit_status);
+int			error_handler(t_command *command, char *message, int exit_code);
 int			shell_exit_with_error(char *message, t_command *command);
 int			shell_exit(t_command *command, int exit_code);
 void		free_env_list(t_envp *env_list);

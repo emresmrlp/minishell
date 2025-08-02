@@ -6,7 +6,7 @@
 /*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:02:17 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 20:51:44 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:42:34 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	shell_loop(t_envp *env_list)
 		}
 		free(command_line);
 	}
-	cleanup_exit_status_str(command);
 	while (env_list)
 	{
 		temp = env_list;

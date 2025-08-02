@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:39:40 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/29 15:52:41 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:41:23 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	builtin_unset(t_command *command, char **args)
 				if (ft_strcmp(temp->key, args[i]) == 0)
 				{
 					remove_env(command, args[i]);
-					break;
+					break ;
 				}
 				temp = temp->next;
 			}

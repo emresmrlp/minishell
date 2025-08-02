@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_pipe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 18:26:52 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/02 13:45:50 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:41:36 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,14 +159,14 @@ void	parse_command(char *command_line, t_envp *env_list)
 	shell = pipe_split(command_line, 0, 0, 0);
 	if (!shell)
 	{
-		error_handler("minishell: syntax error near unexpected token\n");
+		write(2, "minishell: syntax error near unexpected token\n", 47);
 		return ;
 	}
 	head = add_node(shell, env_list);
 	free_shell_array(shell);
 	if (head)
 	{
-		cleanup_exit_status_str();
+		cleanup_exit_status_str(head);
 		execute(head);
 		memory_free(head);
 	}
