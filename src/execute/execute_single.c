@@ -110,6 +110,8 @@ void	execute_single(t_command *command)
 		pid = fork();
 		if (pid == 0)
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 			execute_redirection(command);
 			exit(execute_builtin(command));
 		}
@@ -120,9 +122,11 @@ void	execute_single(t_command *command)
 			close(saved_stdout);
 			return ;
 		}
-		signal(SIGINT, SIG_IGN);
+		g_signal_flag = 1;
+		signal(SIGINT, sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		g_signal_flag = 0;
 		signal(SIGINT, sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 		if (WIFEXITED(status))
@@ -143,6 +147,8 @@ void	execute_single(t_command *command)
 	pid = fork();
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		execute_redirection(command);
 		execute_command(command);
 		exit(127);
@@ -152,9 +158,11 @@ void	execute_single(t_command *command)
 		perror("fork");
 		exit(127);
 	}
-	signal(SIGINT, SIG_IGN);
+	g_signal_flag = 1;
+	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
+	g_signal_flag = 0;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	if (WIFEXITED(status))

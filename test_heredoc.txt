@@ -1,5 +1,0 @@
-<< alo
-hello world
-test content
-alo
-echo "This should run after heredoc"

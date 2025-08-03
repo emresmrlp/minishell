@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_multiple.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/03 14:51:19 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:22:38 by ysumeral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,14 @@ void	execute_multiple(t_command *command)
 	if (prev_fd != -1)
 		close(prev_fd);
 	/* Wait for last command first (pipeline exit status) */
-	signal(SIGINT, SIG_IGN);
+	g_signal_flag = 1;
+	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
+	/* Wait for any remaining children */
+	while (wait(NULL) > 0)
+		;
+	g_signal_flag = 0;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	if (WIFEXITED(status))
