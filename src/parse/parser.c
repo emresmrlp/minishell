@@ -54,7 +54,7 @@ t_command	*process_single_command(char *shell_command, t_envp *env_list)
 	if (!parse_argv(node, tokens, joined))
 	{
 		cleanup_command_resources(joined, tokens, redirect_split_result);
-		free(node);
+		memory_free(node);
 		return (NULL);
 	}
 	cleanup_command_resources(joined, tokens, redirect_split_result);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_multiple.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:31 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/03 17:22:38 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 19:32:40 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	signal(SIGPIPE, SIG_DFL); /* SIGPIPE'ı default haline getir */
-	/* NULL check'ler */
+	signal(SIGPIPE, SIG_DFL);
 	if (!command || !command->args || !command->args[0])
 		exit(127);
 	if (prev_fd != -1)
@@ -32,7 +31,6 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 		dup2(write_fd, STDOUT_FILENO);
 		close(write_fd);
 	}
-	/* Close all other file descriptors */
 	for (fd = 3; fd < 1024; fd++)
 		close(fd);
 	
