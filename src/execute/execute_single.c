@@ -42,34 +42,37 @@ void	execute_single(t_command *command)
 			return ;
 		}
 	}
-	/* Boş argument'ları free et ve compact et */
-	i = 0;
-	write_idx = 0;
-	total_args = 0;
-	/* Count total args first */
-	while (command->args[total_args])
-		total_args++;
-	/* First pass: free empty strings */
-	for (i = 0; i < total_args; i++)
+	/* Boş argument'ları free et ve compact et (echo hariç) */
+	if (!command->args[0] || ft_strcmp(command->args[0], "echo") != 0)
 	{
-		if (command->args[i] && command->args[i][0] == '\0')
+		i = 0;
+		write_idx = 0;
+		total_args = 0;
+		/* Count total args first */
+		while (command->args[total_args])
+			total_args++;
+		/* First pass: free empty strings */
+		for (i = 0; i < total_args; i++)
 		{
-			free(command->args[i]);
-			command->args[i] = NULL;
+			if (command->args[i] && command->args[i][0] == '\0')
+			{
+				free(command->args[i]);
+				command->args[i] = NULL;
+			}
 		}
-	}
-	/* Second pass: compact array (remove NULLs) */
-	write_idx = 0;
-	for (i = 0; i < total_args; i++)
-	{
-		if (command->args[i] != NULL)
+		/* Second pass: compact array (remove NULLs) */
+		write_idx = 0;
+		for (i = 0; i < total_args; i++)
 		{
-			if (i != write_idx)
-				command->args[write_idx] = command->args[i];
-			write_idx++;
+			if (command->args[i] != NULL)
+			{
+				if (i != write_idx)
+					command->args[write_idx] = command->args[i];
+				write_idx++;
+			}
 		}
+		command->args[write_idx] = NULL; /* Terminate compacted array */
 	}
-	command->args[write_idx] = NULL; /* Terminate compacted array */
 	/* Hiç valid command yok */
 	if (!command->args[0])
 	{
