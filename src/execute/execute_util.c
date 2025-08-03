@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:36:28 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/03 15:52:20 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:54:23 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,13 +104,23 @@ static char	*handle_absolute_path(t_command *command)
 char	*get_valid_path(t_command *command)
 {
 	char	*path;
+	char	*current_dir_path;
 
 	path = find_path(command->args[0], command);
 	if (!path && ft_strchr(command->args[0], '/'))
 		path = handle_absolute_path(command);
 	if (!path)
 	{
-		error_handler(command, "minishell: command not found\n", 127);
+		// PATH yoksa veya komut bulunamadıysa mevcut dizini kontrol et
+		current_dir_path = ft_strjoin("./", command->args[0]);
+		if (access(current_dir_path, F_OK) == 0 && access(current_dir_path, X_OK) == 0)
+		{
+			free(current_dir_path);
+			return (ft_strjoin("./", command->args[0]));
+		}
+		free(current_dir_path);
+		if (!ft_strchr(command->args[0], '/'))
+			error_handler(command, "minishell: command not found\n", 127);
 		return (NULL);
 	}
 	return (path);

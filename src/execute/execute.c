@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 23:34:59 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 22:47:13 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:54:28 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,7 @@ void	execute_command(t_command *command)
 	env_list_array = env_list_to_array(command->env_list,
 			get_env_size(command->env_list));
 	if (execve(path, command->args, env_list_array) == -1)
-	{
-		error_handler(command, "minishell: No such file or directory\n", 127);
 		exit(127);
-	}
 }
 
 void	execute(t_command *command)
