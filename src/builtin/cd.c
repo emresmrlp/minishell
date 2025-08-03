@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 23:51:53 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 22:29:10 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 10:27:44 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ int	target_dir_check(t_command *command, char *current_pwd)
 int	builtin_cd(t_command *iter)
 {
 	char	*current_pwd;
-	char	*target_dir;
 	char	*new_pwd;
 
 	if (arg_check(iter) == FAILURE)

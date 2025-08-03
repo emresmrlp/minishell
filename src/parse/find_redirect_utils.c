@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_redirect_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:23:45 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/02 19:59:10 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 10:58:06 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,13 @@ int	process_token_char(char *token, int *j, int *find, int *count)
 
 int	find_next_redirect(char *str, int start)
 {
-	int	next_redirect;
+	int	next;
 
-	next_redirect = start;
-	while (str[next_redirect] && ((str[next_redirect] != '>'
-		&& str[next_redirect] != '<') || inside_quote(str, next_redirect)))
-		next_redirect++;
-	return (next_redirect);
+	next = start;
+	while (str[next] && ((str[next] != '>' && str[next] != '<')
+			|| inside_quote(str, next)))
+		next++;
+	return (next);
 }
 
 int	find_redirection_pos(char *token)
@@ -85,4 +85,3 @@ int	find_redirection_pos(char *token)
 		;
 	return (j);
 }
-

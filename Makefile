@@ -6,7 +6,7 @@
 #    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/08/02 17:31:54 by makpolat         ###   ########.fr        #
+#    Updated: 2025/08/03 14:30:25 by makpolat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,16 @@ SRC =	src/main.c \
 		src/shell/shell_signal.c \
 		src/shell/shell_state.c \
 		src/parse/parse_redirect.c \
+		src/parse/parse_redirect_utils.c \
+		src/parse/parser_utils.c \
+		src/parse/parser.c \
 		src/parse/parse_dollar.c \
 		src/parse/parse_dollar_utils.c \
+		src/parse/parse_dollar_expand.c \
 		src/parse/parse_pipe.c \
+		src/parse/parse_pipe_utils.c \
+		src/parse/parse_function_file.c \
+		src/parse/parse_utils.c \
 		src/builtin/unset.c \
 		src/builtin/cd.c \
 		src/builtin/pwd.c \
@@ -56,8 +63,8 @@ $(OBJDIR)/%.o: src/%.c
 
 $(NAME): $(OBJ)
 	@echo "$(BLUE) Linking (Seriously The Best MiniShell Ever)...$(RESET)"
-	@make -C ./external/libft -s
-	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT) -lreadline
+	make -C ./external/libft -s
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT) -lreadline
 	@echo "$(GREEN) MiniShell build successful!$(RESET)"
 	@echo "$(GREEN) Authors: ysumeral & makpolat$(RESET)"
 

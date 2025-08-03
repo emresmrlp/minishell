@@ -6,13 +6,13 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:29:50 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/02 17:27:13 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 10:53:55 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static void	process_remaining_redirections(char *str, int redirect, char **res, int *k);
+static void	redirection_loop(char *str, int redirect, char **res, int *k);
 static void	add_redirect_parts(char *str, int j, char **result, int *k);
 
 static int	token_count(char **shell)
@@ -40,7 +40,7 @@ static int	token_count(char **shell)
 	return (count);
 }
 
-static void	process_remaining_redirections(char *str, int redirect, char **res, int *k)
+static void	redirection_loop(char *str, int redirect, char **res, int *k)
 {
 	char	*remaining_str;
 
@@ -65,9 +65,9 @@ static void	add_redirect_parts(char *str, int j, char **result, int *k)
 	if (str[next_redirect])
 	{
 		if (next_redirect > remaining_start)
-			result[(*k)++] = ft_substr(str, remaining_start, 
+			result[(*k)++] = ft_substr(str, remaining_start,
 					next_redirect - remaining_start);
-		process_remaining_redirections(str, next_redirect, result, k);
+		redirection_loop(str, next_redirect, result, k);
 	}
 	else if (str[j])
 		result[(*k)++] = ft_strdup(str + j);

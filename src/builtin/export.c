@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:14:22 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 22:40:38 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 10:27:41 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	print_export(t_command *command)
 	free_array(env_array);
 }
 
-static void	export_add(t_command *iter, int arg_index)
+void	export_add(t_command *iter, int arg_index)
 {
 	t_envp	*temp;
 	t_envp	*new_node;
@@ -51,7 +51,7 @@ static void	export_add(t_command *iter, int arg_index)
 	temp->next = new_node;
 }
 
-static void	export_update(t_command *iter, int arg_index, char *key)
+void	export_update(t_command *iter, int arg_index, char *key)
 {
 	t_envp	*temp;
 	char	*index;
