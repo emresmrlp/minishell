@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_state.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:11:56 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 21:59:58 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:58:59 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,49 +23,35 @@ int	error_handler(t_command *command, char *message, int exit_code)
 	return (FAILURE);
 }
 
-void	free_env_list(t_envp *env_list)
+static void	remove_env_node(t_envp **current, t_envp **prev, t_envp **env_list)
 {
-	t_envp	*temp;
+	t_envp	*to_delete;
 
-	while (env_list)
-	{
-		temp = env_list;
-		env_list = env_list->next;
-		free(temp->key);
-		free(temp->value);
-		free(temp);
-	}
+	to_delete = *current;
+	if (*prev)
+		(*prev)->next = (*current)->next;
+	else
+		*env_list = (*current)->next;
+	*current = (*current)->next;
+	free(to_delete->key);
+	if (to_delete->value)
+		free(to_delete->value);
+	free(to_delete);
 }
 
 void	cleanup_empty_env_vars(t_envp **env_list)
 {
 	t_envp	*current;
 	t_envp	*prev;
-	t_envp	*to_delete;
 
 	if (!env_list || !*env_list)
 		return ;
-
 	current = *env_list;
 	prev = NULL;
-
 	while (current)
 	{
-		// Temporary variable'ları temizle (value yoksa veya temporary ise)
 		if (!current->value || current->is_temporary)
-		{
-			to_delete = current;
-			if (prev)
-				prev->next = current->next;
-			else
-				*env_list = current->next;
-			
-			current = current->next;
-			free(to_delete->key);
-			if (to_delete->value)
-				free(to_delete->value);
-			free(to_delete);
-		}
+			remove_env_node(&current, &prev, env_list);
 		else
 		{
 			prev = current;
@@ -92,39 +78,4 @@ int	shell_exit(t_command *command, int exit_code)
 	memory_free(command);
 	exit(exit_code);
 	return (exit_code);
-}
-
-void	save_exit_status_to_env(t_envp *env_list, int exit_status)
-{
-	t_envp	*temp;
-	char	*exit_str;
-
-	exit_str = ft_itoa(exit_status);
-	if (!exit_str)
-		return ;
-	
-	temp = env_list;
-	while (temp)
-	{
-		if (ft_strcmp(temp->key, "__EXIT_STATUS__") == 0)
-		{
-			free(temp->value);
-			temp->value = exit_str;
-			return ;
-		}
-		temp = temp->next;
-	}
-	
-	// If not found, create new env variable
-	temp = (t_envp *)malloc(sizeof(t_envp));
-	if (!temp)
-	{
-		free(exit_str);
-		return ;
-	}
-	temp->key = ft_strdup("__EXIT_STATUS__");
-	temp->value = exit_str;
-	temp->is_temporary = 1;
-	temp->next = env_list->next;
-	env_list->next = temp;
 }

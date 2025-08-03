@@ -6,7 +6,7 @@
 #    By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/13 11:10:21 by ysumeral          #+#    #+#              #
-#    Updated: 2025/08/03 14:30:25 by makpolat         ###   ########.fr        #
+#    Updated: 2025/08/03 15:15:02 by makpolat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ SRC =	src/main.c \
 		src/shell/shell_loop.c \
 		src/shell/shell_signal.c \
 		src/shell/shell_state.c \
+		src/shell/shell_env.c \
 		src/parse/parse_redirect.c \
 		src/parse/parse_redirect_utils.c \
 		src/parse/parser_utils.c \
@@ -28,6 +29,7 @@ SRC =	src/main.c \
 		src/parse/parse_pipe.c \
 		src/parse/parse_pipe_utils.c \
 		src/parse/parse_function_file.c \
+		src/parse/parser_helper_file.c \
 		src/parse/parse_utils.c \
 		src/builtin/unset.c \
 		src/builtin/cd.c \

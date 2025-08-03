@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:51:50 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/03 14:39:41 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:04:57 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ void		free_tokens(char **tokens);
 char		*space_strjoin_function(char **arr);
 char		**split_with_quotes_preserved(char *str, char delimiter);
 int			validate_redirection(char **tokens, int index, t_command *command);
+void		handle_input_redirect(t_command *node, char **tokens, int *j);
+void		handle_output_redirect(t_command *node, char **tokens, int *j);
 void		handle_redirection(t_command *node, char **tokens, int *j);
 void		process_redirection_token(t_command *node, char **tokens,
 				char **original_tokens, int *index);

@@ -6,27 +6,11 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 00:32:16 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 17:08:32 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:40:59 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-// static void	free_env_list(t_envp *env_list) //  ana döngüde readline ın orada
-// {
-// 	t_envp	*temp;
-
-// 	while (env_list)
-// 	{
-// 		temp = env_list;
-// 		env_list = env_list->next;
-// 		if (temp->key)
-// 			free(temp->key);
-// 		if (temp->value)
-// 			free(temp->value);
-// 		free(temp);
-// 	}
-// }
 
 static void	free_command_args(char **args)
 {
@@ -70,9 +54,6 @@ void	memory_free(t_command *command)
 	{
 		temp = command;
 		command = command->next;
-        //free(temp->env_list->key);
-        //free(temp->env_list->value);
-        //free(temp->env_list);
 		free_command_node(temp);
 		free(temp);
 	}

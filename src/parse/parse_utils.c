@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 14:24:39 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/03 14:39:39 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:11:41 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,11 @@ char	**split_with_quotes_preserved(char *str, char delimiter)
 int	validate_redirection(char **tokens, int index, t_command *command)
 {
 	if (!tokens[index + 1])
-		return (1);
+	{
+		error_handler(command,
+			"minishell: syntax error near unexpected token `newline'\n", 2);
+		return (0);
+	}
 	if (is_redirection(tokens[index + 1]))
 	{
 		error_handler(command,
@@ -73,4 +77,26 @@ int	validate_redirection(char **tokens, int index, t_command *command)
 		return (0);
 	}
 	return (1);
+}
+
+void	handle_input_redirect(t_command *node, char **tokens, int *j)
+{
+	if (!tokens[*j + 1])
+	{
+		error_handler(node,
+			"minishell: syntax error near unexpected token `newline'\n", 2);
+		return ;
+	}
+	add_to_fd_array(&node->input_fd, tokens[++(*j)]);
+}
+
+void	handle_output_redirect(t_command *node, char **tokens, int *j)
+{
+	if (!tokens[*j + 1])
+	{
+		error_handler(node,
+			"minishell: syntax error near unexpected token `newline'\n", 2);
+		return ;
+	}
+	add_to_fd_array(&node->output_fd, tokens[++(*j)]);
 }

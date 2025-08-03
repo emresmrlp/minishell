@@ -1,12 +1,16 @@
 /* ************************************************************************** */
-/*                                                                            */
+/*                                                                       		signal(SIGINT, execute_sigint_handler);
+		signal(SIGQUIT, SIG_IGN);
+		waitpid(pid, &status, 0);
+		signal(SIGINT, sigint_handler);
+		signal(SIGQUIT, SIG_IGN);*/
 /*                                                        :::      ::::::::   */
 /*   execute_single.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:33:49 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 21:40:31 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:08:15 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +26,21 @@ void	execute_single(t_command *command)
 	int		write_idx;
 	int		total_args;
 
-	/* Args kontrolü - eğer komut yoksa hata */
+	/* Args kontrolü - eğer komut yoksa ama heredoc varsa sadece heredoc işle */
 	if (!command->args || !command->args[0])
 	{
-		error_handler(command, "minishell: syntax error near unexpected token\n", 0);
-		return ;
+		if (command->heredoc_fd)
+		{
+			/* Standalone heredoc - sadece consume et, stdin'e yönlendirme */
+			execute_redirection(command);
+			command->exit_status = SUCCESS;
+			return ;
+		}
+		else
+		{
+			error_handler(command, "minishell: syntax error near unexpected token\n", 0);
+			return ;
+		}
 	}
 	/* Boş argument'ları free et ve compact et */
 	i = 0;
@@ -116,9 +130,7 @@ void	execute_single(t_command *command)
 		else if (WIFSIGNALED(status))
 		{
 			command->exit_status = 128 + WTERMSIG(status);
-			if (WTERMSIG(status) == SIGINT)
-				write(STDOUT_FILENO, "\n", 1);
-			else if (WTERMSIG(status) == SIGQUIT)
+			if (WTERMSIG(status) == SIGQUIT)
 				write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 		}
 		/* File descriptorleri eski haline getir */

@@ -6,23 +6,11 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 12:52:16 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/03 14:39:38 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:08:20 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-void	handle_redirection(t_command *node, char **tokens, int *j)
-{
-	if (ft_strcmp(tokens[*j], "<<") == 0)
-		add_to_fd_array(&node->heredoc_fd, tokens[++(*j)]);
-	else if (ft_strcmp(tokens[*j], ">>") == 0)
-		add_to_fd_array(&node->append_fd, tokens[++(*j)]);
-	else if (ft_strcmp(tokens[*j], "<") == 0)
-		add_to_fd_array(&node->input_fd, tokens[++(*j)]);
-	else if (ft_strcmp(tokens[*j], ">") == 0)
-		add_to_fd_array(&node->output_fd, tokens[++(*j)]);
-}
 
 static int	initialize_parse_argv(t_command *node, char **tokens,
 		char *original_string, char ***original_tokens)
@@ -75,11 +63,19 @@ int	parse_argv(t_command *node, char **tokens, char *original_string)
 
 	arg_count = initialize_parse_argv(node, tokens, original_string,
 			&original_tokens);
-	if (arg_count <= 0)
-	{
-		if (arg_count == 0)
-			return (1);
+	if (arg_count == -1)
 		return (0);
+	if (arg_count == 0)
+	{
+		index[0] = 0;
+		while (tokens[index[0]])
+		{
+			if (is_redirection(tokens[index[0]]))
+				handle_redirection(node, tokens, &index[0]);
+			else
+				index[0]++;
+		}
+		return (1);
 	}
 	index[0] = 0;
 	index[1] = 0;

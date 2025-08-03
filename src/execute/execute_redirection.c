@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_redirection.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:36:38 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 22:25:49 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:06:06 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,15 +147,22 @@ static char	*expand_heredoc_line(char *line, t_envp *env_list)
 
 static int	redirect_heredoc(char *delimiter, t_envp *env_list)
 {
-	int		heredoc_fd[2];
+	int		temp_fd;
 	char	*line;
 	char	*expanded_line;
 	void	(*old_sigint)(int);
 	void	(*old_sigquit)(int);
+	char	temp_filename[256];
 
-	pipe(heredoc_fd);
+	/* Temporary file oluştur */
+	sprintf(temp_filename, "/tmp/minishell_heredoc_%d", getpid());
+	temp_fd = open(temp_filename, O_CREAT | O_RDWR | O_TRUNC, 0600);
+	if (temp_fd < 0)
+		return (-1);
+	
 	old_sigint = signal(SIGINT, heredoc_sigint_handler);
 	old_sigquit = signal(SIGQUIT, SIG_IGN);
+	
 	while (1)
 	{
 		line = readline("heredoc> ");
@@ -167,15 +174,22 @@ static int	redirect_heredoc(char *delimiter, t_envp *env_list)
 			break;
 		}
 		expanded_line = expand_heredoc_line(line, env_list);
-		write(heredoc_fd[1], expanded_line, ft_strlen(expanded_line));
-		write(heredoc_fd[1], "\n", 1);
+		write(temp_fd, expanded_line, ft_strlen(expanded_line));
+		write(temp_fd, "\n", 1);
 		free(line);
 		free(expanded_line);
 	}
-	close(heredoc_fd[1]);
+	
+	/* File'ı başa sar okuma için */
+	lseek(temp_fd, 0, SEEK_SET);
+	
 	signal(SIGINT, old_sigint);
 	signal(SIGQUIT, old_sigquit);
-	return (heredoc_fd[0]);
+	
+	/* Temp file'ı sil (fd hala açık olacak) */
+	unlink(temp_filename);
+	
+	return (temp_fd);
 }
 
 // Son elemanı bul (array'in sonuncusu aktif redirection)

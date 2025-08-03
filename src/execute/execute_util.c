@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_util.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:36:28 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/02 22:52:04 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 15:52:20 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_signal.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 23:00:53 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/07/28 23:16:00 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:59:41 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
