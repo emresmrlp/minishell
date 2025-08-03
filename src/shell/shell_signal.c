@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_signal.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysumeral < ysumeral@student.42istanbul.    +#+  +:+       +#+        */
+/*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 23:00:53 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/03 17:23:58 by ysumeral         ###   ########.fr       */
+/*   Updated: 2025/08/03 21:21:10 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	sigint_handler(int signal)
 		return ;
 	}
 	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
 	rl_replace_line("", 0);
+	rl_on_new_line();
 	rl_redisplay();
 }

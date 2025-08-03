@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 12:52:16 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/03 16:08:20 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 21:08:15 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ int	parse_argv(t_command *node, char **tokens, char *original_string)
 		return (0);
 	if (arg_count == 0)
 	{
+		node->argc = 0;
 		index[0] = 0;
 		while (tokens[index[0]])
 		{
@@ -77,6 +78,7 @@ int	parse_argv(t_command *node, char **tokens, char *original_string)
 		}
 		return (1);
 	}
+	node->argc = arg_count;
 	index[0] = 0;
 	index[1] = 0;
 	index[2] = 0;

@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 13:09:37 by makpolat          #+#    #+#             */
-/*   Updated: 2025/08/03 19:28:06 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 21:08:15 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ static t_command	*create_node(void)
 	if (!node)
 		return (NULL);
 	node->args = NULL;
+	node->argc = 0;
 	node->input_fd = NULL;
 	node->output_fd = NULL;
 	node->append_fd = NULL;

@@ -6,7 +6,7 @@
 /*   By: makpolat <makpolat@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 23:34:59 by ysumeral          #+#    #+#             */
-/*   Updated: 2025/08/03 17:54:28 by makpolat         ###   ########.fr       */
+/*   Updated: 2025/08/03 21:08:15 by makpolat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,54 @@ void	execute_command(t_command *command)
 
 void	execute(t_command *command)
 {
+	pid_t	pid;
+	int		status;
+
 	if (!command)
 		return ;
+	if (command->argc == 0)
+	{
+		if (command->input_fd || command->output_fd || command->append_fd || command->heredoc_fd)
+		{
+			// Redirection var, fork aç (signal handling için)
+			pid = fork();
+			if (pid == 0)
+			{
+				// Child process
+				signal(SIGINT, SIG_DFL);
+				signal(SIGQUIT, SIG_DFL);
+				execute_redirection(command);
+				exit(command->exit_status);
+			}
+			else if (pid < 0)
+			{
+				command->exit_status = 1;
+				return;
+			}
+			else
+			{
+				// Parent process
+				g_signal_flag = 1;
+				signal(SIGINT, sigint_handler);
+				signal(SIGQUIT, SIG_IGN);
+				waitpid(pid, &status, 0);
+				g_signal_flag = 0;
+				signal(SIGINT, sigint_handler);
+				signal(SIGQUIT, SIG_IGN);
+				if (WIFEXITED(status))
+					command->exit_status = WEXITSTATUS(status);
+				else if (WIFSIGNALED(status))
+					command->exit_status = 128 + WTERMSIG(status);
+			}
+			save_exit_status_to_env(command->env_list, command->exit_status);
+			cleanup_exit_status_str(command);
+		}
+		else
+		{
+			command->exit_status = 0;
+		}
+		return ;
+	}
 	if (!command->next)
 		execute_single(command);
 	else
