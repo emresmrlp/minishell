@@ -21,20 +21,29 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 	signal(SIGPIPE, SIG_DFL);
 	if (!command || !command->args || !command->args[0])
 		exit(127);
-	if (prev_fd != -1)
+	
+	// Önce redirection'ları uygula (heredoc, input/output files)
+	execute_redirection(command);
+	
+	// Redirection yoksa pipe'ları uygula
+	// Input redirection yoksa (heredoc veya input file yoksa) pipe'dan oku
+	if (prev_fd != -1 && !command->input_fd && !command->heredoc_fd)
 	{
 		dup2(prev_fd, STDIN_FILENO);
 		close(prev_fd);
 	}
-	if (write_fd != -1)
+	
+	// Output redirection yoksa (output veya append file yoksa) pipe'a yaz
+	if (write_fd != -1 && !command->output_fd && !command->append_fd)
 	{
 		dup2(write_fd, STDOUT_FILENO);
 		close(write_fd);
 	}
+	
+	// Close all file descriptors except stdin, stdout, stderr
 	for (fd = 3; fd < 1024; fd++)
 		close(fd);
 	
-	execute_redirection(command);
 	if (is_builtin(command->args[0]))
 		exit(execute_builtin(command));
 	execute_command(command);
