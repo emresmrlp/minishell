@@ -26,12 +26,10 @@ void	execute_single(t_command *command)
 	int		write_idx;
 	int		total_args;
 
-	/* Args kontrolü - eğer komut yoksa ama heredoc varsa sadece heredoc işle */
 	if (!command->args || !command->args[0])
 	{
 		if (command->heredoc_fd)
 		{
-			/* Standalone heredoc - sadece consume et, stdin'e yönlendirme */
 			execute_redirection(command);
 			command->exit_status = SUCCESS;
 			return ;
@@ -42,16 +40,13 @@ void	execute_single(t_command *command)
 			return ;
 		}
 	}
-	/* Boş argument'ları free et ve compact et (echo hariç) */
 	if (!command->args[0] || ft_strcmp(command->args[0], "echo") != 0)
 	{
 		i = 0;
 		write_idx = 0;
 		total_args = 0;
-		/* Count total args first */
 		while (command->args[total_args])
 			total_args++;
-		/* First pass: free empty strings */
 		for (i = 0; i < total_args; i++)
 		{
 			if (command->args[i] && command->args[i][0] == '\0')
@@ -60,7 +55,6 @@ void	execute_single(t_command *command)
 				command->args[i] = NULL;
 			}
 		}
-		/* Second pass: compact array (remove NULLs) */
 		write_idx = 0;
 		for (i = 0; i < total_args; i++)
 		{
@@ -71,9 +65,8 @@ void	execute_single(t_command *command)
 				write_idx++;
 			}
 		}
-		command->args[write_idx] = NULL; /* Terminate compacted array */
+		command->args[write_idx] = NULL;
 	}
-	/* Hiç valid command yok */
 	if (!command->args[0])
 	{
 		command->exit_status = 0;
@@ -82,7 +75,6 @@ void	execute_single(t_command *command)
 
 	if (is_builtin(command->args[0]))
 	{
-		// Shell state'ini değiştiren komutlar - fork kullanma
 		if (ft_strcmp(command->args[0], "exit") == 0)
 		{
 			command->exit_status = builtin_exit(command, command->args);
@@ -104,10 +96,6 @@ void	execute_single(t_command *command)
 			command->exit_status = SUCCESS;
 			return ;
 		}
-		/*
-		** Sadece output üreten builtin komutlar için fork kullan
-		** (pwd, echo, env - redirection desteği için)
-		*/
 		saved_stdin = dup(STDIN_FILENO);
 		saved_stdout = dup(STDOUT_FILENO);
 		pid = fork();
@@ -140,7 +128,6 @@ void	execute_single(t_command *command)
 			if (WTERMSIG(status) == SIGQUIT)
 				write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 		}
-		/* File descriptorleri eski haline getir */
 		dup2(saved_stdin, STDIN_FILENO);
 		dup2(saved_stdout, STDOUT_FILENO);
 		close(saved_stdin);

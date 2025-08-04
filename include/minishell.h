@@ -32,7 +32,7 @@
 # define SUCCESS 0
 # define FAILURE 1
 
-extern int g_signal_flag;
+extern int	g_signal_flag;
 
 typedef struct s_envp
 {

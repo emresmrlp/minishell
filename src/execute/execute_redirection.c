@@ -154,15 +154,12 @@ static int	redirect_heredoc(char *delimiter, t_envp *env_list)
 	void	(*old_sigquit)(int);
 	char	temp_filename[256];
 
-	/* Temporary file oluştur */
 	sprintf(temp_filename, "/tmp/minishell_heredoc_%d", getpid());
 	temp_fd = open(temp_filename, O_CREAT | O_RDWR | O_TRUNC, 0600);
 	if (temp_fd < 0)
 		return (-1);
-	
 	old_sigint = signal(SIGINT, heredoc_sigint_handler);
-	old_sigquit = signal(SIGQUIT, SIG_IGN);
-	
+	old_sigquit = signal(SIGQUIT, SIG_IGN);	
 	while (1)
 	{
 		line = readline("heredoc> ");
@@ -179,20 +176,13 @@ static int	redirect_heredoc(char *delimiter, t_envp *env_list)
 		free(line);
 		free(expanded_line);
 	}
-	
-	/* File'ı başa sar okuma için */
 	lseek(temp_fd, 0, SEEK_SET);
-	
 	signal(SIGINT, old_sigint);
 	signal(SIGQUIT, old_sigquit);
-	
-	/* Temp file'ı sil (fd hala açık olacak) */
 	unlink(temp_filename);
-	
 	return (temp_fd);
 }
 
-// Son elemanı bul (array'in sonuncusu aktif redirection)
 static char *get_last_element(char **array)
 {
 	int i = 0;
@@ -205,11 +195,10 @@ static char *get_last_element(char **array)
 	
 	if (i > 0)
 		return array[i - 1];
-	
+	return (NULL);
 	return NULL;
 }
 
-// Array'daki son eleman hariç tüm dosyaları oluştur
 static int create_previous_files(char **files, int is_append, t_command *command)
 {
 	int i = 0;
@@ -218,8 +207,6 @@ static int create_previous_files(char **files, int is_append, t_command *command
 	
 	if (!files)
 		return (0);
-	
-	// Önce tüm dosyaları kontrol et (son dahil)
 	while (files[i])
 	{
 		if (is_append)
@@ -236,7 +223,7 @@ static int create_previous_files(char **files, int is_append, t_command *command
 			error_handler(command, final_msg, 1);
 			free(error_msg);
 			free(final_msg);
-			return (1); // Hata varsa dur
+			return (1);
 		}
 		i++;
 	}
@@ -249,7 +236,6 @@ void	execute_redirection(t_command *command)
 	int	i;
 	char *last_output, *last_append;
 
-	// Heredoc'ları sırayla işle (tüm heredoc'ları consume et, son olanını kullan)
 	if (command->heredoc_fd)
 	{
 		i = 0;
@@ -261,8 +247,7 @@ void	execute_redirection(t_command *command)
 				command->exit_status = 130;
 				return;
 			}
-			// Sadece son heredoc'u stdin'e yönlendir
-			if (!command->heredoc_fd[i + 1])  // Son heredoc
+			if (!command->heredoc_fd[i + 1])
 			{
 				dup2(heredoc_fd, STDIN_FILENO);
 			}
@@ -272,7 +257,6 @@ void	execute_redirection(t_command *command)
 	}
 	else
 	{
-		// Önce input dosyalarını kontrol et - hata varsa dur
 		if (command->input_fd)
 		{
 			i = 0;
@@ -284,17 +268,12 @@ void	execute_redirection(t_command *command)
 			}
 		}
 	}
-
-	// Sonra tüm output redirection'ları kontrol et - hata varsa dur
-	if (command->output_fd && create_previous_files(command->output_fd, 0, command) != 0)  // Output files (truncate)
+	if (command->output_fd && create_previous_files(command->output_fd, 0, command) != 0)
 		exit(command->exit_status);
-	if (command->append_fd && create_previous_files(command->append_fd, 1, command) != 0)  // Append files (no truncate)
+	if (command->append_fd && create_previous_files(command->append_fd, 1, command) != 0)
 		exit(command->exit_status);
-	
-	// Output redirection'ları uygula
 	last_append = get_last_element(command->append_fd);
 	last_output = get_last_element(command->output_fd);
-	
 	if (last_append)
 	{
 		if (redirect_append_simple(last_append, command) != 0)

@@ -21,29 +21,19 @@ static void	child_process(t_command *command, int prev_fd, int write_fd)
 	signal(SIGPIPE, SIG_DFL);
 	if (!command || !command->args || !command->args[0])
 		exit(127);
-	
-	// Önce redirection'ları uygula (heredoc, input/output files)
 	execute_redirection(command);
-	
-	// Redirection yoksa pipe'ları uygula
-	// Input redirection yoksa (heredoc veya input file yoksa) pipe'dan oku
 	if (prev_fd != -1 && !command->input_fd && !command->heredoc_fd)
 	{
 		dup2(prev_fd, STDIN_FILENO);
 		close(prev_fd);
 	}
-	
-	// Output redirection yoksa (output veya append file yoksa) pipe'a yaz
 	if (write_fd != -1 && !command->output_fd && !command->append_fd)
 	{
 		dup2(write_fd, STDOUT_FILENO);
 		close(write_fd);
 	}
-	
-	// Close all file descriptors except stdin, stdout, stderr
 	for (fd = 3; fd < 1024; fd++)
 		close(fd);
-	
 	if (is_builtin(command->args[0]))
 		exit(execute_builtin(command));
 	execute_command(command);
@@ -72,10 +62,11 @@ void	execute_multiple(t_command *command)
 	int			prev_fd;
 	pid_t		pid;
 	int			status;
-	pid_t		first_pid = 0;
+	pid_t		first_pid;
 	t_command	*original_command;
 
-	original_command = command; // Save original command pointer
+	first_pid = 0;
+	original_command = command;
 	prev_fd = -1;
 	while (command)
 	{
@@ -86,28 +77,22 @@ void	execute_multiple(t_command *command)
 			pipe_fd[0] = -1;
 			pipe_fd[1] = -1;
 		}
-		
 		pid = fork_and_run_child(command, prev_fd, pipe_fd[1]);
 		if (first_pid == 0)
 			first_pid = pid;
-		
 		if (prev_fd != -1)
 			close(prev_fd);
 		if (pipe_fd[1] != -1)
 			close(pipe_fd[1]);
-		
 		prev_fd = pipe_fd[0];
 		command = command->next;
 	}
-	/* Close the last pipe read end */
 	if (prev_fd != -1)
 		close(prev_fd);
-	/* Wait for last command first (pipeline exit status) */
 	g_signal_flag = 1;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
-	/* Wait for any remaining children */
 	while (wait(NULL) > 0)
 		;
 	g_signal_flag = 0;
@@ -121,7 +106,6 @@ void	execute_multiple(t_command *command)
 		if (WTERMSIG(status) == SIGQUIT)
 			write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 	}
-	/* Then wait for any remaining children */
 	while (wait(NULL) > 0)
 		;
 }

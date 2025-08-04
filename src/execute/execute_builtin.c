@@ -14,8 +14,8 @@
 
 int	execute_builtin(t_command *command)
 {
-	int result;
-	
+	int	result;
+
 	if (ft_strcmp(command->args[0], "pwd") == 0)
 		result = builtin_pwd();
 	else if (ft_strcmp(command->args[0], "echo") == 0)
@@ -27,7 +27,7 @@ int	execute_builtin(t_command *command)
 	else if (ft_strcmp(command->args[0], "unset") == 0)
 	{
 		builtin_unset(command, command->args);
-		result = SUCCESS;  // unset always returns 0 in bash
+		result = SUCCESS;
 	}
 	else if (ft_strcmp(command->args[0], "env") == 0)
 		result = builtin_env(command);
@@ -35,12 +35,7 @@ int	execute_builtin(t_command *command)
 		result = builtin_exit(command, command->args);
 	else
 		result = FAILURE;
-		
-	// Tüm builtin komutlardan sonra static memory cleanup
 	cleanup_exit_status_str(command);
-	
-	// Value'su olmayan environment variable'ları temizle
 	cleanup_empty_env_vars(&command->env_list);
-	
 	return (result);
 }

@@ -37,13 +37,12 @@ void	execute(t_command *command)
 		return ;
 	if (command->argc == 0)
 	{
-		if (command->input_fd || command->output_fd || command->append_fd || command->heredoc_fd)
+		if (command->input_fd || command->output_fd
+			|| command->append_fd || command->heredoc_fd)
 		{
-			// Redirection var, fork aç (signal handling için)
 			pid = fork();
 			if (pid == 0)
 			{
-				// Child process
 				signal(SIGINT, SIG_DFL);
 				signal(SIGQUIT, SIG_DFL);
 				execute_redirection(command);
@@ -52,11 +51,10 @@ void	execute(t_command *command)
 			else if (pid < 0)
 			{
 				command->exit_status = 1;
-				return;
+				return ;
 			}
 			else
 			{
-				// Parent process
 				g_signal_flag = 1;
 				signal(SIGINT, sigint_handler);
 				signal(SIGQUIT, SIG_IGN);

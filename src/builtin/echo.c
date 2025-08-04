@@ -38,7 +38,7 @@ int	builtin_echo(t_command *command)
 	}
 	while (command->args[i])
 	{
-		if (i > 1) // Add space before each argument except the first
+		if (i > 1)
 			ft_putstr_fd(" ", STDOUT_FILENO);
 		ft_putstr_fd(command->args[i], STDOUT_FILENO);
 		i++;
