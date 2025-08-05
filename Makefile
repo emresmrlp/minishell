@@ -42,12 +42,15 @@ SRC =	src/main.c \
 		src/builtin/env_util.c \
 		src/execute/execute.c \
 		src/execute/execute_single.c \
+		src/execute/execute_single_utils.c \
 		src/execute/execute_multiple.c \
 		src/execute/execute_util.c \
 		src/execute/execute_builtin.c \
 		src/execute/execute_redirection.c \
 		src/parse/find_redirect.c \
-		src/parse/find_redirect_utils.c
+		src/parse/find_redirect_utils.c \
+		src/parse/parse_split.c \
+		src/parse/parse_split_util.c
 
 OBJDIR = objs
 OBJ = $(SRC:src/%.c=$(OBJDIR)/%.o)
@@ -77,8 +80,6 @@ clean:
 fclean: clean
 	@make fclean -C ./external/libft
 	@rm -rf $(NAME)
-
-test: all clean #TODO DELETE THIS
 
 re: fclean all
 

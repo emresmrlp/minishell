@@ -55,6 +55,22 @@ static void	process_tokens_loop(t_command *node, char **tokens,
 	}
 }
 
+static int	handle_zero_args(t_command *node, char **tokens)
+{
+	int	index;
+
+	node->argc = 0;
+	index = 0;
+	while (tokens[index])
+	{
+		if (is_redirection(tokens[index]))
+			handle_redirection(node, tokens, &index);
+		else
+			index++;
+	}
+	return (1);
+}
+
 int	parse_argv(t_command *node, char **tokens, char *original_string)
 {
 	char	**original_tokens;
@@ -66,18 +82,7 @@ int	parse_argv(t_command *node, char **tokens, char *original_string)
 	if (arg_count == -1)
 		return (0);
 	if (arg_count == 0)
-	{
-		node->argc = 0;
-		index[0] = 0;
-		while (tokens[index[0]])
-		{
-			if (is_redirection(tokens[index[0]]))
-				handle_redirection(node, tokens, &index[0]);
-			else
-				index[0]++;
-		}
-		return (1);
-	}
+		return (handle_zero_args(node, tokens));
 	node->argc = arg_count;
 	index[0] = 0;
 	index[1] = 0;

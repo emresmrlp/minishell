@@ -111,7 +111,6 @@ char	*get_valid_path(t_command *command)
 		path = handle_absolute_path(command);
 	if (!path)
 	{
-		// PATH yoksa veya komut bulunamadıysa mevcut dizini kontrol et
 		current_dir_path = ft_strjoin("./", command->args[0]);
 		if (access(current_dir_path, F_OK) == 0 && access(current_dir_path, X_OK) == 0)
 		{

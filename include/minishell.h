@@ -160,4 +160,15 @@ int			shell_exit_with_error(char *message, t_command *command);
 int			shell_exit(t_command *command, int exit_code);
 void		free_env_list(t_envp *env_list);
 
+int			count_words(const char *s, char c);
+char		**free_split_array(char **arr);
+void		remove_quotes_from_word(const char *s, char c, char *result);
+
+void		remove_empty_strings(t_command *command, int total_args);
+void		compact_args_array(t_command *command, int total_args);
+void		setup_child_builtin_signals_and_wait(t_command *command, 
+			pid_t pid, int saved_stdin, int saved_stdout);
+void		setup_external_signals_and_wait(t_command *command, pid_t pid);
+int			handle_empty_command(t_command *command);
+
 #endif

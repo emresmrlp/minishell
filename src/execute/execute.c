@@ -12,6 +12,49 @@
 
 #include "../../include/minishell.h"
 
+static void	handle_child_process(t_command *command)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	execute_redirection(command);
+	exit(command->exit_status);
+}
+
+static void	setup_parent_signals_and_wait(t_command *command, pid_t pid)
+{
+	int	status;
+
+	g_signal_flag = 1;
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	waitpid(pid, &status, 0);
+	g_signal_flag = 0;
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	if (WIFEXITED(status))
+		command->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		command->exit_status = 128 + WTERMSIG(status);
+}
+
+static void	handle_zero_argc_with_redirections(t_command *command)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == 0)
+		handle_child_process(command);
+	else if (pid < 0)
+	{
+		command->exit_status = 1;
+		return ;
+	}
+	else
+		setup_parent_signals_and_wait(command, pid);
+	save_exit_status_to_env(command->env_list, command->exit_status);
+	cleanup_exit_status_str(command);
+}
+
 void	execute_command(t_command *command)
 {
 	char	*path;
@@ -30,50 +73,15 @@ void	execute_command(t_command *command)
 
 void	execute(t_command *command)
 {
-	pid_t	pid;
-	int		status;
-
 	if (!command)
 		return ;
 	if (command->argc == 0)
 	{
 		if (command->input_fd || command->output_fd
 			|| command->append_fd || command->heredoc_fd)
-		{
-			pid = fork();
-			if (pid == 0)
-			{
-				signal(SIGINT, SIG_DFL);
-				signal(SIGQUIT, SIG_DFL);
-				execute_redirection(command);
-				exit(command->exit_status);
-			}
-			else if (pid < 0)
-			{
-				command->exit_status = 1;
-				return ;
-			}
-			else
-			{
-				g_signal_flag = 1;
-				signal(SIGINT, sigint_handler);
-				signal(SIGQUIT, SIG_IGN);
-				waitpid(pid, &status, 0);
-				g_signal_flag = 0;
-				signal(SIGINT, sigint_handler);
-				signal(SIGQUIT, SIG_IGN);
-				if (WIFEXITED(status))
-					command->exit_status = WEXITSTATUS(status);
-				else if (WIFSIGNALED(status))
-					command->exit_status = 128 + WTERMSIG(status);
-			}
-			save_exit_status_to_env(command->env_list, command->exit_status);
-			cleanup_exit_status_str(command);
-		}
+			handle_zero_argc_with_redirections(command);
 		else
-		{
 			command->exit_status = 0;
-		}
 		return ;
 	}
 	if (!command->next)
