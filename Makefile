@@ -46,6 +46,7 @@ SRC =	src/main.c \
 		src/execute/execute_multiple.c \
 		src/execute/execute_multiple_utils.c \
 		src/execute/execute_util.c \
+		src/execute/execute_process.c \
 		src/execute/execute_path_utils.c \
 		src/execute/execute_builtin.c \
 		src/execute/execute_redirection.c \

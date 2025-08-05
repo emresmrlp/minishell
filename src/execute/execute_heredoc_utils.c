@@ -12,40 +12,6 @@
 
 #include "../../include/minishell.h"
 
-static char	*join_and_free(char *result, char *temp)
-{
-	char	*old_result;
-
-	old_result = result;
-	result = ft_strjoin(result, temp);
-	free(old_result);
-	free(temp);
-	return (result);
-}
-
-static char	*process_dollar_expansion(char *line, t_envp *env_list, int *i)
-{
-	int		j;
-	char	*temp;
-	char	*env_value;
-
-	j = *i + 1;
-	while (line[j] && (ft_isalnum(line[j]) || line[j] == '_'))
-		j++;
-	temp = ft_substr(line, *i + 1, j - *i - 1);
-	if (temp)
-	{
-		env_value = get_env_value(NULL, temp, env_list);
-		free(temp);
-		if (env_value)
-			temp = ft_strdup(env_value);
-		else
-			temp = ft_strdup("");
-	}
-	*i = j;
-	return (temp);
-}
-
 static void	expand_variable(t_expansion_data *data, char *line,
 	t_envp *env_list)
 {

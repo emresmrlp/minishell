@@ -198,5 +198,28 @@ void		setup_child_builtin_signals_and_wait(t_command *command,
 				pid_t pid, int saved_stdin, int saved_stdout);
 void		setup_external_signals_and_wait(t_command *command, pid_t pid);
 int			handle_empty_command(t_command *command);
+void		process_builtin_with_fork(t_command *command);
+void		process_external_command(t_command *command);
+void		handle_shell_state_builtins(t_command *command);
+
+// Multiple execution functions
+void		setup_child_fds(int prev_fd, int write_fd);
+void		close_extra_fds(void);
+void		child_process(t_command *command, int prev_fd, int write_fd);
+pid_t		fork_and_run_child(t_command *command, int prev_fd, int write_fd);
+
+// Redirection functions
+char		*expand_heredoc_line(char *line, t_envp *env_list);
+char		*get_last_element(char **array);
+int			redirect_append_simple(char *filename, t_command *command);
+int			redirect_output_simple(char *filename, t_command *command);
+int			redirect_heredoc(char *delimiter, t_envp *env_list);
+void		handle_input_redirection(t_command *command);
+void		handle_heredoc_redirection(t_command *command);
+
+// Utility functions for replacing non-allowed functions
+int			get_pid_from_proc(void);
+void		create_temp_filename(char *filename);
+void		int_to_string(int num, char *str);
 
 #endif

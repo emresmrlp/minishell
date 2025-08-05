@@ -23,7 +23,7 @@ static int	setup_heredoc_file(char *temp_filename)
 {
 	int	temp_fd;
 
-	sprintf(temp_filename, "/tmp/minishell_heredoc_%d", getpid());
+	create_temp_filename(temp_filename);
 	temp_fd = open(temp_filename, O_CREAT | O_RDWR | O_TRUNC, 0600);
 	return (temp_fd);
 }
@@ -69,7 +69,8 @@ int	redirect_heredoc(char *delimiter, t_envp *env_list)
 	old_sigint = signal(SIGINT, heredoc_sigint_handler);
 	old_sigquit = signal(SIGQUIT, SIG_IGN);
 	read_heredoc_input(delimiter, temp_fd, env_list);
-	lseek(temp_fd, 0, SEEK_SET);
+	close(temp_fd);
+	temp_fd = open(temp_filename, O_RDONLY);
 	signal(SIGINT, old_sigint);
 	signal(SIGQUIT, old_sigquit);
 	unlink(temp_filename);

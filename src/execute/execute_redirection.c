@@ -12,53 +12,6 @@
 
 #include "../../include/minishell.h"
 
-static void	heredoc_sigint_handler(int signal)
-{
-	(void)signal;
-	write(STDOUT_FILENO, "\n", 1);
-	exit(130);
-}
-
-static void	read_heredoc_input(t_heredoc_data *data, char *delimiter,
-			t_envp *env_list)
-{
-	while (1)
-	{
-		data->line = readline("heredoc> ");
-		if (!data->line)
-			break ;
-		if (ft_strcmp(data->line, delimiter) == 0)
-		{
-			free(data->line);
-			break ;
-		}
-		data->expanded_line = expand_heredoc_line(data->line, env_list);
-		write(data->temp_fd, data->expanded_line,
-			ft_strlen(data->expanded_line));
-		write(data->temp_fd, "\n", 1);
-		free(data->line);
-		free(data->expanded_line);
-	}
-}
-
-static int	redirect_heredoc(char *delimiter, t_envp *env_list)
-{
-	t_heredoc_data	data;
-
-	sprintf(data.temp_filename, "/tmp/minishell_heredoc_%d", getpid());
-	data.temp_fd = open(data.temp_filename, O_CREAT | O_RDWR | O_TRUNC, 0600);
-	if (data.temp_fd < 0)
-		return (-1);
-	data.old_sigint = signal(SIGINT, heredoc_sigint_handler);
-	data.old_sigquit = signal(SIGQUIT, SIG_IGN);
-	read_heredoc_input(&data, delimiter, env_list);
-	lseek(data.temp_fd, 0, SEEK_SET);
-	signal(SIGINT, data.old_sigint);
-	signal(SIGQUIT, data.old_sigquit);
-	unlink(data.temp_filename);
-	return (data.temp_fd);
-}
-
 static int	create_previous_files(char **files, int is_append,
 			t_command *command)
 {
