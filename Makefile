@@ -44,9 +44,15 @@ SRC =	src/main.c \
 		src/execute/execute_single.c \
 		src/execute/execute_single_utils.c \
 		src/execute/execute_multiple.c \
+		src/execute/execute_multiple_utils.c \
 		src/execute/execute_util.c \
+		src/execute/execute_path_utils.c \
 		src/execute/execute_builtin.c \
 		src/execute/execute_redirection.c \
+		src/execute/execute_redirection_utils.c \
+		src/execute/execute_redirection_helpers.c \
+		src/execute/execute_heredoc.c \
+		src/execute/execute_heredoc_utils.c \
 		src/parse/find_redirect.c \
 		src/parse/find_redirect_utils.c \
 		src/parse/parse_split.c \

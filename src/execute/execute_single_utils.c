@@ -48,8 +48,8 @@ void	compact_args_array(t_command *command, int total_args)
 	command->args[write_idx] = NULL;
 }
 
-void	setup_child_builtin_signals_and_wait(t_command *command, 
-	pid_t pid, int saved_stdin, int saved_stdout)
+void	setup_child_builtin_signals_and_wait(t_command *command,
+		pid_t pid, int saved_stdin, int saved_stdout)
 {
 	int	status;
 
@@ -109,7 +109,8 @@ int	handle_empty_command(t_command *command)
 		}
 		else
 		{
-			error_handler(command, "minishell: syntax error near unexpected token\n", 0);
+			error_handler(command,
+				"minishell: syntax error near unexpected token\n", 0);
 			return (1);
 		}
 	}

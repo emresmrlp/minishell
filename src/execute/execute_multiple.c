@@ -12,50 +12,8 @@
 
 #include "../../include/minishell.h"
 
-static void	child_process(t_command *command, int prev_fd, int write_fd)
-{
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	if (prev_fd != -1)
-	{
-		dup2(prev_fd, STDIN_FILENO);
-		close(prev_fd);
-	}
-	if (write_fd != -1)
-	{
-		dup2(write_fd, STDOUT_FILENO);
-		close(write_fd);
-	}
-	
-	int fd;
-	for (fd = 3; fd < 1024; fd++)
-		close(fd);
-	
-	execute_redirection(command);
-	if (is_builtin(command->args[0]))
-		exit(execute_builtin(command));
-	execute_command(command);
-	exit(127);
-}
-
-static pid_t	fork_and_run_child(t_command *command,
-	int prev_fd, int write_fd)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == 0)
-		child_process(command, prev_fd, write_fd);
-	else if (pid < 0)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-	return (pid);
-}
-
-static void	setup_pipe_and_fork(t_command **command, int *prev_fd, 
-	pid_t *pid, pid_t *first_pid)
+static void	setup_pipe_and_fork(t_command **command, int *prev_fd,
+		pid_t *pid, pid_t *first_pid)
 {
 	int	pipe_fd[2];
 

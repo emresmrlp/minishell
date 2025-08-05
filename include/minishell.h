@@ -50,6 +50,34 @@ typedef struct s_parse_data
 	int		*state;
 }	t_parse_data;
 
+typedef struct s_heredoc_data
+{
+	int		temp_fd;
+	char	*line;
+	char	*expanded_line;
+	void	(*old_sigint)(int);
+	void	(*old_sigquit)(int);
+	char	temp_filename[256];
+}	t_heredoc_data;
+
+typedef struct s_expansion_data
+{
+	char	*result;
+	char	*temp;
+	char	*env_value;
+	char	*old_result;
+	int		i;
+	int		j;
+}	t_expansion_data;
+
+typedef struct s_file_creation_data
+{
+	int		i;
+	int		fd;
+	char	*error_msg;
+	char	*final_msg;
+}	t_file_creation_data;
+
 typedef struct s_command
 {
 	int					exit_status;
@@ -166,8 +194,8 @@ void		remove_quotes_from_word(const char *s, char c, char *result);
 
 void		remove_empty_strings(t_command *command, int total_args);
 void		compact_args_array(t_command *command, int total_args);
-void		setup_child_builtin_signals_and_wait(t_command *command, 
-			pid_t pid, int saved_stdin, int saved_stdout);
+void		setup_child_builtin_signals_and_wait(t_command *command,
+				pid_t pid, int saved_stdin, int saved_stdout);
 void		setup_external_signals_and_wait(t_command *command, pid_t pid);
 int			handle_empty_command(t_command *command);
 
